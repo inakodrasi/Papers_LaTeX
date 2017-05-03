@@ -1,0 +1,205 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.20810,0.16630,0.52920}%
+\definecolor{mycolor2}{rgb}{0.07935,0.52002,0.83118}%
+\definecolor{mycolor3}{rgb}{0.21783,0.72504,0.61926}%
+\definecolor{mycolor4}{rgb}{0.85066,0.72990,0.33603}%
+\definecolor{mycolor5}{rgb}{0.97630,0.98310,0.05380}%
+%
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=0.45\figurewidth,
+height=\figureheight,
+area legend,
+bar shift auto,
+scale only axis,
+xlabel={$M$},
+xmajorgrids,
+ylabel={$\Delta$PESQ},
+ylabel absolute, ylabel style={yshift=-0.9em},
+ymajorgrids,
+name=plot1,
+x label style={at={(axis description cs:0.5,0.08)},anchor=north},
+title={$T_{60} \approx 0.61$ s},
+legend columns = 4,
+area legend,
+legend style={at={([xshift=13pt,yshift=20pt] 1,1)},anchor=south},
+legend image post style={xscale=0.8},
+legend entries = {MVDR, MWF-ML, MWF-EVD, MWF-NNM},
+xmin=1,
+xmax=7,
+xtick={2, 4, 6},
+ymin=0,
+ymax=0.65,
+ytick={0,0.1,0.2, 0.3,0.4, 0.5,0.6,0.7},
+yticklabels={0,,0.2,,0.4,,0.6,},
+xmajorgrids,
+ymajorgrids,
+]
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor1, pattern = horizontal lines, draw=black, area legend] table[row sep=crcr] {%
+2	0.142\\
+4	0.237\\
+6	0.274\\
+};
+
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor2, pattern = north west lines, draw=black, area legend] table[row sep=crcr] {%
+2	0.344\\
+4	0.417\\
+6	0.42\\
+};
+
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor3, pattern = crosshatch, draw=black, area legend] table[row sep=crcr] {%
+2	0.41\\
+4	0.499\\
+6	0.518\\
+};
+
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor5, pattern = crosshatch dots, draw=black, area legend] table[row sep=crcr] {%
+2	0.388\\
+4	0.598\\
+6	0.589\\
+};
+\end{axis}
+
+\begin{axis}[%
+width=0.45\figurewidth,
+height=\figureheight,
+area legend,
+bar shift auto,
+scale only axis,
+xmin=1,
+xmax=7,
+xtick={2, 4, 6},
+xlabel={$M$},
+xmajorgrids,
+ytick={0,0.1,0.2, 0.3,0.4, 0.5,0.6,0.7},
+yticklabels={0,,0.2,,0.4,,0.6,},
+ymin=0,
+ymax=0.65,
+ymajorgrids,
+name=plot2,
+at={($(plot1.south east)+(30,0)$)},
+x label style={at={(axis description cs:0.5,0.08)},anchor=north},
+%anchor=south west,
+title={$T_{60} \approx 1.25$ s}
+]
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor1, pattern = horizontal lines, draw=black, area legend] table[row sep=crcr] {%
+2	0.0760000000000001\\
+4	0.195\\
+6	0.278\\
+};
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor2, pattern = north west lines, draw=black, area legend] table[row sep=crcr] {%
+2	0.179\\
+4	0.289\\
+6	0.357\\
+};
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor3, pattern = crosshatch, draw=black, area legend] table[row sep=crcr] {%
+2	0.176\\
+4	0.305\\
+6	0.386\\
+};
+
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor5, pattern = crosshatch dots, draw=black, area legend] table[row sep=crcr] {%
+2	0.325\\
+4	0.476\\
+6	0.557\\
+};
+\end{axis}
+
+\begin{axis}[%
+width=0.45\figurewidth,
+height=\figureheight,
+area legend,
+bar shift auto,
+scale only axis,
+xmin=1,
+xmax=7,
+xtick={2, 4, 6},
+xlabel={$M$},
+xmajorgrids,
+ymin=-2,
+ylabel={$\Delta$CD [dB]},
+ylabel absolute, ylabel style={yshift=-0.9em},
+ymax=0,
+ytick={-2,-1.75,-1.5,-1.25,-1,-0.75,-0.5,-0.25,0},
+yticklabels={-2,,-1.5,,-1,,-0.5,,0},
+ymajorgrids,
+name=plot3,
+at={($(plot1.south west)-(0,35)$)},
+x label style={at={(axis description cs:0.5,0.08)},anchor=north},
+anchor=north west
+]
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor1, pattern = horizontal lines, draw=black, area legend] table[row sep=crcr] {%
+2	-0.364506120566303\\
+4	-0.669922953558931\\
+6	-0.838416238873296\\
+};
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor2, pattern = north west lines, draw=black, area legend] table[row sep=crcr] {%
+2	-0.852424977522848\\
+4	-1.05261466710744\\
+6	-1.16464016418959\\
+};
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor3, pattern = crosshatch, draw=black, area legend] table[row sep=crcr] {%
+2	-0.810527631509876\\
+4	-1.02002812641721\\
+6	-1.11135810111524\\
+};
+
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor5, pattern = crosshatch dots, draw=black, area legend] table[row sep=crcr] {%
+2	-0.781519534682876\\
+4	-0.889034939462563\\
+6	-1.01746736625863\\
+};
+\end{axis}
+
+\begin{axis}[%
+width=0.45\figurewidth,
+height=\figureheight,
+area legend,
+bar shift auto,
+scale only axis,
+xmin=1,
+xmax=7,
+xtick={2, 4, 6},
+xlabel={$M$},
+xmajorgrids,
+ytick={-2,-1.75,-1.5,-1.25,-1,-0.75,-0.5,-0.25,0},
+yticklabels={-2,,-1.5,,-1,,-0.5,,0},
+ymin=-2,
+ymax=0,
+ymajorgrids,
+name=plot4,
+at={($(plot2.south west)-(0,35)$)},
+x label style={at={(axis description cs:0.5,0.08)},anchor=north},
+anchor=north west,
+]
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor1, pattern = horizontal lines, draw=black, area legend] table[row sep=crcr] {%
+2	-0.236990277618278\\
+4	-0.704124818021838\\
+6	-1.07230155228522\\
+};
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor2, pattern = north west lines, draw=black, area legend] table[row sep=crcr] {%
+2	-0.624323547174519\\
+4	-1.11172230479739\\
+6	-1.38610527021348\\
+};
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor3, pattern = crosshatch, draw=black, area legend] table[row sep=crcr] {%
+2	-0.828207269991667\\
+4	-1.38575758131396\\
+6	-1.68452021193428\\
+};
+
+\addplot[ybar, bar width=0.015\figurewidth, fill=mycolor5, pattern = crosshatch dots, draw=black, area legend] table[row sep=crcr] {%
+2	-0.839271300068673\\
+4	-1.51731701100657\\
+6	-1.77865659045355\\
+};
+\end{axis}
+\node[below] at ([yshift=-15pt] $(plot1.south)!.5!(plot2.south)$) {(a)};
+\node[below] at ([yshift=-15pt] $(plot3.south)!.5!(plot4.south)$) {(b)};
+\end{tikzpicture}%

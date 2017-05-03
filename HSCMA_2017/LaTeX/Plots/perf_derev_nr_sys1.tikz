@@ -1,0 +1,147 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.20810,0.16630,0.52920}%
+\definecolor{mycolor2}{rgb}{0.02650,0.61370,0.81350}%
+\definecolor{mycolor3}{rgb}{0.64730,0.74560,0.41880}%
+\definecolor{mycolor4}{rgb}{0.97630,0.98310,0.05380}%
+%
+\begin{tikzpicture}[font = \footnotesize]
+\begin{axis}[%
+width=0.17\figurewidth,
+height=0.8\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+bar shift auto,
+xmin=5,
+xmax=35,
+xlabel={SIR [dB] \\ (a)},
+ymin=0,
+ymax=8.3,
+ylabel={$\Delta$fwSSNR [dB]},
+axis background/.style={fill=white},
+xmajorgrids,
+ymajorgrids,
+xlabel absolute, xlabel style={align = center, yshift=0.2em},
+ylabel absolute, ylabel style={yshift=-1.0em},
+legend style={at={(1.15,1.07)},anchor=south},
+legend cell align=left,
+legend columns=4
+]
+\addplot[ybar, bar width=3, fill=mycolor1, draw=black, pattern = crosshatch, area legend] table[row sep=crcr] {%
+10	7.97574086192933\\
+20	7.53142355627233\\
+30	7.03591921041247\\
+40	6.91885483495685\\
+};
+\addlegendentry{True}
+
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+\addplot[ybar, bar width=3, fill=mycolor2, draw=black, pattern = north east lines, area legend] table[row sep=crcr] {%
+10	6.28401804511633\\
+20	6.17141888560127\\
+30	5.84505054713485\\
+40	5.75981030713978\\
+};
+\addlegendentry{PW}
+
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+\addplot[ybar, bar width=3, fill=white!70!black, draw=black, area legend] table[row sep=crcr] {%
+10	6.2902759731883\\
+20	6.16982748754123\\
+30	5.85038780152447\\
+40	5.75880281771942\\
+};
+\addlegendentry{PS}
+
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+\addplot[ybar, bar width=3, fill=mycolor4, draw=black, pattern = horizontal lines, area legend] table[row sep=crcr] {%
+10	7.33980263929312\\
+20	6.97767771155521\\
+30	6.45058890925586\\
+40	6.31439869218544\\
+};
+\addlegendentry{LS}
+
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+\end{axis}
+
+\begin{axis}[%
+width=0.17\figurewidth,
+height=0.8\figureheight,
+at={(0.25\figurewidth,0\figureheight)},
+scale only axis,
+bar shift auto,
+xmin=5,
+xmax=35,
+xlabel={SIR [dB] \\ (b)},
+ymin=-1.2,
+ymax=0,
+ylabel={$\Delta$CD [dB]},
+ytick={0,-0.2,-0.4,-0.6,-0.8,-1,-1.2},
+xlabel absolute, xlabel style={align = center, yshift=0.2em},
+ylabel absolute, ylabel style={yshift=-1.0em},
+axis background/.style={fill=white},
+xmajorgrids,
+ymajorgrids
+]
+\addplot[ybar, bar width=3, fill=mycolor1, draw=black, pattern = crosshatch, area legend] table[row sep=crcr] {%
+10	-1.10000821139669\\
+20	-1.04236602289465\\
+30	-0.993075509401826\\
+40	-0.979700033010294\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+
+\addplot[ybar, bar width=3, fill=mycolor2, draw=black, pattern = north east lines, area legend] table[row sep=crcr] {%
+10	-0.796774185868474\\
+20	-0.763976945740818\\
+30	-0.728111495041255\\
+40	-0.716490785262418\\
+};
+\addplot[forget plot, color=white] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+
+\addplot[ybar, bar width=3, fill=white!70!black, draw=black, area legend] table[row sep=crcr] {%
+10	-0.796046327502841\\
+20	-0.763535343230871\\
+30	-0.728031451995609\\
+40	-0.715868179356641\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+\addplot[ybar, bar width=3, fill=mycolor4, draw=black, pattern = horizontal lines, area legend] table[row sep=crcr] {%
+10	-0.844258630850434\\
+20	-0.787039585619486\\
+30	-0.74091681012787\\
+40	-0.727033724342347\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+
+\end{axis}
+\end{tikzpicture}%

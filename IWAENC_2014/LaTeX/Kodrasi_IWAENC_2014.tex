@@ -1,0 +1,424 @@
+% Template for IWAENC 2014 paper; to be used with:
+%          spconf.sty  - ICASSP/ICIP LaTeX style file, and
+%          IEEEbib.bst - IEEE bibliography style file.
+% --------------------------------------------------------------------------
+\documentclass{article}
+\usepackage{spconfa4,amsmath,graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\tikzset{font=\footnotesize,>=stealth}
+\usepackage{caption}
+\usepackage{subcaption}
+\usetikzlibrary{shapes,snakes}
+\usetikzlibrary{calc,chains}
+\usepackage{phaistos}
+\usepackage{graphics,color}
+\usetikzlibrary{plotmarks}
+\usepackage{url}
+\usepackage{pgfplots}
+\usepackage[bottom]{footmisc}
+\usetikzlibrary{plotmarks}
+\def\ninept{\def\baselinestretch{.9}\let\normalsize\small\normalsize}
+% Title.
+% ------
+\title{Joint Dereverberation and Noise Reduction \\ Based on Acoustic Multichannel Equalization}
+%
+% Single address.
+% ---------------
+\name{Ina Kodrasi, Simon Doclo
+\thanks{
+This work was supported in part by a Grant from the GIF, the German-Israeli Foundation for Scientific
+Research and Development, the Cluster of Excellence 1077 ``Hearing4All'', funded by the German Research Foundation (DFG), and the Marie Curie Initial Training Network DREAMS (Grant no. 316969).
+}}
+\address{
+University of Oldenburg, Department of Medical Physics and Acoustics,  \\ and Cluster of Excellence Hearing4All, Oldenburg, Germany \\
+{\tt \{ina.kodrasi,simon.doclo\}@uni-oldenburg.de}\\
+}
+
+\begin{document}
+\newlength\figureheight
+\newlength\figurewidth
+\setlength\figureheight{2.8cm}
+\setlength\figurewidth{0.37\textwidth}
+\ninept
+%
+\maketitle
+%
+\begin{abstract}
+
+In many speech communication applications, the recorded microphone signals are often corrupted by both reverberation and noise, which can significantly impair speech quality and intelligibility. 
+While acoustic multichannel equalization techniques can achieve a high dereverberation performance, they may lead to amplification of the additive noise, since the equalization filters are typically designed without taking the presence of noise into account. 
+
+This paper presents a novel approach to joint dereverberation and noise reduction based on acoustic multichannel equalization (DeNoREq). 
+DeNoREq produces a weighted minimum mean-square error estimate of the clean speech signal, where the weighting parameter trades off between dereverberation and noise reduction performance. 
+Furthermore, an automatic procedure for the selection of the weighting parameter is established. 
+Experimental results for perfectly and erroneously estimated room impulse responses illustrate the effectiveness of the proposed technique in achieving a high dereverberation and noise reduction performance.
+
+\end{abstract}
+%
+\begin{keywords}
+dereverberation, noise reduction, acoustic multichannel equalization, robustness, P-MINT
+\end{keywords}
+%
+\section{Introduction}
+\label{sec:intro}
+Speech signals recorded in an enclosed space by microphones placed at a distance from the source are often corrupted by reverberation and background noise, which typically degrade speech quality, impair speech intelligibility, and decrease the performance of automatic speech recognition systems~\cite{Beutelmann_2006,Sehr_phd,Maas_ICASSP_2012}.
+In order to mitigate these detrimental effects, algorithms aiming at joint dereverberation and noise reduction have been proposed~\cite{Doclo_IWAENC_2001,Delcroix_ITASLP_2007,Yoshioka_ITASLP_2009,Habets_ITASLP_2013,Braun_EUSIPCO_2013,Cauchi_Reverb_2014}. 
+% While a large number of dereverberation~\cite{Habets_ICASSP_2007,Nakatani_ITASLP_2010,Kodrasi_ITASLP_2013} or noise reduction algorithms~\cite{Doclo_ITSAP_2005,Chen_ITASLP_2006} have been proposed, the effective integration of the dereverberation and noise reduction tasks remains a challenge.
+In this paper, we focus on the effective integration of the dereverberation and noise reduction tasks using acoustic multichannel equalization.
+
+Acoustic multichannel equalization techniques~\cite{Kodrasi_ITASLP_2013,Miyoshi_ITASS_1988,Zhang_IWAENC_2010,Mertins_ITASLP_2010}, which are based on estimating and reshaping the room impulse responses~(RIRs) between the source and the microphone array, comprise an attractive approach to speech dereverberation, since in theory perfect dereverberation can be achieved~\cite{Kodrasi_ITASLP_2013,Miyoshi_ITASS_1988}. 
+However, in practice such techniques suffer from several drawbacks. 
+Firstly, acoustic multichannel equalization techniques typically design reshaping filters aiming only at speech dereverberation, without taking the presence of additive background noise into account.
+Applying such reshaping filters may result in a large noise amplification~\cite{Kodrasi_ITASLP_2013}, hindering the high dereverberation performance potential.
+Secondly, the estimated RIRs generally differ from the true ones~\cite{Radlovic_ITSA_2000,Hasan_EUSIPCO_2006,Lin_ITASLP_2012}, such that reshaping filters based on these estimates may even fail to achieve dereverberation, yielding speech distortion in the processed output signal~\cite{Kodrasi_ITASLP_2013,Zhang_IWAENC_2010,Lim_EUSIPCO_2013}. 
+
+In order to increase robustness to RIR estimation errors, several techniques have been proposed~\cite{Kodrasi_ITASLP_2013,Zhang_IWAENC_2010,Lim_EUSIPCO_2013,Lim_WASPAA_2013}, with the regularized partial multichannel equalization technique based on the multiple-input/output inverse theorem~(P-MINT) shown to yield a high reverberant tail suppression and perceptual speech quality preservation~\cite{Kodrasi_ITASLP_2013}.
+By incorporating regularization in P-MINT, the energy of the reshaping filter is decreased, reducing the distortions in the output signal due to RIR estimation errors and increasing the dereverberation performance~\cite{Kodrasi_ITASLP_2013}.
+While the regularization parameter introduced in P-MINT is also effective in partly avoiding noise amplification, the noise reduction performance is limited since the noise statistics are not explicitly taken into account.
+
+In this paper, a novel technique is proposed which aims at joint Dereverberation and Noise Reduction based on acoustic multichannel Equalization~(DeNoREq).
+DeNoREq produces a weighted minimum mean-square error~(MMSE) estimate of the dereverberated speech, where the weighting parameter allows to trade off between dereverberation error energy and output noise energy.
+The weighting parameter is automatically computed using the L-curve based procedure proposed in~\cite{Kodrasi_ITASLP_2013}.
+Furthermore, in order to avoid the estimation of the clean speech correlation matrix, the reshaping filter designed from equalization techniques is exploited. 
+Experimental results illustrate the effectiveness of the proposed technique in achieving joint dereverberation and noise reduction.
+% \begin{figure}[b!]
+%   \centering
+%   \begin{tikzpicture}
+%     % Adjustments
+%     \def\micd{.1cm}                % mic diameter
+%     \def\micl{.6cm}                % mic length
+%     \def\micw{.15cm}                % mic width
+%     \def\micbend{10}               % mic bottom bend
+%     \def\micdistance{.8cm}         % distance between microphones
+%     \def\filterdistance{2.5cm}     % distance between microphone and filter
+%     \def\filteroutline{.9cm}       % length of line which gets out of filter
+%     \def\sumdistance{1.5cm}        % distance of sum node to the filter
+%     \def\sumoutline{1cm}           % length of line which gets out of sum
+%     \def\headdistance{2cm}         % distance between microphone and head
+% %
+%     % Styles
+%     \tikzset{%
+%       mic head/.style={fill=black,draw=black,circle,minimum size=\micd},
+%       filter/.style={draw,minimum width=1.1cm,inner sep=2pt},
+%       sum/.style={draw,circle},
+%       xlabel/.style={inner sep=1pt,above,midway},
+%       sumlabel/.style={xlabel},
+%       hlabel/.style={xlabel,sloped,pos=.4},
+%       head/.style={font=\Large}
+%     }   %
+%     % Draw Microphones
+%     \begin{scope}[start chain=going below,every node/.style={on chain},node distance=\micdistance]
+%       \node[mic head] (mic1) {};
+%       \node[mic head] (mic2) {};
+%       \node[mic head,yshift=-0.5*\micdistance] (mic3) {};
+%     \end{scope}
+%     \node[yshift=12pt] at ($(mic2)!.5!(mic3)$) {$\vdots$};
+%     %
+%     \foreach \m in {1,2,3} {%
+%       \coordinate (m1) at ($(mic\m)+(\micl,\micw/2)$);
+%       \coordinate (m2) at ($(mic\m)+(\micl,-\micw/2)$);
+%       \draw (tangent cs:node=mic\m,point={(m1)},solution=1) -- (m1) to[bend left=\micbend] (m2) -- (tangent cs:node=mic\m,point={(m2)},solution=2);
+%     }%
+%     % Draw Filter
+%     \foreach \m/\i in {1/1,2/2,3/M} {%
+%       \node[filter,right=\filterdistance of mic\m] (filter\m) {\footnotesize $g_{\i}(n)$};
+%       \draw ($(mic\m)+(\micl,0)$) to node[xlabel] (x\m) {\footnotesize $y_{\i}(n)$} (filter\m);
+%     }
+%     \node[yshift=3pt] at ($(filter2)!.5!(filter3)$) {$\vdots$};
+%     \node[yshift=3pt] at ($(x2)!.5!(x3)$) {$\vdots$};
+%     % Sum Node
+%     \node[sum] (sum) at ($(filter1)!.5!(filter3)+(\sumdistance,0)$) {$\Sigma$};
+%     \draw[->] (sum) -- node[above] {\footnotesize $z(n)$} ++(1.3,0);
+%     % Connect filter with sum
+%     \foreach \m in {1,2,3} {%
+%       \draw (filter\m) -- ++(\filteroutline,0) -- (sum);
+%     }%
+%     % Head
+%     \node[head] (head) at ($(mic1)!.5!(mic3)-(\headdistance,0)$) {\PHtattooedHead};
+%     \node[fill=white,minimum width=4.8pt,minimum height=5.7pt,inner sep=0pt] at ($(head.center)+(2.3pt,-2.5pt)$) {};
+%     \node at ($(head.center)+(0.0pt,-20.5pt)$) {\footnotesize $s(n)$};
+%     % Connect head with mics
+%     \foreach \m/\i in {1/1,2/2,3/M} {%
+%       \draw[->] (head) -- node[hlabel] {\footnotesize $h_{\i}(n)$} (mic\m);
+%     }
+%     % Draw noise
+%     \draw[<-] (mic1) -- node[above=0.1cm] {\footnotesize ${v_1(n)}$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+%     \draw[<-] (mic2) -- node[above=0.1cm] {\footnotesize $v_2(n)$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+%     \draw[<-] (mic3) -- node[above=0.1cm] {\footnotesize $v_M(n)$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+%   \end{tikzpicture}
+%   \vspace{-0.2cm}
+%   \caption{System configuration}
+%   \label{fig: conf}
+% \end{figure}
+
+\vspace{-0.2cm}
+\section{Configuration and Notation}
+\vspace{-0.2cm}
+Consider an acoustic system with a single speech source and $M$ microphones.
+The $m$-th microphone signal, $m = 1, \; \ldots, \; M,$ at time index $n$ is given by $y_m(n) =  x_m(n) + v_m(n) = s(n) \ast h_m(n) + v_m(n)$, where $x_m(n)$ and $v_m(n)$ denote the reverberant speech and noise components respectively, $\ast$ denotes convolution, $s(n)$ is the clean speech signal, and $h_m(n)$ denotes the RIR between the source and the $m$-th microphone.
+The RIR can be described in vector notation as $\mathbf{h}_m = \left[h_m(0) \; h_m(1) \; \ldots \; h_m(L_h-1) \right]^T$, with $L_h$ the RIR length and $\left[\cdot \right]^T$ denoting the transpose operation.
+Applying filters $g_m(n)$ of length $L_g$, i.e., $\mathbf{g}_m = \left[g_m(0) \; g_m(1) \; \ldots \; g_m(L_g-1) \right]^T$, the system output signal $z(n)$ is given by
+\begin{align}
+  z(n) & = \sum_{m=1}^{M} y_m(n) \ast g_m(n) \\
+ & = s(n) \ast \underbrace{\sum_{m=1}^{M} h_m(n) \ast g_m(n)}_{c(n)} + \sum_{m=1}^{M} v_m(n) \ast g_m(n),
+\end{align}
+where $c(n)$ denotes the equalized impulse response~(EIR) between the clean speech signal and the output speech component.
+The EIR can be described in vector notation as $\mathbf{c} = \left[c(0) \; c(1) \; \ldots \; c(L_c-1) \right]^{T}$, with $L_c = L_h+L_g-1$ the EIR length.
+Using the $ML_g$--dimensional stacked filter vector $\mathbf{g}$, i.e., $\mathbf{g}  =  \left[\mathbf{g}_1^T \; \mathbf{g}_2^T \; \ldots \; \mathbf{g}_M^T \right]^T$, the output signal can be expressed as $z(n) = \mathbf{g}^T\mathbf{y}(n)$, with
+\begin{align}
+  \label{eq: y}
+  \mathbf{y}(n) & = [\mathbf{y}_1^T(n) \; \mathbf{y}_2^T(n) \; \ldots \; \mathbf{y}_M^T(n)]^T, \\
+  \label{eq: ym}
+  \mathbf{y}_m(n) & = [y_m(n) \; y_m(n-1) \; \ldots \; y_m(n-L_g+1)] ^T.
+\end{align}
+Defining the reverberant speech and noise vectors $\mathbf{x}(n)$ and $\mathbf{v}(n)$ similarly as $\mathbf{y}(n)$ in~(\ref{eq: y}) and~(\ref{eq: ym}), $z(n)$ can also be expressed as
+\begin{equation}
+\boxed{z(n)  = \mathbf{g}^T \mathbf{x}(n) + \mathbf{g}^T \mathbf{v}(n) = (\underbrace{\mathbf{H}\mathbf{g}}_{\mathbf{c}})^T\mathbf{s}(n) + \mathbf{g}^T\mathbf{v}(n) }
+\end{equation}
+with $\mathbf{H}$ the $L_c \times ML_g$--dimensional multichannel convolution matrix, $\mathbf{s}(n)  = [s(n) \; s(n-1) \; \ldots \; s(n-L_c+1)]^T$, and $\mathbf{x}(n) = \mathbf{H}^T\mathbf{s}(n)$.
+
+As described in the following section, equalization techniques disregard the presence of the additive noise $\mathbf{v}(n)$ and design $\mathbf{g}$ such that only the EIR $\mathbf{c}$ is optimized. 
+Furthermore, since the true RIRs are typically not available in practice, the estimated multichannel convolution matrix $\hat{\mathbf{H}}$~(constructed from the estimated RIRs $\hat{h}_m(n)$) is used for the reshaping filter design.
+
+\section{Acoustic Multichannel Equalization}
+\label{sec: ame}
+In this paper, we will focus on the partial multichannel equalization technique based on MINT which aims at setting the reverberant tail of the EIR to $\mathbf{0}$, while controlling the remaining taps corresponding to the direct path and early reflections~\cite{Kodrasi_ITASLP_2013}. 
+To accomplish this objective, the least-squares cost function
+\begin{equation}
+\label{eq: ls}
+\boxed{J_{_{\rm P}} = \|\hat{\mathbf{H}}\mathbf{g} - \mathbf{c}_t  \|_2^2}
+\end{equation}
+is minimized, where the direct path and early reflections of the target EIR $\mathbf{c}_t$ are set to the direct path and early reflections of one of the estimated RIRs, i.e., $\mathbf{c}_t = [\hat{h}_p(0)\; \ldots\; \hat{h}_p(L_d-1) \; 0 \; \ldots \; 0 ]^{T}$, with $p \in \{1, \; \ldots, \; M\}$ and $L_d$ denoting the number of the EIR taps to be preserved.
+Assuming that the estimated RIRs do not share any common zeros and that $L_g \geq \lceil{\frac{L_h-1}{M-1}\rceil}$, the P-MINT reshaping filter minimizing~(\ref{eq: ls}) is equal to~\cite{Kodrasi_ITASLP_2013}
+\begin{equation}
+  \label{eq: fpmint}
+  \boxed{\mathbf{g}_{_{\rm P}} = \hat{\mathbf{H}}^+\mathbf{c}_t}
+\end{equation}
+with $\{\cdot\}^+$ denoting the Moore-Penrose pseudo-inverse~\cite{Golub_Matrix_book}. 
+For perfectly estimated RIRs, i.e., $\hat{\mathbf{H}} = \mathbf{H}$, the P-MINT reshaping filter yields perfect dereverberation when applied to the received microphone signals~\cite{Kodrasi_ITASLP_2013}, i.e.,
+\begin{equation}
+  \label{eq: peir}
+   \boxed{\mathbf{c}_t = \mathbf{H}\mathbf{g}_{_{\rm P}}}
+\end{equation}
+However, for erroneously estimated RIRs the P-MINT reshaping filter may result in large speech distortion.
+In order to increase the robustness of P-MINT to RIR estimation errors, the automatically regularized P-MINT technique has been proposed~\cite{Kodrasi_ITASLP_2013}, which minimizes the regularized least-squares cost function
+\begin{equation}
+  \label{eq: rls}
+\boxed{J_{_{\rm RP}} = \|\hat{\mathbf{H}}\mathbf{g} - \mathbf{c}_t  \|_2^2 + \delta \|\mathbf{g} \|_2^2}
+\end{equation}
+with $\delta$ being a regularization parameter.
+The filter minimizing~(\ref{eq: rls}) is equal to
+\begin{equation}
+  \label{eq: RP}
+  \boxed{\mathbf{g}_{_{\rm RP}} = (\hat{\mathbf{H}}^T\hat{\mathbf{H}} + \delta \mathbf{I})^{-1} \hat{\mathbf{H}}^T\mathbf{c}_t}
+\end{equation}
+where $\delta$ is automatically computed using the procedure proposed in~\cite{Kodrasi_ITASLP_2013}.
+Introducing a regularization parameter reduces the energy of the reshaping filter, hence, reducing speech distortion in the output signal due to RIR estimation errors.
+While the P-MINT filter typically fails to achieve dereverberation in the presence of estimation errors, i.e., $  \mathbf{c}_t \neq \mathbf{H}\mathbf{g}_{_{\rm P}}$, the regularized P-MINT filter results in a significantly better dereverberation performance~\cite{Kodrasi_ITASLP_2013}, i.e.,
+\begin{equation}
+  \label{eq: peir2}
+  \boxed{\mathbf{c}_t \approx \mathbf{H}\mathbf{g}_{_{\rm RP}}}
+\end{equation}
+Furthermore, decreasing the energy of the reshaping filter by means of regularization is also effective in partly avoiding the (otherwise large) noise amplification at the output of the system~\cite{Kodrasi_ITASLP_2013}~(cf. Section~\ref{sec: exp}).
+However, the noise reduction performance of the automatically regularized P-MINT filter in~(\ref{eq: RP}) is limited since the noise statistics are not explicitly taken into account.
+In the following, a novel technique is proposed which aims at estimating the dereverberated and denoised speech signal $\mathbf{c}_t^T\mathbf{s}(n)$.
+
+
+\section{Dereverberation and Noise Reduction Based on Multichannel Equalization~(DeNoREq)}
+Aiming at joint dereverberation and noise reduction, an MMSE estimate of the desired signal $\mathbf{c}_t^T \mathbf{s}(n)$ can be obtained by minimizing the cost function
+\begin{align}
+  \label{eq: cdenoreq1}
+  J & = {\cal{E}} \{[z(n) - \mathbf{c}_t^T \mathbf{s}(n)]^2 \} \\
+  \label{eq: cdenoreq2}
+  & =  {\cal{E}} \{[\mathbf{g}^T \mathbf{x}(n) + \mathbf{g}^T \mathbf{v}(n) - \mathbf{c}_t^T \mathbf{s}(n)]^2 \},
+\end{align}
+with ${\cal{E}}$ denoting the expected value operator.
+The cost function in~(\ref{eq: cdenoreq2}) is similar to the well-known multichannel Wiener filter cost function for noise reduction~\cite{Chen_ITASLP_2006}, with the difference consisting in the desired signal being the denoised and dereverberated speech signal.
+Assuming that the speech and noise components are uncorrelated and introducing a weighting parameter $\mu$ to trade off between dereverberation and noise reduction, the cost function of the proposed dereverberation and noise reduction technique based on equalization~(DeNoREq) can be written as
+\begin{equation}
+  \label{eq: wmmse}
+\boxed{J_{_{\rm DeNoREq}} = {\cal{E}} \{[\mathbf{g}^T\mathbf{x}(n) - \mathbf{c}_t^T\mathbf{s}(n)]^2 \} + \mu {\cal{E}} \{[\mathbf{g}^T \mathbf{v}(n) ]^2\}}
+\end{equation}
+Increasing the parameter $\mu$ in~(\ref{eq: wmmse}) increases the noise reduction performance at the expense of decreased dereverberation performance.
+The filter minimizing~(\ref{eq: wmmse}) is equal to
+\begin{align}
+  \mathbf{g}_{_{\rm DeNoREq}} &= (\mathbf{R}_{\mathbf{x}} + \mu \mathbf{R}_{\mathbf{v}})^{-1} {\cal{E}} \{\mathbf{x}(n)\mathbf{s}^T(n)\}  \mathbf{c}_t \\
+  \label{eq: wmmsefilt}
+  &= (\mathbf{R}_{\mathbf{x}} + \mu \mathbf{R}_{\mathbf{v}})^{-1} \mathbf{H}^T \mathbf{R}_{\mathbf{s}}  \mathbf{c}_t,
+\end{align}
+with $\mathbf{R}_{\mathbf{s}} = {\cal{E}} \{\mathbf{s}(n)\mathbf{s}^T(n) \}$ the $L_c \times L_c$--dimensional correlation matrix of the clean speech signal $\mathbf{s}(n)$ and 
+\begin{align}
+\label{eq: Rx}
+\mathbf{R}_{\mathbf{x}} & =  {\cal{E}} \{\mathbf{x}(n)\mathbf{x}^T(n) \}  =  \mathbf{H}^T \mathbf{R}_{\mathbf{s}} \mathbf{H}, \\
+\label{Rv}
+\mathbf{R}_{\mathbf{v}} & =  {\cal{E}} \{\mathbf{v}(n)\mathbf{v}^T(n) \},
+\end{align}
+the $ML_g \times ML_g$--dimensional correlation matrices of the reverberant speech and noise respectively.
+Hence, in order to compute the filter in~(\ref{eq: wmmsefilt}), an estimate of the clean speech, reverberant speech, and noise correlation matrices is required. 
+While the estimation of $\mathbf{R}_{\mathbf{x}}$ and $\mathbf{R}_{\mathbf{v}}$ can in practice be done e.g., using a voice activity detector~(VAD)~\cite{Ramirez_SC_2004}, estimating the clean speech correlation matrix $\mathbf{R}_{\mathbf{s}}$ is not at all trivial. 
+However, as described in Section~\ref{sec: ame}, for perfectly estimated RIRs the P-MINT reshaping filter yields perfect dereverberation performance~(cf.~(\ref{eq: peir})).
+Using~(\ref{eq: peir}) and~(\ref{eq: Rx}), the following equality
+\begin{equation}
+\label{eq: subeq}
+\boxed{\mathbf{H}^T \mathbf{R}_{\mathbf{s}}\mathbf{c}_t = \mathbf{R}_{\mathbf{x}}\mathbf{g}_{_{\rm P}}}
+\end{equation}
+can be derived.
+Exploiting the equality in~(\ref{eq: subeq}), the filter minimizing the DeNoREq cost function in~(\ref{eq: wmmse}) can hence be computed as
+\begin{equation}
+  \label{eq: fp}
+\boxed{\mathbf{g}_{_{\rm DeNoREq}}^{\rm P} = (\mathbf{R}_{\mathbf{x}} + \mu \mathbf{R}_{\mathbf{v}})^{-1} \mathbf{R}_{\mathbf{x}} \mathbf{g}_{_{\rm P}}}
+\end{equation}
+which does not require an estimate of the clean speech correlation matrix $\mathbf{R}_{\mathbf{s}}$.
+In the presence of RIR estimation errors, the P-MINT reshaping filter however fails to achieve dereverberation. 
+As a result, the DeNoREq filter in~(\ref{eq: fp}) is expected to inherit the sensitivity of P-MINT to estimation errors~(cf. Section~\ref{sec: exp}), since the equality in~(\ref{eq: subeq}) used for computing $\mathbf{g}_{_{\rm DeNoREq}}^{\rm P}$ does not hold.
+On the other hand, the regularized P-MINT filter provides a better approximation to $\mathbf{c}_t$~(cf.~(\ref{eq: peir2})).
+Hence, to increase robustness in the presence of RIR estimation errors we propose to compute the DeNoREq filter as\footnote{The DeNoREq filter can be computed using any robust acoustic multichannel equalization technique, as long as the reshaping filter resulting from the equalization technique provides a high dereverberation performance.}
+\begin{equation}
+  \label{eq: frp}
+\boxed{\mathbf{g}_{_{\rm DeNoREq}}^{\rm RP} = (\mathbf{R}_{\mathbf{x}} + \mu \mathbf{R}_{\mathbf{v}})^{-1} \mathbf{R}_{\mathbf{x}} \mathbf{g}_{_{\rm RP}}}
+\end{equation}
+Clearly, the dereverberation and noise reduction performance of the proposed technique depends on the weighting parameter $\mu$, which introduces a trade off between the dereverberation error energy $\epsilon_s^2 = {\cal{E}} \{[\mathbf{g}^T\mathbf{x}(n) - \mathbf{c}_t^T\mathbf{s}(n)]^2 \}$ and the noise output energy $\epsilon_v^2 = {\cal{E}} \{[\mathbf{g}^T \mathbf{v}]^2 \}$, with $\mathbf{g}$ being the filter computed in~(\ref{eq: fp}) or~(\ref{eq: frp}).
+In order to automatically select a weighting parameter $\mu$, we use the procedure proposed in~\cite{Kodrasi_ITASLP_2013} for the automatic selection of the regularization parameter in multichannel equalization techniques, which requires a parametric plot of $\epsilon_v^2$ versus $\epsilon_s^2$ for a set of weighting parameters $\mu$.
+Since this parametric plot has an L-shape, the weighting parameter $\mu$ can be automatically selected as the one corresponding to the point of maximum curvature, i.e., the corner of the L-curve, such that both the dereverberation error and the noise output energies are kept small.
+The noise output energy can be computed as $\epsilon_v^2 = \mathbf{g}^T\mathbf{R}_{\mathbf{v}}\mathbf{g}$, whereas the computation of $\epsilon_s^2$ requires an estimate of the cross-correlation between the reverberant and clean speech, which is not available in practice.
+Instead, we propose computing the dereverberation error energy based on the deviation of the resulting EIR from the target EIR $\mathbf{c}_t$.
+Since in practice only the estimated multichannel convolution matrix $\hat{\mathbf{H}}$ is available, the dereverberation error energy is computed as $\epsilon_s^2 = \|\hat{\mathbf{H}}\mathbf{g} - \mathbf{c}_t \|_2^2$.
+
+Fig.~\ref{fig: lcurveex} depicts a typical L-curve obtained using DeNoREq based on regularized P-MINT for a perfectly estimated acoustic system. 
+As illustrated in this figure, increasing the value of $\mu$ decreases the output noise energy, hence increasing the noise reduction performance.
+However, increasing $\mu$ increases the dereverberation error energy, hence decreasing the dereverberation performance.
+Although from such a curve it seems intuitively easy to determine the weighting parameter that corresponds to the maximum curvature, a numerically stable algorithm is needed to detect it automatically. 
+In this work, the triangle method~\cite{Castellanos_2002} is used.
+\begin{figure}[t!]
+  \input{Plots/lcurveex.tikz}
+  \vspace{-0.22cm}
+  \caption{Typical L-curve obtained using DeNoREq based on regularized P-MINT for a perfectly estimated acoustic system}
+  \label{fig: lcurveex}
+\end{figure}%
+
+
+\section{Simulation Results}
+\label{sec: exp}
+In the following, the dereverberation and noise reduction performance when using the P-MINT filter in~(\ref{eq: fpmint}), the regularized P-MINT filter in~(\ref{eq: RP}), the DeNoREq filter based on P-MINT in~(\ref{eq: fp}), and the DeNoREq filter based on regularized P-MINT in~(\ref{eq: frp}) will be evaluated.
+
+
+\subsection{Simulation parameters and performance measures}
+We have considered an acoustic scenario with a single speech source, a directional noise source, and a linear microphone array with $M = 4$ equidistant microphones in a room with reverberation time $T_{60} \approx 450$~ms.
+The distance between the microphones is $5$~cm and the distance between the sources and the microphone array is $1$~m.
+The speech source is located in front of the microphone array and the noise source is positioned at an angle of about $70^{\circ}$, i.e, on the left of the microphone array.
+Measured RIRs from the MARDY database~\cite{Wen_IWAENC_2006} have been used, with $L_h = 3600$ at a sampling frequency $f_s = 8$~kHz.
+In order to simulate RIR estimation errors, the RIRs have been perturbed by adding scaled white noise as proposed in~\cite{Zhang_2008}, such that a normalized projection misalignment~(NPM) defined as
+\begin{equation}
+{\rm NPM} = 10 \log_{10} \frac{\|\mathbf{h} - \frac{\mathbf{h}^T\hat{\mathbf{h}}}{\hat{\mathbf{h}}^T\hat{\mathbf{h}}}\hat{\mathbf{h}} \|_2^2}{\| \mathbf{h}\|_2^2}
+\end{equation}
+is generated.
+Although several NPMs have been investigated, only ${\rm NPM} = -\infty$~dB~(i.e., perfectly estimated RIRs) and ${\rm NPM} = -33$~dB have been considered in this paper due to space constraints.
+The simulation parameters are set to $L_g = 1200$, $p=1$, $L_d = 0.03 \times f_s$~(i.e., $30$~ms), and the input signal-to-noise ratio~($ \rm SNR_i$) of the noisy first microphone signal is $0$~dB, i.e.,
+\begin{equation}
+  {\rm SNR}_{\rm i} = 10 \log_{10} \frac{\sum_n [x_1(n)]^2}{\sum_n [v_1(n)]^2} = 0~{\rm dB}.
+\end{equation}
+To avoid other sources of errors, we have put aside the influence of the VAD in this paper and estimated the reverberant speech and noise correlation matrices as long-term sample averages of $\mathbf{x}(n)$ and $\mathbf{v}(n)$ respectively.
+In order to generate the parametric L-curve required for the automatic selection of $\mu$, the set of considered weighting parameters is $\mu \in \{10^{-4}, \; 10^{-3}, \; 10^{-2}, \; 10^{-1}, \; 1, \; 5 \}$.
+
+
+The dereverberation performance of the considered techniques is evaluated using the energy decay curve~(EDC) of the resulting EIR~\cite{Naylor_Derev_book} defined as
+\begin{equation}
+{\rm EDC}(n) = 10 \log_{10} \frac{1}{\|\mathbf{c}\|_2^2} \sum_{i = n}^{L_c-1} c^2(i), \; n =0, \; \ldots, \; L_c-1,
+\end{equation}
+where $\mathbf{c} = \mathbf{H}\mathbf{g}$ and the filter $\mathbf{g}$ is designed using the estimated multichannel convolution matrix $\hat{\mathbf{H}}$.
+In order to evaluate the noise reduction performance, the $\rm SNR$ improvement~($\Delta {\rm SNR}$) is computed, i.e.,
+\begin{equation}
+\Delta {\rm SNR} = {\rm SNR}_{\rm o} - {\rm SNR}_{\rm i}, \; \;  {\rm SNR}_{\rm o} = 10 \log_{10} \frac{\sum_n [z_x(n)]^2}{\sum_n [z_v(n)]^2},
+\end{equation}
+with $z_x(n)$ and $z_v(n)$ the speech and noise components of the output signal.
+It should be noted that when aiming at dereverberation, some speech reduction is intrinsically introduced. 
+In order to separate the influence of noise reduction and speech reduction on the $ \rm SNR$ improvement, also the noise reduction factor $\eta_{_{\rm NR}}$ and speech reduction factor $\eta_{_{\rm SR}}$ are computed, with
+\begin{equation}
+\eta_{_{\rm NR}} \! = \! 10 \log_{10} \frac{\sum_n[v_1(n)]^2}{\sum_n[z_v(n)]^2}, \; \eta_{_{\rm SR}} \! = \! 10 \log_{10} \frac{\sum_n[x_1(n)]^2}{\sum_n[z_x(n)]^2}. \! \! \! \!
+\end{equation}
+
+\vspace{-0.6cm}
+\subsection{Results}
+
+To evaluate the dereverberation performance for perfectly estimated RIRs, Fig.~\ref{fig: edc1} depicts the EDC of the true RIR $\mathbf{h}_1$ and the EDCs of the EIRs obtained using all considered techniques for $\rm{NPM} = -\infty$~dB.
+For both DeNoREq filters, the automatically determined weighting parameter is $\mu = 10^{-2}$.
+As expected, P-MINT yields perfect dereverberation, with the reverberant tail fully suppressed, whereas regularized P-MINT achieves a high dereverberation performance but only partly suppresses the reverberant tail.
+Furthermore, also the proposed DeNoREq technique achieves a high level of dereverberation, since the reverberant tail is suppressed by more than $35$~dB and the artificial tail introduced after about $300$~ms is not audible.
+Both DeNoREq filters  yield a similar dereverberation performance in this scenario, with the reverberant tails being approximately $5$~dB higher than the reverberant tail obtained using the regularized P-MINT filter.
+Some performance degradation in terms of dereverberation when using DeNoREq in comparison to P-MINT is expected, since DeNoREq aims at simultaneously suppressing the additive noise as well. 
+\begin{figure}[t!]
+  \input{Plots/edcn1.tikz}
+  \vspace{-0.22cm}
+  \caption{EDC of $\mathbf{h}_1$ and EDCs of the EIRs obtained using P-MINT, regularized P-MINT, DeNoREq based on P-MINT, and DeNoREq based on regularized P-MINT for ${\rm NPM} = -\infty$~dB}
+  \label{fig: edc1}
+\end{figure}%
+\begin{table}[t]
+\centering
+\begin{tabular}{|l|r|r|r|r|}
+  \hline
+  Measure [dB] & {\footnotesize $\mathbf{g}_{_{\rm P}}$} & {\footnotesize $\mathbf{g}_{_{\rm RP}}$} & {\footnotesize $\mathbf{g}_{_{\rm DeNoREq}}^{\rm P}$} & {\footnotesize $\mathbf{g}_{_{\rm DeNoREq}}^{\rm RP}$} \\
+  \hline
+  $\Delta {\rm SNR}$ & $-53.0$ & $-1.4$ & $28.3$ & $\bf 28.9$ \\
+  \hline
+  $\eta_{_{\rm NR}}$ & $-52.8$ & $-1.2$ & $28.5$ & $\bf 29.1$ \\
+  \hline
+  $\eta_{_{\rm SR}}$ & $\bf 0.2$ & $\bf 0.2$ & $\bf 0.2$ & $\bf 0.2$ \\
+  \hline
+\end{tabular}
+\vspace{-0.1cm}
+\caption{Performance of P-MINT, regularized P-MINT, DeNoREq based on P-MINT, and DeNoREq based on regularized P-MINT for ${\rm NPM} = -\infty$~dB}
+\label{tbl: 1}
+\vspace{-0.4cm}
+\end{table}
+Furthermore, Table~\ref{tbl: 1} presents the $\rm SNR$ improvement, noise reduction, and speech reduction factors of the considered techniques.
+It can be seen that the P-MINT filter significantly amplifies the noise, decreasing the $\rm SNR$ at the output by $53.0$~dB.
+Although the regularized P-MINT technique partly avoids the noise amplification in comparison to P-MINT, the $\rm SNR$ at the output is still decreased by $1.4$~dB.
+On the other hand, the proposed DeNoREq technique achieves a high level of noise reduction, with the filter computed based on regularized P-MINT, i.e., $\mathbf{g}_{_{\rm DeNoREq}}^{\rm RP}$, yielding the highest $\rm SNR$ improvement of $28.9$~dB.
+Based on these simulation results it can be said that the proposed DeNoREq technique simultaneously achieves dereverberation and noise reduction, whereas the P-MINT-based equalization techniques achieve dereverberation but amplify the noise. 
+
+In order to evaluate the performance in the presence of RIR estimation errors, Fig.~\ref{fig: edc2} depicts the EDC of the true RIR $\mathbf{h}_1$ and the EDCs of the EIRs obtained using all considered techniques for an ${\rm NPM} = -33$~dB.
+The automatically determined weighting parameter is $\mu = 10^{-2}$ for $\mathbf{g}_{_{\rm DeNoREq}}^{\rm P}$ and $\mu = 10^{-3}$ for $\mathbf{g}_{_{\rm DeNoREq}}^{\rm RP}$.
+As expected, the P-MINT technique completely fails to achieve dereverberation, whereas the regularized P-MINT technique is significantly more robust, resulting in a high level of reverberant tail suppression.
+Since $\mathbf{g}_{_{\rm DeNoREq}}^{\rm P}$ is computed using the P-MINT filter, it inherits its sensitivity to RIR estimation errors and hence also fails to achieve dereverberation.
+\begin{figure}[t!]
+  \input{Plots/edcn2.tikz}
+  \vspace{-0.22cm}
+  \caption{EDC of $\mathbf{h}_1$ and EDCs of the EIRs obtained using P-MINT, regularized P-MINT, DeNoREq based on P-MINT, and DeNoREq based on regularized P-MINT for ${\rm NPM} = -33$~dB}
+  \label{fig: edc2}
+\end{figure}
+\begin{table}[t]
+  \vspace{-0.1cm}
+\centering
+\begin{tabular}{|l|r|r|r|r|}
+  \hline
+  Measure [dB] & {\footnotesize $\mathbf{g}_{_{\rm P}}$} & {\footnotesize $\mathbf{g}_{_{\rm RP}}$} & {\footnotesize $\mathbf{g}_{_{\rm DeNoREq}}^{\rm P}$} & {\footnotesize $\mathbf{g}_{_{\rm DeNoREq}}^{\rm RP}$} \\
+  \hline
+  $\Delta {\rm SNR}$ & $-22.9$ & $-0.4$ & $24.2$ & $\bf{26.0}$ \\
+  \hline
+  $\eta_{_{\rm NR}}$ & $-32.2$ & $-0.1$ & $14.9$ & $\bf{26.3}$ \\
+  \hline
+  $\eta_{_{\rm SR}}$ & $-9.3$ & $\bf{0.3}$ & $-9.3$ & $\bf{0.3}$ \\
+  \hline
+\end{tabular}
+\vspace{-0.1cm}
+\caption{Performance of P-MINT, regularized P-MINT, DeNoREq based on P-MINT, and DeNoREq based on regularized P-MINT for ${\rm NPM} = -33$~dB}
+\label{tbl: 2}
+\vspace{-0.4cm}
+\end{table}
+On the other hand, the DeNoREq filter computed using the regularized P-MINT technique is robust and achieves a high dereverberation performance, with a very similar reverberant tail suppression as the regularized P-MINT technique.
+To evaluate the noise reduction performance, Table~\ref{tbl: 2} also depicts the $\rm SNR$ improvement, noise reduction factor, and speech reduction factor obtained by all considered techniques.
+Similarly as in the case of perfectly estimated RIRs, the P-MINT and regularized P-MINT techniques result in noise amplification.
+Furthermore, the DeNoREq filter computed using P-MINT, i.e., $\mathbf{g}_{_{\rm DeNoREq}}^{\rm P}$, improves the ${\rm SNR}$ at the output by $24.2$~dB but significantly distorts the speech as shown by the speech reduction factor of $-9.3$~dB.
+On the other hand, the DeNoREq filter based on regularized P-MINT is robust and achieves a high level of noise reduction also in the presence of RIR estimation errors, with an $\rm SNR$ improvement of $26.0$~dB.
+Summarizing these simulation results, it can be observed that the DeNoREq technique using the robust regularized P-MINT filter results in a high dereverberation and noise reduction performance, both for perfectly estimated RIRs as well as in the presence of RIR estimation errors.
+
+\section{Conclusion}
+In this paper, we have presented a novel approach to joint dereverberation and noise reduction based on acoustic multichannel equalization~(DeNoREq).
+DeNoREq produces a weighted MMSE estimate of the dereverberated speech signal, with the weighting parameter automatically selected such that both a high dereverberation and noise reduction performance is achieved.
+Experimental results demonstrate that unlike equalization techniques which amplify the noise, DeNoREq yields a high dereverberation performance while significantly suppressing the additive noise.
+
+\bibliographystyle{IEEEbib}
+\bibliography{refs2}
+
+\end{document}

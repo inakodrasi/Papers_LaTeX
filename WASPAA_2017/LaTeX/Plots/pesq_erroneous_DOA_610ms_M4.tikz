@@ -1,0 +1,151 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.44700,0.74100}%
+\definecolor{mycolor2}{rgb}{0.85000,0.32500,0.09800}%
+\definecolor{mycolor3}{rgb}{0.92900,0.69400,0.12500}%
+\definecolor{mycolor4}{rgb}{0.49400,0.18400,0.55600}%
+\definecolor{mycolor5}{rgb}{0.46600,0.67400,0.18800}%
+%
+\begin{tikzpicture}[font=\small]
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-100,
+xmax=100,
+xlabel={$\hat{\theta}^{\circ}$ \\ (a)},
+xtick = {-90, -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90},
+xticklabels = {-$90$, -$75$, -$60$, -$45$ , -$30$, -$15$, $0$, $15$, $30$, $45$, $60$, $70$, $90$},
+xlabel absolute,
+xlabel style={yshift=0.5em, align = center},
+xmajorgrids,
+grid = both,
+ytick = {-0.6,-0.45,-0.3,-0.15,0,0.15,0.3,0.45,0.6},
+yticklabels = {-$0.6$,,-$0.3$,,$0$,,$0.3$,,$0.6$},
+%minor tick num=1,
+ylabel={$\Delta$PESQ},
+ylabel absolute, ylabel style={yshift=-0.9em},
+legend columns = 4,
+legend style={at=({-0.13,1.5}),anchor=north west,draw=black,fill=white,legend cell align=left},
+%legend image post style={xscale=0.85},
+scale only axis,
+xmin=-100,
+xmax=100,
+ymin=-0.6,
+ymax=0.7,
+%legend style={legend columns=5, legend cell align=left, align=left, draw=white!15!black}
+]
+\addplot [color=blue,
+dotted,
+line width=0.9pt,
+mark size=2.5pt,
+mark=triangle,
+mark options={solid,rotate=90}]
+  table[row sep=crcr]{%
+-90	-0.164\\
+-75	-0.171\\
+-60	-0.289\\
+-45	-0.25\\
+-30	-0.293\\
+-15	-0.24\\
+0	-0.127\\
+15	-0.004\\
+30	0.171\\
+45	0.237\\
+60	0.142\\
+75	0.0250000000000004\\
+90	-0.0259999999999998\\
+};
+\addlegendentry{MVDR};
+
+\addplot [color=green!50!black,
+line width=1.0pt,
+mark size=2.0pt,
+mark=diamond*,
+mark options={solid}]
+  table[row sep=crcr]{%
+-90	-0.264\\
+-75	-0.256\\
+-60	-0.428\\
+-45	-0.494\\
+-30	-0.508\\
+-15	-0.336\\
+0	-0.117\\
+15	0.0820000000000003\\
+30	0.33\\
+45	0.417\\
+60	0.342\\
+75	0.256\\
+90	0.216\\
+};
+\addlegendentry{MWF-ML};
+
+\addplot [color=yellow!50!black,
+mark = square,
+mark size = 2.0pt,
+line width=1.0pt,
+smooth]
+  table[row sep=crcr]{%
+-90	0.0230000000000001\\
+-75	0.028\\
+-60	-0.0729999999999997\\
+-45	-0.0859999999999999\\
+-30	-0.109\\
+-15	-0.02\\
+0	0.122\\
+15	0.22\\
+30	0.413\\
+45	0.499\\
+60	0.418\\
+75	0.325\\
+90	0.279\\
+};
+\addlegendentry{MWF-EVD};
+
+
+\addplot [color=black,
+dash pattern=on 3pt off 3pt on 3pt off 3pt,
+line width=1.2pt,
+mark = star,
+mark size = 2.5pt,
+mark options={solid}]
+  table[row sep=crcr]{%
+-90	0.103\\
+-75	0.0660000000000003\\
+-60	-0.0579999999999998\\
+-45	-0.0749999999999997\\
+-30	-0.212\\
+-15	-0.161\\
+0	0.104\\
+15	0.284\\
+30	0.531\\
+45	0.598\\
+60	0.477\\
+75	0.369\\
+90	0.322\\
+};
+\addlegendentry{MWF-NNM};
+\addplot [
+color=black,
+line width=0.8pt,
+]
+table[row sep=crcr]{
+45 -5\\
+45 -4\\
+45 -3\\
+45 -2\\
+45 -1\\
+45 0\\
+45 1\\
+45 2\\
+45 3\\
+45 4\\
+45 5\\
+45 6\\
+};
+\end{axis}
+\end{tikzpicture}%

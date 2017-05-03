@@ -1,0 +1,67 @@
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=0.95\figurewidth,
+height=0.5\figureheight,
+area legend,
+scale only axis,
+xmin=0.5,
+xmax=4.5,
+xtick={1, 2, 3, 4},
+xticklabels={S$_1$-NPM$_1$, S$_2$-NPM$_1$, S$_1$-NPM$_2$, S$_2$-NPM$_2$},
+xlabel = {Scenario},
+xmajorgrids,
+ymin=0,
+ymax=4,
+ylabel={PESQ},
+xlabel absolute, xlabel style={align = center, yshift=0.2em},
+ylabel absolute, ylabel style={yshift=-1.0em},
+ymajorgrids
+]
+\addplot[ybar,bar width=0.0228571428571429\figurewidth,bar shift=-0.0857142857142857\figurewidth,pattern = crosshatch,draw=black] plot coordinates{(1,1.695)
+(2,1.615)
+(3,1.741)
+(4,1.736)};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+0.5 0\\
+4.5 0\\
+};
+\addplot[ybar,bar width=0.0228571428571429\figurewidth,bar shift=-0.0571428571428571\figurewidth,fill=black!30!white,draw=black] plot coordinates{(1,2.644)
+(2,2.148)
+(3,1.922)
+(4,1.749)};
+
+\addplot[ybar,bar width=0.0228571428571429\figurewidth,bar shift=-0.0285714285714286\figurewidth,pattern = north east lines,draw=black] plot coordinates{(1,3.748)
+(2,3.53)
+(3,2.758)
+(4,2.256)};
+
+\addplot[ybar,bar width=0.0228571428571429\figurewidth,fill=white,draw=black] plot coordinates{(1,3.039)
+(2,3.025)
+(3,2.339)
+(4,2.154)};
+
+\addplot[ybar,bar width=0.0228571428571429\figurewidth,bar shift=0.0285714285714286\figurewidth,pattern = dots,draw=black] plot coordinates{(1,2.421)
+(2,1.896)
+(3,1.927)
+(4,1.836)};
+
+\addplot[ybar,bar width=0.0228571428571429\figurewidth,bar shift=0.0571428571428572\figurewidth,fill=black!50!white,draw=black] plot coordinates{(1,3.534)
+(2,3.224)
+(3,2.692)
+(4,2.273)};
+
+\addplot[ybar,bar width=0.0228571428571429\figurewidth,bar shift=0.0857142857142857\figurewidth,pattern = north west lines,draw=black] plot coordinates{(1,3.428)
+(2,2.906)
+(3,2.612)
+(4,2.178)};
+
+\end{axis}
+\node[left, yshift = 10pt] at (current bounding box.west) {(d)};
+\end{tikzpicture}%

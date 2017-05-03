@@ -1,0 +1,386 @@
+%%%%%%%%%%%%%%%%%%%%  bare_jrnl.tex V1.2 2002/11/18  %%%%%%%%%%%%%%%%%%%%%%%
+
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.6b or later) with an IEEE journal paper.
+
+%\documentclass[10pt]{IEEEtran}
+\documentclass[11pt,draftcls,onecolumn]{IEEEtran}
+
+%%%%%%%%%%%%%%%%%%%  PACKAGES AND DEFINITIONS%%%%%%%%%%%%%%%%%
+
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{amsmath,graphicx}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{subfig}
+\usetikzlibrary{backgrounds,shapes,snakes}
+\usetikzlibrary{calc,chains,positioning}
+\usepackage{phaistos}
+\usepackage{cases}
+\usepackage{pgfplots}
+\usepackage{empheq}
+\DeclareMathOperator{\diag}{diag}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% correct bad hyphenation here
+%\hyphenation{}
+
+\begin{document}
+\newlength\figureheight
+\newlength\figurewidth
+\setlength\figureheight{3.6cm}
+\setlength\figurewidth{6.5cm}
+\title{On Least Squares Equalization and Channel Shortening for Speech Dereverberation}
+
+\date{June 24, 2013}
+
+\author{Ina Kodrasi*,~\IEEEmembership{Student Member,~IEEE,} Simon Doclo,~\IEEEmembership{Senior Member,~IEEE}% <-this % stops a space
+\thanks{The authors are with the Signal Processing Group, Department of Medical Physics and Acoustics, and Cluster of Excellence Hearing4All, University of Oldenburg, Oldenburg, Germany (e-mail: \mbox{ina.kodrasi@uni-oldenburg.de}; simon.doclo@uni-oldenburg.de).}
+\thanks{
+This work was supported in part by a Grant from the GIF, the German-Israeli Foundation for Scientific Research and Development, the Cluster of Excellence 1077 ``Hearing4All'' funded by the German Research Foundation (DFG), and the Marie Curie Initial Training Network DREAMS (Grant no. 316969).}
+}
+
+\markboth{IEEE Signal Processing Letters}{Kodrasi and Doclo: On Least Squares Equalization and Channel Shortening for Speech Dereverberation}
+
+
+\maketitle
+
+\begin{abstract}
+
+In this letter, a generalized framework for least squares acoustic multichannel equalization techniques is established, which enables to analyze the properties~(i.e., existence and uniqueness) of the resulting reshaping filters.
+It is shown that least squares equalization techniques yield reshaping filters that lie in the subspace spanned by the multiple solutions maximizing the so-called channel shortening~(CS) cost function.
+Since least squares reshaping filters have been experimentally validated to yield a trade-off between reverberant tail suppression and perceptual speech quality preservation and they lie in the subspace of CS solutions, it can be said that the multiple CS solutions offer the potential to achieve a high performance both in terms of reverberant tail suppression and perceptual speech quality preservation.
+Hence, a novel subspace-based equalization~(SuB) technique is proposed, which constrains the reshaping filter to be a linear combination of the multiple CS solutions. 
+Simulation results illustrate the high dereverberation performance of the proposed technique.
+\end{abstract}
+
+\begin{keywords}
+least squares equalization, channel shortening, subspace-based equalization
+\end{keywords}
+
+%==============================================================================================================
+\section{Introduction}
+Acoustic multichannel equalization comprises an attractive approach to speech dereverberation due to its potential to theoretically achieve perfect dereverberation~\cite{Miyoshi_ITASS_1988,Kodrasi_ITASLP_2013}.
+However, in practice such an approach remains challenging given its sensitivity to estimation errors in the room impulse responses~(RIRs) between the source and the microphone array~\cite{Kodrasi_ITASLP_2013,Zhang_IWAENC_2010}.
+Over the past decades, several acoustic multichannel equalization techniques have been proposed~\cite{Miyoshi_ITASS_1988,Kodrasi_ITASLP_2013,Zhang_IWAENC_2010,Lim_IWAENC_2012,Kallinger_ICASSP_2006,Lim_ICASSP_2013,Lim_WASPAA_2013,Mertins_ITASLP_2010,Jungmann_ICASSP_2014}.
+On the one hand, least squares equalization techniques such as the multiple-input/output inverse theorem~(MINT)-based technique~\cite{Miyoshi_ITASS_1988}, the partial multichannel equalization technique based on MINT~(P-MINT)~\cite{Kodrasi_ITASLP_2013}, the relaxed multichannel least squares technique~(RMCLS)~\cite{Zhang_IWAENC_2010}, and the relaxed multichannel least squares technique with constrained initial taps~(RMCLS-CIT)~\cite{Lim_IWAENC_2012}, design reshaping filters such that the (weighted) system response equals a given (weighted) target response. 
+On the other hand, channel shortening aims at an overall system response with maximum energy in the direct path and early reflections and minimum energy in the reverberant tail.
+In~\cite{Zhang_IWAENC_2010} it has been shown that multiple solutions exist which maximize the CS cost function.
+Furthermore, in~\cite{Kodrasi_ITASLP_2013} and~\cite{Zhang_IWAENC_2010} it has been proven that the reshaping filters designed using the MINT and P-MINT techniques can be expressed as linear combinations of these multiple CS solutions.
+
+The aim of this letter is twofold.
+Firstly, a generalized framework for state-of-the-art least squares equalization techniques is established. 
+A theoretical analysis based on the Rouch\'{e}-Capelli theorem~\cite{shafarevic_algebra_book} is provided to determine the properties~(i.e., existence and uniqueness) of the solution(s) for each technique.
+Using this analysis, it can be shown that state-of-the-art least squares equalization techniques yield reshaping filters which lie in the subspace spanned by the multiple CS solutions.
+Although this result may appear trivial, to the best of our knowledge it was not yet available in the literature.
+Secondly, the subspace of CS solutions is exploited to derive a novel subspace-based equalization~(SuB) technique aiming at achieving a high reverberant tail suppression and perceptual speech quality preservation. 
+Experimental results demonstrate the advantage of the proposed technique as compared to the least squares equalization techniques in the presence of RIR estimation errors.
+%==============================================================================================================
+
+\section{Acoustic Multichannel Equalization}
+\subsection{Problem Formulation}
+Consider an acoustic system with a single speech source and $M$ microphones as depicted in Fig.~\ref{fig: acsys}.
+The $m$-th microphone signal $x_m(n)$ at time index $n$ is given by 
+\begin{equation}
+x_m(n) = s(n) \ast h_m(n), \; \; \; \; \; m = 1, \; \ldots, \; M,
+\end{equation}
+with $s(n)$ the clean speech signal, $h_m(n)$ the $L_h$ taps long RIR between the source and the $m$-th microphone, i.e., $\mathbf{h}_m = \left[h_m(0) \; h_m(1) \; \ldots \; h_m(L_h-1) \right]^T$, and $\ast$ denoting convolution.
+Equalization techniques apply filters $\mathbf{g}_m$ of length $L_g$, i.e., $\mathbf{g}_m = \left[g_m(0) \; g_m(1) \; \ldots \; g_m(L_g-1) \right]^T$, such that the output of the system $\hat{s}(n)$ is given by
+\begin{equation}
+  \hat{s}(n) = \sum_{m=1}^{M} x_m(n) \ast g_m(n) = s(n) \ast \underbrace{\sum_{m=1}^{M} h_m(n) \ast g_m(n)}_{c(n)},
+\end{equation}
+\begin{figure}[t!]
+  \centering
+  \begin{tikzpicture}
+    % Adjustments
+    \def\micd{.1cm}                % mic diameter
+    \def\micl{.6cm}                % mic length
+    \def\micw{.15cm}               % mic width
+    \def\micbend{10}               % mic bottom bend
+    \def\micdistance{.2cm}         % distance between microphones
+    \def\filterdistance{2.5cm}     % distance between microphone and filter
+    \def\filteroutline{.9cm}       % length of line which gets out of filter
+    \def\sumdistance{1.5cm}        % distance of sum node to the filter
+    \def\sumoutline{1cm}           % length of line which gets out of sum
+    \def\headdistance{2cm}         % distance between microphone and head
+
+    % Styles
+    \tikzset{%
+      mic head/.style={fill=black,draw=black,circle,minimum size=\micd},
+      filter/.style={draw,minimum width=1.1cm,inner sep=2pt},
+      sum/.style={draw,circle},
+      xlabel/.style={inner sep=1pt,above,midway},
+      sumlabel/.style={xlabel},
+      hlabel/.style={xlabel,sloped,pos=.7},
+      head/.style={font=\Large}
+    }
+
+    % Draw Microphones
+    \begin{scope}[start chain=going below,every node/.style={on chain},node distance=\micdistance]
+      \node[mic head] (mic1) {};
+      \node[mic head] (mic2) {};
+      \node[mic head,yshift=-1.8*\micdistance] (mic3) {};
+    \end{scope}
+    \node[yshift=3pt] at ($(mic2)!.5!(mic3)$) {$\vdots$};
+
+    \foreach \m in {1,2,3} {%
+      \coordinate (m1) at ($(mic\m)+(\micl,\micw/2)$);
+      \coordinate (m2) at ($(mic\m)+(\micl,-\micw/2)$);
+      \draw (tangent cs:node=mic\m,point={(m1)},solution=1) -- (m1) to[bend left=\micbend] (m2) -- (tangent cs:node=mic\m,point={(m2)},solution=2);
+    }
+
+    % Draw Filter
+    \foreach \m/\i in {1/1,2/2,3/M} {%
+      \node[filter,right=\filterdistance of mic\m] (filter\m) {\footnotesize $g_{\i}(n)$};
+      \draw ($(mic\m)+(\micl,0)$) to node[xlabel] (x\m) {\footnotesize $x_{\i}(n)$} (filter\m);
+    }
+    \node[yshift=3pt] at ($(filter2)!.5!(filter3)$) {$\vdots$};
+    \node[yshift=3pt] at ($(x2)!.5!(x3)$) {$\vdots$};
+    % Sum Node
+    \node[sum] (sum) at ($(filter1)!.5!(filter3)+(\sumdistance,0)$) {$\Sigma$};
+    \draw[->] (sum) -- node[above] {\footnotesize $\hat{s}(n)$} ++(1.3,0);
+    % Connect filter with sum
+    \foreach \m in {1,2,3} {%
+      \draw (filter\m) -- ++(\filteroutline,0) -- (sum);
+    }
+
+    % Head
+    \node[head] (head) at ($(mic1)!.5!(mic3)-(\headdistance,0)$) {\PHtattooedHead};
+    \node[fill=white,minimum width=4.8pt,minimum height=5.7pt,inner sep=0pt] at ($(head.center)+(2.3pt,-2.5pt)$) {};
+    \node at ($(head.center)+(0.0pt,-20.5pt)$) {\footnotesize $s(n)$};
+    % Connect head with mics
+    \foreach \m/\i in {1/1,2/2,3/M} {%
+      \draw[->] (head) -- node[hlabel] {\footnotesize $h_{\i}(n)$} (mic\m);
+    }
+  \end{tikzpicture}
+  \caption{Multichannel equalization system.}
+  \label{fig: acsys}
+\end{figure}
+with $c(n)$ denoting the overall response between the source and the output, referred to as the equalized impulse response~(EIR).
+The EIR of length $L_c = L_h+L_g-1$ can be described in vector notation as $\mathbf{c} = \left[c(0) \; c(1) \; \ldots \; c(L_c-1) \right]^{T}$.
+Using the $ML_g$--dimensional reshaping filter 
+\begin{equation}
+\mathbf{g}  =  \left[\mathbf{g}_1^T \; \mathbf{g}_2^T \; \ldots \; \mathbf{g}_M^T \right]^T
+\end{equation}
+and the $L_c \times ML_g$--dimensional multichannel convolution matrix $\mathbf{H}$, i.e.,
+\begin{equation}
+\mathbf{H} = \left[\mathbf{H}_1 \; \mathbf{H}_2 \; \ldots \; \mathbf{H}_M \right],
+\end{equation}
+with $\mathbf{H}_m$ the convolution matrix of $h_m(n)$, the EIR can be expressed as $\mathbf{c} = \mathbf{H}\mathbf{g}$.
+The reshaping filter can then be constructed based on different design objectives for the EIR $\mathbf{c}$.
+Since the true RIRs are typically not available in practice~\cite{Radlovic_ITSA_2000,Hasan_EUSIPCO_2006,Lin_ITASLP_2012}, equalization techniques design $\mathbf{g}$ using the estimated multichannel convolution matrix $\hat{\mathbf{H}}$~(constructed from the estimated RIRs $\hat{h}_m(n)$), hence optimizing the estimated EIR
+\begin{equation}
+\boxed{\hat{\mathbf{c}} = \hat{\mathbf{H}}\mathbf{g}}
+\end{equation}
+Under the assumptions typically made in acoustic multichannel equalization~\cite{Miyoshi_ITASS_1988}, i.e., 
+\begin{itemize}
+  \item the estimated RIRs do not share any common zeros, and
+  \item $L_g \geq \lceil{\frac{L_h-1}{M-1}\rceil}$,
+\end{itemize}
+the estimated multichannel convolution matrix $\hat{\mathbf{H}}$ is assumed to be a full row-rank matrix~\cite{Harikumar_ITSP_1998}.
+
+In the following, the optimization criteria of state-of-the-art equalization techniques are reviewed.
+\subsection{Least Squares Equalization Techniques}
+The aim of least squares equalization is to design a reshaping filter $\mathbf{g}$ such that the~(weighted)~EIR equals a~(weighted)~target EIR $\mathbf{c}_t$. 
+Formally, these techniques seek to compute a solution $\mathbf{g}$ to the system of equations
+\begin{equation}
+  \label{eq: lsg}
+\boxed{\mathbf{W}\hat{\mathbf{H}}\mathbf{g} = \mathbf{W}\mathbf{c}_t}
+\end{equation}
+with $\mathbf{W}$ being a diagonal weighting matrix.
+The definition of the weighting matrix $\mathbf{W}$ and target EIR $\mathbf{c}_t$ for MINT~\cite{Miyoshi_ITASS_1988}, P-MINT~\cite{Kodrasi_ITASLP_2013}, RMCLS~\cite{Zhang_IWAENC_2010}, and RMCLS-CIT~\cite{Lim_IWAENC_2012} is presented in Tables~\ref{tbl: wls} and~\ref{tbl: tls} respectively, where $\mathbf{I}$ is the $L_c \times L_c$--dimensional identity matrix, $\tau$ denotes a delay in number of samples, $L_d$ is the length in number of samples of the direct path and early reflections, $L_r$ is the number of taps to constrain in RMCLS-CIT, and $p \in \{1, \; \ldots, \; M \}$.
+\begin{table}[b!]
+  \centering
+  \caption{Definition of the weighting matrix $\mathbf{W}$ for state-of-the-art least squares equalization techniques.}
+  \label{tbl: wls}
+  \begin{tabular}{|l|r|}
+    \hline
+    Technique & Weighting matrix $\mathbf{W}$ \\
+    \hline
+     MINT & $\mathbf{I}$ \\
+    \hline
+    P-MINT & $\mathbf{I}$ \\
+    \hline
+    RMCLS & $\mathbf{W}_c = {\diag}[\underbrace{1 \; \ldots \; 1}_{\tau} \; \underbrace{1 \; 0 \; \ldots \; 0}_{L_d} \; 1 \; \ldots 1]^{T}$\\
+    \hline
+    RMCLS-CIT & $\mathbf{W}_{r} = {\diag} [\underbrace{1 \; \ldots \; 1}_{\tau} \; \underbrace{1 \; 1 \; \ldots \; 1}_{L_{r}} \; \underbrace{0 \; \ldots 0}_{L_d-L_{r}} \; 1 \; \ldots 1]^{T}$\\
+    \hline
+  \end{tabular}
+\end{table}
+\begin{table}[b!]
+  \centering
+  \caption{Definition of the target EIR $\mathbf{c}_t$ for state-of-the-art least squares equalization techniques.}
+  \label{tbl: tls}
+  \begin{tabular}{|l|r|}
+    \hline
+    Technique & Target EIR $\mathbf{c}_t$ \\
+    \hline
+    MINT & $\mathbf{d} = [\underbrace{0 \; \ldots \; 0}_{\tau} \; 1 \; 0 \; \ldots \; 0 ]^T$ \\
+    \hline
+    P-MINT & $\hat{\mathbf{h}}_{p}^{\rm d} = [\underbrace{0\phantom{\rlap{$(L_d-1)$}} \ldots 0 }_{\tau} \underbrace{\hat{h}_p(0) \ldots \hat{h}_p(L_d-1)}_{L_d} 0 \ldots 0 ]^{T}$  \\
+    \hline
+    RMCLS & $\mathbf{d} = [\underbrace{0 \; \ldots \; 0}_{\tau} \; 1 \; 0 \; \ldots \; 0 ]^T$ \\
+    \hline
+    RMCLS-CIT & $\hat{\mathbf{h}}_{p}^{\rm d} = [\underbrace{0\phantom{\rlap{$(L_d-1)$}} \ldots 0 }_{\tau} \underbrace{\hat{h}_p(0) \ldots \hat{h}_p(L_d-1)}_{L_d} 0 \ldots 0 ]^{T}$ \\
+    \hline
+  \end{tabular}
+\end{table}
+From these definitions of $\mathbf{W}$ and $\mathbf{c}_t$, it can be observed that on the one hand, techniques such as MINT and P-MINT aim at setting all taps of the resulting EIR to a desired target EIR, which results in a good perceptual speech quality preservation but low reverberant tail suppression~\cite{Kodrasi_ITASLP_2013}, while on the other hand, techniques such as RMCLS and RMCLS-CIT do not constrain all taps of the EIR, which results in a high performance in terms of reverberant tail suppression, but lower perceptual speech quality preservation~\cite{Kodrasi_ITASLP_2013, Lim_IWAENC_2012}.
+
+\subsection{Channel Shortening~(CS)}
+Channel shortening~\cite{Zhang_IWAENC_2010, Kallinger_ICASSP_2006} aims at maximizing the energy in the first $L_d$ taps of the EIR~(i.e., direct path and early reflections), while minimizing the energy in the remaining taps~(i.e., reverberant tail).
+This objective can be expressed as the maximization of a generalized Rayleigh quotient, i.e.,
+\begin{equation}
+\label{eq: rayleigh}
+\boxed{J_{_{\rm CS}} (\mathbf{g}) = \frac{\|\mathbf{W}_d\hat{\mathbf{c}}\|_2^2}{\|\mathbf{W}_u\hat{\mathbf{c}}\|_2^2} =  \frac{\|\mathbf{W}_d\hat{\mathbf{H}}\mathbf{g}\|_2^2}{\|\mathbf{W}_u\hat{\mathbf{H}}\mathbf{g}\|_2^2} = \frac{\mathbf{g}^T \hat{\mathbf{B}} \mathbf{g}}{\mathbf{g}^T \hat{\mathbf{A}} \mathbf{g}}}
+\end{equation}
+where $\mathbf{W}_d = {\diag}\{\mathbf{w}_d\}$ and $\mathbf{W}_u = {\diag}\{\mathbf{w}_u\}$, with
+\begin{equation}
+\label{eq: wincs}
+\mathbf{w}_d  = [\underbrace{0 \; \ldots \; 0}_{\tau} \; \underbrace{1 \; \ldots \; 1}_{L_d}\; 0\; \ldots\; 0]^{T}, \; \; \mathbf{w}_u  = \mathbf{1} - \mathbf{w}_d,
+\end{equation}
+and
+\begin{equation}
+\hat{\mathbf{B}}  = \hat{\mathbf{H}}^{T} \mathbf{W}_d^T \mathbf{W}_d\hat{\mathbf{H}},\; \;  \hat{\mathbf{A}} = \hat{\mathbf{H}}^{T} \mathbf{W}_u^T \mathbf{W}_u\hat{\mathbf{H}}.
+\end{equation}
+Maximizing~(\ref{eq: rayleigh}) is equivalent to solving the generalized eigenvalue problem $\hat{\mathbf{B}} \mathbf{g} = \lambda \hat{\mathbf{A}} \mathbf{g}$, where the optimal reshaping filter $\mathbf{g}_{_{\rm CS}}$ is the generalized eigenvector corresponding to the largest generalized eigenvalue $\lambda_{\max}$.
+In~\cite{Zhang_IWAENC_2010} it has been shown that $L_d$ linearly independent generalized eigenvectors $\mathbf{g}_{_{\rm CS}}^i, i = 1, \; \ldots, \; L_d$, exist, which maximize the CS cost function in~(\ref{eq: rayleigh}) to $\lambda_{\max} = \infty$.
+Hence, any reshaping filter $\mathbf{g}$ in the subspace spanned by the $L_d$ solutions $\mathbf{g}_{_{\rm CS}}^i$ leads to an estimated EIR $\hat{\mathbf{c}}$ which satisfies the system of equations
+\begin{equation}
+\label{eq: sysc}
+\begin{cases}
+\|\mathbf{W}_d \hat{\mathbf{c}} \|_2^2 \neq 0 \\
+\|\mathbf{W}_u \hat{\mathbf{c}} \|_2^2 = 0.
+\end{cases}
+\end{equation} 
+In the next section, it will be shown that all considered least squares equalization techniques yield an estimated EIR $\hat{\mathbf{c}}$ which satisfies~(\ref{eq: sysc}).
+\section{Insights Into Least Squares Equalization Techniques and Their Relation to CS}
+\label{sec: theory}
+In the following, the Rouch\'{e}-Capelli theorem~\cite{shafarevic_algebra_book} is used to establish the existence and uniqueness of solutions to~(\ref{eq: lsg}) for the different definitions of $\mathbf{W}$ and $\mathbf{c}_t$.
+
+{\textit{Rouch\'{e}-Capelli theorem: \enspace
+Consider the system of equations $\mathbf{A}\mathbf{x} = \mathbf{b}$ with $\mathbf{A}$ a $p \times q$ matrix. Such a system has a solution if and only if the rank of the coefficient matrix $\mathbf{A}$ is equal to the rank of the augmented matrix $[\mathbf{A}|\mathbf{b}]$. 
+If a solution exists and $q = {\rm rank}(\mathbf{A})$, this solution is unique, otherwise there are an infinite number of solutions.
+}}
+
+Exploiting the fact that $\hat{\mathbf{H}}$ is a full row-rank matrix, Table~\ref{tbl: rank} summarizes the rank of the coefficient and augmented matrix for each least squares technique.
+\begin{table}[t!]
+  \centering
+  \caption{Rank of the coefficient and augmented matrix for state-of-the-art least squares equalization techniques.}
+  \label{tbl: rank}
+ {\small \begin{tabular}{|l|r|r|r|}
+    \hline
+    Technique & $\mathbf{A}\mathbf{x} \!=\! \mathbf{b}$ & ${\rm rank}(\mathbf{A})$ & ${\rm rank}[\mathbf{A}|\mathbf{b}]$ \\
+    \hline
+    MINT & $\hat{\mathbf{H}}\mathbf{g} \!=\! \mathbf{d}$ & $L_c$ & $L_c$ \\
+    \hline
+    P-MINT & $\hat{\mathbf{H}}\mathbf{g} \!=\! \hat{\mathbf{h}}_p^{\rm d}$ & $L_c$ & $L_c$ \\
+    \hline
+    RMCLS & $\mathbf{W}_c\hat{\mathbf{H}}\mathbf{g} \!=\! \mathbf{W}_c\mathbf{d}$ & $L_c \!-\! L_d\!+\!1$ & $L_c \!-\!L_d\!+\!1$ \\
+    \hline
+    RMCLS-CIT & $\mathbf{W}_{r}\hat{\mathbf{H}}\mathbf{g} \!=\! \mathbf{W}_{r}\hat{\mathbf{h}}_p^{\rm d}$ & $L_c \!-\! L_d \!+\! L_r$ & $L_c \!- \!L_d \!+\! L_r$\\
+    \hline
+  \end{tabular}}
+\end{table}
+Since the rank of the coefficient matrix is equal to the rank of the augmented matrix for all definitions of $\mathbf{W}$ and $\mathbf{c}_t$, the system of equations in~(\ref{eq: lsg}) is always solvable.
+For the MINT and P-MINT techniques we need to distinguish amongst the following two cases:
+\begin{itemize}
+  \item if $L_c = L_h + L_g -1 = ML_g$,~i.e., $\hat{\mathbf{H}}$ is a square matrix and hence, ${\rm rank(\hat{\mathbf{H}})} =  L_c = ML_g$, there is a unique solution to~(\ref{eq: lsg}),
+  \item otherwise there are an infinite number of solutions.
+\end{itemize}
+For the RMCLS technique there is always an infinite number of solutions since the number of columns in $\mathbf{W}\hat{\mathbf{H}}$ is always greater than its rank, i.e., $M L_g > L_c - L_d +1$.
+Furthermore, also for the RMCLS-CIT technique there is always an infinite number of solutions since $M L_g > L_c -L_d+L_r$.
+
+Given that~(\ref{eq: lsg}) is solvable for all considered least squares techniques, applying all solutions $\mathbf{g}$ to the estimated RIRs yields the respective target EIRs.  
+Clearly, all target EIRs in Table~\ref{tbl: tls} satisfy the system of equations in~(\ref{eq: sysc}).
+Hence, all solutions $\mathbf{g}$ of the least squares equalization techniques lie in the subspace spanned by the multiple CS solutions, i.e., 
+\begin{equation}
+\boxed{\mathbf{g} = \mathbf{G} \boldsymbol \alpha}
+\end{equation}
+with $\mathbf{G} = [\mathbf{g}_{_{\rm CS}}^1 \; \ldots \; \mathbf{g}_{_{\rm CS}}^{L_d}]$ being the $ML_g \times L_d$--dimensional matrix whose columns are the $L_d$ channel shortening solutions and $\boldsymbol \alpha$ being an $L_d$--dimensional linear combination vector.
+
+In the following section, the subspace of CS solutions is exploited to derive a novel subspace-based equalization technique. 
+Some preliminary results on exploiting the subspace of CS solutions were discussed in~\cite{Kodrasi_ICASSP_2013} and \cite{Kodrasi_EUSIPCO_2013}.
+
+\section{Subspace-Based Equalization Technique}
+In~\cite{Kodrasi_ITASLP_2013} it has been shown that RMCLS achieves a high reverberant tail suppression but a low perceptual speech quality preservation. 
+On the other hand, P-MINT achieves a low reverberant tail suppression but a high perceptual speech quality preservation.
+Since the theoretical analysis in Section~\ref{sec: theory} has shown that all least squares filters lie in the subspace spanned by the CS solutions, it can be said that this subspace offers the potential to achieve a high dereverberation performance, both in terms of reverberant tail suppression and perceptual speech quality preservation.
+Furthermore, in~\cite{Kodrasi_ITASLP_2013} it has been shown that incorporating regularization in equalization techniques in order to decrease the energy of the reshaping filter yields a significant increase in robustness in the presence of RIR estimation errors.
+Based on such theoretical and experimental observations, the following regularized subspace-based cost function~(SuB) is proposed
+\begin{equation}
+  \label{eq: subr}
+\boxed{J_{_{\rm SuB}}^{\rm R}(\boldsymbol \alpha) = \|\mathbf{W}(\hat{\mathbf{H}}\mathbf{G}\boldsymbol \alpha-\mathbf{c}_t) \|_2^2 + \delta \|\mathbf{G}\boldsymbol \alpha \|_2^2}
+\end{equation}
+with $\delta$ being a regularization parameter.
+The minimization of~(\ref{eq: subr}) aims at computing the reshaping filter as a linear combination of the multiple CS solutions which yields a desired (weighted) target EIR $\mathbf{c}_t$, while still controlling the energy of the reshaping filter in order to increase robustness to RIR estimation errors.
+Minimizing~(\ref{eq: subr}) yields the linear combination vector
+\begin{equation}
+\boxed{\boldsymbol \alpha_{_{\rm SuB}}^{\rm R} \!=\! [(\mathbf{W}\hat{\mathbf{H}}\mathbf{G})^T(\mathbf{W}\hat{\mathbf{H}}\mathbf{G}) \!+\! \delta \mathbf{I}]^{-1}(\mathbf{W}\hat{\mathbf{H}}\mathbf{G})^T(\mathbf{W}\mathbf{c}_t)}
+\end{equation}
+and the subspace-based reshaping filter
+\begin{equation}
+\boxed{\mathbf{g}_{_{\rm SuB}}^{\rm R} = \mathbf{G}\boldsymbol \alpha_{_{\rm SuB}}^{\rm R}}
+\end{equation}
+
+\section{Experimental Results}
+In this section, the performance of the proposed subspace-based technique will be investigated for different definitions of the weighting matrix $\mathbf{W}$ and target EIR $\mathbf{c}_t$ and compared to the performance of regularized least squares equalization. For an overview of the regularized least squares equalization techniques, the reader is referred to~\cite{Kodrasi_ITASLP_2013}.
+
+We have considered a measured $2$-channel acoustic system with reverberation time $T_{60} \approx 450$~ms as the true system to be equalized.
+The sampling frequency is $f_s = 8$~kHz and the length of the RIRs is $L_h = 3600$.
+Furthermore, the simulation parameters are set to $\tau = 0$, $L_g = 3599$, $p = 1$, $L_d = 0.05 f_s$~(i.e., $50$~ms), and $L_r = \lfloor \frac{L_d}{3} \rfloor$.
+The estimated RIRs are simulated as in~\cite{Kodrasi_ITASLP_2013}, i.e., 
+\begin{equation}
+\hat{h}_m(n) = h_m(n)[1+e_m(n)],
+\end{equation}
+with $e_m(n)$ an uncorrelated Gaussian noise sequence with zero mean and variance such that a normalized channel mismatch 
+\begin{equation}
+ E_m = 10 \log_{10} \frac{\|\mathbf{h}_m-\hat{\mathbf{h}}_m\|_2^2}{\|\mathbf{h}_m\|_2^2}
+\end{equation}
+is generated. 
+The considered normalized channel mismatch values are $E_m \in \{-33~{\rm dB}, \; -30~{\rm dB}, \; \ldots, \; -15~{\rm dB} \}$.
+
+The reverberant energy suppression is evaluated using the energy decay curve~(EDC) of the resulting EIR~\cite{Naylor_derev_book}, whereas the perceptual speech quality is evaluated using the objective speech quality measure PESQ~\cite{PESQ}.
+The reference signal employed in PESQ is the clean speech convolved with the first part of the true first RIR, i.e., $s(n) \ast h_1^{\rm d}(n)$.
+
+Finally, the set of considered regularization parameters for all techniques is $\delta \in \{10^{-9}, \; 0.5 \times 10^{-8}, \; 10^{-8}, \; \ldots, \; 10^{-1} \}$ and the used parameter is intrusively selected as the one leading to the highest PESQ score.
+
+Fig.~\ref{fig: edc} depicts the EDC of the true RIR $\mathbf{h}_1$ and the average EDCs~(averaged over the different considered mismatch values) obtained using the regularized SuB technique with the weighting matrix $\mathbf{W}$ and the target vector $\mathbf{c}_t$ defined according to Table~\ref{tbl: wls} and~\ref{tbl: tls}.
+It appears that using the weighting matrix and the target vector of RMCLS and P-MINT yields the highest reverberant energy suppression in the CS subspace domain, with the reverberant tails being well below the reverberant tail of the true first RIR $\mathbf{h}_1$.
+However, it can be said that the performance of the regularized SuB technique for all definitions of $\mathbf{W}$ and $\mathbf{c}_t$ is quite similar in terms of reverberant energy suppression.
+\begin{figure}[b!]
+  \centering
+  \input{Plots/edc_sub.tikz}
+  \caption{EDC of the true RIR $\mathbf{h}_1$ and average EDC~(averaged over several channel mismatch values) of the EIR obtained using the regularized SuB technique with $\mathbf{W}$ and $\mathbf{c}_t$ defined as in MINT, RMCLS, P-MINT, and RMCLS-CIT.}
+  \label{fig: edc}
+\end{figure}
+\begin{figure}[t!]
+  \centering
+  \input{Plots/pesq_sub.tikz}
+\caption{PESQ score of the reverberant signal $x_1(n)$ and PESQ score of the output signal $\hat{s}(n)$ using the regularized SuB technique with $\mathbf{W}$ and $\mathbf{c}_t$ defined as in MINT, RMCLS, P-MINT, and RMCLS-CIT for several channel mismatch values.}
+\label{fig: pesq}
+\end{figure}
+On the other hand, significant performance differences can be noticed in terms of perceptual speech quality preservation for all considered mismatch values as depicted in Fig.~\ref{fig: pesq}.
+As illustrated in this figure, the regularized SuB technique with $\mathbf{W}$ and $\mathbf{c}_t$ defined as in P-MINT~(i.e., $\mathbf{W} = \mathbf{I}$ and $\mathbf{c}_t = \hat{\mathbf{h}}_p^{\rm d}$) yields a significantly higher PESQ score than using any other definition of the weighting matrix and target vector, offering a large improvement over the perceptual speech quality of the unprocessed microphone signal $x_1(n)$.
+Based on these simulations, it can be concluded that the regularized SuB technique with the weighting matrix and target vector defined as in P-MINT leads to the highest dereverberation performance out of all considered subspace-based techniques.
+\begin{figure}[b!]
+  \centering
+  \input{Plots/all_subnosub.tikz}
+  \caption{The performance of the regularized SuB technique~($\mathbf{W} =\mathbf{I}$, $\mathbf{c}_t = \hat{\mathbf{h}}_p^{\rm d}$) and of the regularized P-MINT technique. Top figure: Average EDC over several channel mismatch values. Bottom figure: PESQ score for several channel mismatch values.}
+  \label{fig: all}
+\end{figure}
+Since the regularized SuB technique based on P-MINT results in the highest performance, its performance is compared to the regularized least squares P-MINT technique in order to evaluate the advantages of doing channel reshaping in the CS subspace domain as compared to least squares equalization.
+Fig.~\ref{fig: all} depicts the performance in terms of average EDC~(top figure) and PESQ score~(bottom figure) of the regularized SuB technique~($\mathbf{W} = \mathbf{I}$, $\mathbf{c}_t = \hat{\mathbf{h}}_p^{\rm d}$) as well as of the regularized least squares P-MINT technique.
+As illustrated in this figure, the regularized SuB technique significantly outperforms the regularized P-MINT technique in terms of reverberant energy suppression.
+However, while the obtained PESQ scores for both techniques are very similar for moderate channel estimation errors, as the channel estimation errors increase, the regularized P-MINT technique appears to yield a higher perceptual speech quality.
+\section{Conclusion}
+In this letter, we have theoretically analyzed the properties of the solutions of state-of-the-art least squares equalization techniques and showed that they belong to the subspace spanned by the multiple CS solutions.
+A novel regularized subspace-based equalization~(SuB) technique has been proposed, where the reshaping filter is constrained to be a linear combination of the multiple CS solutions.
+Simulation results demonstrate that the regularized SuB technique with the weighting matrix and target vector defined as in P-MINT outperforms the regularized least squares P-MINT technique in terms of reverberant tail suppression in the presence of RIR estimation errors.
+Furthermore, the regularized SuB technique also yields a similar perceptual speech quality as the regularized P-MINT technique for moderate channel estimation errors.
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}

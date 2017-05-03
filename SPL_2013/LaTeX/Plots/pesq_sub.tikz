@@ -1,0 +1,87 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+area legend,
+scale only axis,
+xmin=-35,
+xmax=-13,
+xtick={-33, -30, -27, -24, -21, -18, -15},
+xlabel={Normalized Channel Mismatch [dB]},
+xlabel absolute, xlabel style={yshift=0.5em},
+xmajorgrids,
+ymin=1,
+ymax=4.5,
+ylabel={PESQ Score},
+ylabel absolute,ylabel style={yshift=-1.2em},
+ymajorgrids,
+legend style={at={(1,1)},anchor=north east,draw=black,fill=white,legend cell align=left, row sep = -3pt,inner sep=0pt,outer sep=0pt,font=\scriptsize}
+]
+
+\draw[/pgfplots/every axis grid] (axis cs:-35,1.5) -- (axis cs:-13,1.5);
+\draw[/pgfplots/every axis grid] (axis cs:-35,2.5) -- (axis cs:-13,2.5);
+\draw[/pgfplots/every axis grid] (axis cs:-35,3.5) -- (axis cs:-13,3.5);
+
+\addplot[ybar,bar width=0.0167832167832168\figurewidth,bar shift=-0.041958041958042\figurewidth,fill=gray,draw=black] plot coordinates{(-33,2.29418278923264)
+(-30,2.29418278923264)
+(-27,2.29418278923264)
+(-24,2.29418278923264)
+(-21,2.29418278923264)
+(-18,2.29418278923264)
+(-15,2.29418278923264)};
+
+\addlegendentry{$x_1(n)$};
+
+\addplot[ybar,bar width=0.0167832167832168\figurewidth,bar shift=-0.020979020979021\figurewidth,fill=darkgray,draw=black] plot coordinates{(-33,3.65067633578364)
+(-30,3.54807726558764)
+(-27,3.41705916866347)
+(-24,3.11526265018678)
+(-21,2.92901844225506)
+(-18,2.79558410986856)
+(-15,2.75291302228184)};
+
+\addlegendentry{MINT$_{\rm SuB}$};
+
+\addplot[ybar,bar width=0.0167832167832168\figurewidth,fill=white,draw=black] plot coordinates{(-33,3.46335498720889)
+(-30,3.47738376611553)
+(-27,3.33901636287868)
+(-24,3.1061055138374)
+(-21,2.91251041985391)
+(-18,2.75372982949786)
+(-15,2.73380950758797)};
+
+\addlegendentry{$\text{RMCLS}_{\text{SuB}}$};
+
+\addplot[ybar,bar width=0.0167832167832168\figurewidth,bar shift=0.020979020979021\figurewidth,fill=black,draw=black] plot coordinates{(-33,3.93103850749655)
+(-30,3.83646574342579)
+(-27,3.63471918786783)
+(-24,3.40095032389396)
+(-21,3.10761882368037)
+(-18,2.96158773728619)
+(-15,2.81942548124362)};
+
+\addlegendentry{$\text{P-MINT}_{\text{SuB}}$};
+
+\addplot[ybar,bar width=0.0167832167832168\figurewidth,bar shift=0.041958041958042\figurewidth,fill=lightgray,draw=black] plot coordinates{(-33,3.60932097418771)
+(-30,3.48219239168311)
+(-27,3.43577858540429)
+(-24,3.2114685806008)
+(-21,2.95343040832053)
+(-18,2.84662515987229)
+(-15,2.81550915499809)};
+
+\addlegendentry{$\text{RMCLS-CIT}_{\text{SuB}}$};
+
+\end{axis}
+\end{tikzpicture}%

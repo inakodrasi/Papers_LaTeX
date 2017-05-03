@@ -1,0 +1,122 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.20810,0.16630,0.52920}%
+\definecolor{mycolor2}{rgb}{0.21783,0.72504,0.61926}%
+\definecolor{mycolor3}{rgb}{0.97630,0.98310,0.05380}%
+%
+\begin{tikzpicture}[font = \footnotesize]
+
+\begin{axis}[%
+width=0.17\figurewidth,
+height=0.8\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+bar shift auto,
+xmin=5,
+xmax=35,
+xlabel={SIR [dB] \\ (a)},
+ymin=0,
+ymax=4.5,
+ylabel={$\Delta$fwSSNR [dB]},
+axis background/.style={fill=white},
+xlabel absolute, xlabel style={align = center, yshift=0.2em},
+ylabel absolute, ylabel style={yshift=-1.0em},
+legend style={at={(1.15,1.07)},anchor=south},
+legend cell align=left,
+legend columns=4,
+ytick = {0,1,2,3,4},
+xmajorgrids,
+ymajorgrids
+]
+\addplot[ybar, bar width=3, fill=white, draw=black, pattern = north east lines, area legend] table[row sep=crcr] {%
+10	3.80779526066423\\
+20	3.4113696951971\\
+30	3.37806811062818\\
+40	3.36665102571495\\
+};
+\addlegendentry{PW}
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+\addplot[ybar, bar width=3, fill=white!70!black, draw=black, area legend] table[row sep=crcr] {%
+10	3.79771495725548\\
+20	3.37576731375062\\
+30	3.27697401581533\\
+40	3.22697582946137\\
+};
+\addlegendentry{PS}
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+\addplot[ybar, bar width=3, fill=white, draw=black, pattern = horizontal lines, area legend] table[row sep=crcr] {%
+10	4.2193421034276\\
+20	3.64700987191832\\
+30	3.53307335998379\\
+40	3.50565670229998\\
+};
+\addlegendentry{LS}
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+\end{axis}
+
+\begin{axis}[%
+width=0.17\figurewidth,
+height=0.8\figureheight,
+at={(0.25\figurewidth,0\figureheight)},
+scale only axis,
+bar shift auto,
+xmin=5,
+xmax=35,
+xlabel={SIR [dB] \\ (b)},
+ymin=-0.7,
+ymax=0,
+xlabel absolute, xlabel style={align = center, yshift=0.2em},
+ylabel absolute, ylabel style={yshift=-1.0em},
+ylabel={$\Delta$CD [dB]},
+ytick = {0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7},
+xmajorgrids,
+ymajorgrids,
+]
+\addplot[ybar, bar width=3, fill=white, draw=black, pattern = north east lines, area legend] table[row sep=crcr] {%
+10	-0.664552044718475\\
+20	-0.66418769138512\\
+30	-0.655618149759825\\
+40	-0.65489550929338\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+
+\addplot[ybar, bar width=3, fill=white!70!black, draw=black, area legend] table[row sep=crcr] {%
+10	-0.660669796394464\\
+20	-0.658292004246598\\
+30	-0.648381673518629\\
+40	-0.647076566061303\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+
+\addplot[ybar, bar width=3, fill=white, draw=black, pattern = horizontal lines, area legend] table[row sep=crcr] {%
+10	-0.642458346394015\\
+20	-0.625825127044419\\
+30	-0.609789501586564\\
+40	-0.607146732427395\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+0	0\\
+60	0\\
+};
+
+\end{axis}
+\end{tikzpicture}%

@@ -1,0 +1,52 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+
+% defining custom colors
+\definecolor{mycolor1}{rgb}{0,0,0.5625}%
+
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+area legend,
+scale only axis,
+xmin=-8,
+xmax=12,
+xtick={-5,  0,  5, 10},
+xlabel={SIR [dB]},
+xmajorgrids,
+ymin=0,
+ymax=0.5,
+ylabel={$\Delta\text{ PESQ}$},
+ymajorgrids
+]
+\addplot[ybar,bar width=0.0571428571428571\figurewidth,bar shift=-0.0357142857142857\figurewidth,fill=mycolor1,draw=black] plot coordinates{(-5,0.432666666666667)
+(0,0.4595)
+(5,0.471833333333334)
+(10,0.470833333333333)};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+-8 0\\
+12 0\\
+};
+\addplot[ybar,bar width=0.0571428571428571\figurewidth,bar shift=0.0357142857142857\figurewidth,fill=red!50!black,draw=black] plot coordinates{(-5,0.0611666666666668)
+(0,0.191333333333334)
+(5,0.267666666666667)
+(10,0.315166666666667)};
+
+\end{axis}
+\end{tikzpicture}%

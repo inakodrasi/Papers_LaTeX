@@ -1,0 +1,234 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+%
+\definecolor{mycolor1}{rgb}{1,0,1}%
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+name = drr,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-8,
+xmax=13,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (a)},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xtick = {-5,0,5,10},
+xticklabels = {-5,0,5,10},
+ytick = {0, 2, 4, 6, 8, 10, 12},
+yticklabels = {0, 2, 4, 6, 8, 10, 12},
+xmajorgrids,
+ymin=0,
+ymax=8,
+ylabel={$\Delta$DRR [dB]},
+ymajorgrids
+]
+
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=black,draw=black] plot coordinates{(-6,7.5010851868773)
+(-1,7.56463327596609)
+(4,7.60592126447635)
+(9,7.62864946524758)};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+-8 0\\
+8 0\\
+};
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=white!80!black,draw=black] plot coordinates{(-4,4.15487215260241)
+(1,4.86398002211319)
+(6,5.01667484164285)
+(11,4.94431226602541)};
+
+\end{axis}
+
+\begin{axis}[%
+name = pesq,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-8,
+xmax=13,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (b)},
+xtick = {-5,0, 5,10},
+xticklabels = {-5,0,5,10},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xmajorgrids,
+ymin=0,
+ymax=0.5,
+ylabel={$\Delta$PESQ},
+ymajorgrids,
+at={($(drr.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+]
+
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=black,draw=black] plot coordinates{(-6,0.432666666666667)
+(-1,0.4595)
+(4,0.471833333333334)
+(9,0.470833333333333)};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+-8 0\\
+8 0\\
+};
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=white!80!black,draw=black] plot coordinates{(-4,0.0611666666666668)
+(1,0.191333333333334)
+(6,0.267666666666667)
+(11,0.315166666666667)};
+
+\end{axis}
+
+\begin{axis}[%
+name = nr,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-8,
+xmax=13,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (c)},
+xtick = {-5,0,5,10},
+xticklabels = {-5,0,5,10},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xmajorgrids,
+ymin=0,
+ymax=19,
+ylabel={$\psi_{_{\rm NR}}$ [dB]},
+ymajorgrids,
+at={($(pesq.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+]
+
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=black,draw=black] plot coordinates{(-6,7.71926146995955)
+(-1,5.26170396863151)
+(4,3.25741759950274)
+(9,1.82934452864539)};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+-8 0\\
+8 0\\
+};
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=white!80!black,draw=black] plot coordinates{(-4,13.4688613303205)
+(1,12.4942812240601)
+(6,10.7682679204459)
+(11,8.93880725901647)};
+
+
+\end{axis}
+
+\begin{axis}[%
+name = sir,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-8,
+xmax=13,
+xtick = {-5,0,5,10},
+xticklabels = {-5,0,5,10},
+ytick = {3,5,7,9,11},
+yticklabels = {3,5,7,9,11},
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (d)},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xmajorgrids,
+ymin=1.5,
+ymax=11,
+%legend style={at={([yshift=0.5cm] $(nr.north west)!.5!(nr.north east)$)},anchor=north,row sep = -1pt,draw=black,fill=white,legend cell align=left, inner sep = 1pt},
+legend style={at={(-2.0,1.1)},anchor=south west,legend cell align=left},
+legend columns = 2,
+area legend,
+%legend image post style={xscale=0.8},
+legend entries = {RPM-DNR, MWF-DNR},
+at={($(nr.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+ylabel={$\Delta$SRNR [dB]},
+ymajorgrids
+]
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=black,draw=black] plot coordinates{(-6,5.66937009120099)
+(-1,3.65113811240757)
+(4,2.48265737725432)
+(9,2.02933931964001)};
+
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+-8 0\\
+8 0\\
+};
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=white!80!black,draw=black] plot coordinates{(-4,7.32261595607633)
+(1,5.70030303309397)
+(6,4.23069307824245)
+(11,3.48015398938991)};
+
+\end{axis}
+
+\begin{axis}[%
+name = fwssnr,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-8,
+xmax=13,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (e)},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xtick = {-5, 0, 5, 10},
+xticklabels = {-5,0,5,10},
+xmajorgrids,
+ymin=0,
+ymax=3,
+ylabel={$\Delta$fwSSNR [dB]},
+ymajorgrids,
+at={($(sir.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+]
+
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=black,draw=black] plot coordinates{(-6,0.144055722658052)
+(-1,0.730074705953759)
+(4,1.19348885980111)
+(9,1.38086149822489)};
+
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+-8 0\\
+8 0\\
+};
+\addplot[ybar,bar width=0.0314285714285714\figurewidth,fill=white!80!black,draw=black] plot coordinates{(-4,1.46720411543849)
+(1,2.24446496367937)
+(6,2.69372250380039)
+(11,2.62610745645293)};
+
+\end{axis}
+
+\end{tikzpicture}%

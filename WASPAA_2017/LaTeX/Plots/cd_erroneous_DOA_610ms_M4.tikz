@@ -1,0 +1,142 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.44700,0.74100}%
+\definecolor{mycolor2}{rgb}{0.85000,0.32500,0.09800}%
+\definecolor{mycolor3}{rgb}{0.92900,0.69400,0.12500}%
+\definecolor{mycolor4}{rgb}{0.49400,0.18400,0.55600}%
+\definecolor{mycolor5}{rgb}{0.46600,0.67400,0.18800}%
+%
+\begin{tikzpicture}[font=\small]
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-100,
+xmax=100,
+xlabel={$\hat{\theta}^{\circ}$ \\ (b)},
+xtick = {-90, -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90},
+xticklabels = {-$90$, -$75$, -$60$, -$45$ , -$30$, -$15$, $0$, $15$, $30$, $45$, $60$, $70$, $90$},
+xlabel absolute,
+xlabel style={yshift=0.5em, align = center},
+xmajorgrids,
+grid = both,
+%minor tick num=1,
+ylabel={$\Delta$CD [dB]},
+ylabel absolute, ylabel style={yshift=-0.9em},
+legend columns = 5,
+scale only axis,
+ytick = {-1,-0.75,-0.5,-0.25,0,0.25,0.5,0.75,1},
+yticklabels = {-$1$,,-$0.5$,,$0$,,$0.5$,,$1$},
+ymin=-1.2,
+ymax=1.2,
+]
+\addplot [color=blue,
+dotted,
+line width=0.9pt,
+mark size=2.5pt,
+mark=triangle,
+mark options={solid,rotate=90}]
+  table[row sep=crcr]{%
+-90	0.459990732020236\\
+-75	0.464089137852303\\
+-60	0.575775424809325\\
+-45	0.542680470810831\\
+-30	0.460313232016601\\
+-15	0.657422754074233\\
+0	0.433358951391328\\
+15	0.443724752591861\\
+30	0.0611129559647448\\
+45	-0.669922953558931\\
+60	0.351147910360387\\
+75	0.52204160797988\\
+90	0.57567487722171\\
+};
+
+\addplot [color=green!50!black,
+line width=1.0pt,
+mark size=2.0pt,
+mark=diamond*,
+mark options={solid}]
+  table[row sep=crcr]{%
+-90	0.748336271020649\\
+-75	0.789799456305776\\
+-60	0.962945306602132\\
+-45	0.851612673127271\\
+-30	0.737737949901426\\
+-15	0.83919718409875\\
+0	0.591567537553481\\
+15	0.639754098706715\\
+30	0.00606113117663343\\
+45	-1.05261466710744\\
+60	0.412266452401259\\
+75	0.747528677870396\\
+90	0.781685828900458\\
+};
+
+\addplot [color=yellow!50!black,
+mark = square,
+mark size = 2.0pt,
+line width=1.0pt,
+smooth]
+  table[row sep=crcr]{%
+-90	-0.0236033376657345\\
+-75	-0.00501715143098602\\
+-60	0.130516721574915\\
+-45	0.112383491097543\\
+-30	0.0598725540179932\\
+-15	0.0941559301527888\\
+0	-0.134319453941506\\
+15	-0.0930444389453124\\
+30	-0.516853900094167\\
+45	-1.02002812641721\\
+60	-0.2818331136777\\
+75	-0.0576419118253777\\
+90	0.00760373678346404\\
+};
+
+
+\addplot [color=black,
+dash pattern=on 3pt off 3pt on 3pt off 3pt,
+line width=1.2pt,
+mark = star,
+mark size = 2.5pt,
+mark options={solid}]
+  table[row sep=crcr]{%
+-90	0.00614103827308821\\
+-75	0.0327336364775732\\
+-60	0.168312607012183\\
+-45	0.158367975339677\\
+-30	0.0618649109251983\\
+-15	0.154125998860358\\
+0	-0.0403814101576048\\
+15	-0.0674363742095601\\
+30	-0.438936307646469\\
+45	-0.889034939462563\\
+60	-0.221867055851602\\
+75	-0.00493467170141315\\
+90	0.0553407437680367\\
+};
+\addplot [
+color=black,
+line width=0.8pt,
+]
+table[row sep=crcr]{
+45 -5\\
+45 -4\\
+45 -3\\
+45 -2\\
+45 -1\\
+45 0\\
+45 1\\
+45 2\\
+45 3\\
+45 4\\
+45 5\\
+45 6\\
+};
+\end{axis}
+\end{tikzpicture}%

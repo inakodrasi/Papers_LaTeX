@@ -1,0 +1,56 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=0,
+xmax=0.00012,
+xlabel={$\epsilon_s^2 = \|\hat{\mathbf{H}}\mathbf{g} - \mathbf{c}_t \|_2^2$},
+xlabel absolute, xlabel style={yshift=0.7em},
+xtick scale label code/.code={},
+xmajorgrids,
+ymin=-1e-007,
+ymax=2.5e-006,
+ylabel={$\epsilon_v^2 = \mathbf{g}^T \mathbf{R}_{\mathbf{v}} \mathbf{g}$},
+ylabel absolute, ylabel style={yshift=-1.9em},
+ytick scale label code/.code={},
+ymajorgrids
+]
+\addplot [
+color=blue,
+dashed,
+mark=o,
+line width=1.2pt,
+mark size = 1.7pt,
+mark options={solid},
+forget plot
+]
+table[row sep=crcr]{
+8.69011100827712e-006 2.04775707348494e-006\\
+1.03137489669204e-005 4.57605985660687e-007\\
+1.65966975737613e-005 1.51027344160795e-007\\
+2.9570684884378e-005 4.42449521639802e-008\\
+6.01298625917203e-005 1.25257799584006e-008\\
+0.000107897505234121 5.40003701269199e-009\\
+};
+\node at (axis cs:8.69011100827712e-006, 2.04775707348494e-006) [anchor=south west] {$\mu = 10^{-4}$};
+\node at (axis cs:1.03137489669204e-005, 4.57605985660687e-007) [anchor=south west] {$\mu = 10^{-3}$};
+\node at (axis cs:1.65966975737613e-005, 1.51027344160795e-007) [anchor=south west] {$\mu = 10^{-2}$};
+\node at (axis cs:3.1570684884378e-005, 4.42449521639802e-008) [anchor=south west] {$\mu = 10^{-1}$};
+\node at (axis cs:6.01298625917203e-005, 1.25257799584006e-008) [anchor=south west] {$\mu = 1$};
+\node at (axis cs:0.000107897505234121, 5.40003701269199e-009) [anchor=south] {$\mu = 5$};
+\end{axis}
+
+
+\end{tikzpicture}%

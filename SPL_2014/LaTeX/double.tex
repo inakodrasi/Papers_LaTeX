@@ -1,0 +1,300 @@
+%%%%%%%%%%%%%%%%%%%%  bare_jrnl.tex V1.2 2002/11/18  %%%%%%%%%%%%%%%%%%%%%%%
+
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.6b or later) with an IEEE journal paper.
+
+\documentclass[10pt]{IEEEtran}
+
+%%%%%%%%%%%%%%%%%%%  PACKAGES AND DEFINITIONS%%%%%%%%%%%%%%%%%
+\usepackage{etex}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{amsmath,graphicx}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{subfig}
+\usetikzlibrary{backgrounds,shapes,snakes}
+\usetikzlibrary{calc,chains,positioning}
+\usepackage{phaistos}
+\usepackage{cases}
+\usepackage{pgfplots}
+\usepackage{empheq}
+\usepackage{cite}
+\DeclareMathOperator{\diag}{diag}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% correct bad hyphenation here
+%\hyphenation{}
+
+\begin{document}
+\newlength\figureheight
+\newlength\figurewidth
+\setlength\figureheight{3.6cm}
+\setlength\figurewidth{6.5cm}
+\title{Robust Trade-off Parameter for the Speech Distortion Weighted Multichannel Wiener Filter}
+
+\date{June 24, 2013}
+
+\author{
+%Ina Kodrasi\textsuperscript{1}*, Daniel Marquardt\textsuperscript{1}, Timo Gerkmann\textsuperscript{2}, and Simon Doclo\textsuperscript{1}% <-this % stops a space
+Ina Kodrasi*, Daniel Marquardt, and Simon Doclo% <-this % stops a space
+\thanks{The authors are with the Signal Processing group, Department of Medical Physics and Acoustics, and Cluster of Excellence Hearing4All, University of Oldenburg, Oldenburg, Germany (e-mail: ina.kodrasi@uni-oldenburg.de).}
+% \thanks{The authors are with the Signal Processing\textsuperscript{1} and Speech Signal Processing\textsuperscript{2} groups, Department of Medical Physics and Acoustics, and Cluster of Excellence Hearing4All, University of Oldenburg, Oldenburg, Germany (e-mail: ina.kodrasi@uni-oldenburg.de).}
+\thanks{
+This work was supported by a Grant from the GIF, the German-Israeli Foundation for Scientific Research and Development, the Cluster of Excellence 1077 ``Hearing4All'' funded by the German Research Foundation (DFG), and the Marie Curie Initial Training Network DREAMS (Grant no. 316969).}
+}
+
+\maketitle
+
+\begin{abstract}
+  The use of an optimal trade-off parameter in the speech distortion weighted multichannel Wiener filter~(MWF) is of crucial importance, since it controls the resulting speech distortion and noise reduction.
+
+Aiming at achieving a high noise reduction performance at a low speech distortion, in this letter we propose computing the time-frequency dependent trade-off parameter as the maximum curvature of the parametric plot of noise power versus speech distortion.
+Within the proposed framework speech distortion and noise power can be weighted in advance, e.g. based on perceptually motivated criteria.
+Theoretical and experimental results show that the proposed parameter results in a more robust filter to SNR estimation errors than the traditional MWF, significantly improving the performance.
+
+\end{abstract}
+
+\begin{keywords}
+SDW-MWF, trade-off parameter, curvature
+\end{keywords}
+
+%==============================================================================================================
+\section{Introduction}
+%==============================================================================================================
+Multichannel Wiener filtering~(MWF) is a commonly used technique aiming at noise reduction by minimizing the mean-square error between the output signal and the speech component in the reference microphone~\cite{Doclo_Chap_2010}.
+The error signal typically consists of a speech distortion term and a noise power term. 
+While the traditional MWF assigns equal importance to both terms, the speech distortion weighted multichannel Wiener filter~(SDW-MWF) incorporates a trade-off parameter to trade-off between speech distortion and noise reduction~\cite{Spriet_SP_2004,Doclo_SC_2007}. \newline
+An empirically selected and fixed trade-off parameter has been generally used in the SDW-MWF~\cite{Doclo_SC_2007,Cornelis_thesis}, which can be suboptimal since it does not reflect the typically changing speech and noise powers in different time-frequency bins.
+Hence, in~\cite{Ngo_IWAENC_2008,Ngo_ICASSP_2011,Ngo_EURASIP_2012} it has been proposed to use a soft output voice activity detector~\cite{Gazor_ITSAP_2003} to weight the speech distortion term by the probability that speech is present and the noise power term by the probability that speech is absent. 
+This principle has been further extended in~\cite{Defraene_ICASSP_2012} where again an empirical strategy for the selection of the trade-off parameter based on the instantaneous masking threshold~\cite{Painter_IEEE_2000} has been proposed. \newline
+In this paper a systematic method for determining a time-frequency dependent trade-off parameter is established.
+Aiming at keeping both speech distortion and noise power low, it is proposed to use the parameter that maximizes the curvature of the parametric plot of noise power versus speech distortion.
+Within the proposed framework, speech distortion and noise power can be weighted in advance based on what is more important for the speech communication application under consideration or based on perceptually motivated criteria.
+Theoretical and experimental results show that the proposed parameter yields a more robust filter to commonly occurring signal-to-noise ratio~(SNR) estimation errors than the traditional MWF.
+
+%==============================================================================================================
+\section{The SDW-MWF}
+%==============================================================================================================
+\label{sec:mwf}
+Consider an $M$-channel acoustic system, where the $m$-th microphone signal $Y_m(k,l)$ at frequency index $k$ and time index $l$ consists of a speech component $X_m(k,l)$ and a noise component $V_m(k,l)$, i.e.,
+\begin{align}
+Y_m(k,l) &= X_m(k,l) + V_m(k,l).
+\end{align}
+For conciseness the frequency and time indices $k$ and $l$ will be omitted in the remainder of the letter.
+In vector notation, the $M$-dimensional vector $\mathbf{y}$ of the received microphone signals can be written as $\mathbf{y} = \mathbf{x} + \mathbf{v}$,
+with $\mathbf{y} = [Y_1 \; \ldots \; Y_M]^T$, and the speech and noise vectors $\mathbf{x}$ and $\mathbf{v}$ similarly defined.
+Defining the vector of filter coefficients $\mathbf{w}$ similarly as $\mathbf{y}$, the output signal $Z$ is given by
+\begin{align}
+  Z = \mathbf{w}^H \mathbf{y} = \mathbf{w}^H \mathbf{x} + \mathbf{w}^H \mathbf{v}.
+\end{align}
+The MWF aims at noise reduction by minimizing the mean-square error between the output signal and the received speech component in the $m$-th microphone, i.e.,~reference microphone~\cite{Doclo_Chap_2010}.
+In the SDW-MWF, a trade-off parameter $\mu$ has been incorporated which allows to trade-off between noise reduction and speech distortion~\cite{Spriet_SP_2004,Doclo_SC_2007}.
+Assuming that the speech and noise components are uncorrelated, the SDW-MWF cost function can be written as
+\begin{align}
+  \label{eq: cost_wmwf}
+    \min_{\mathbf{w}} \; \; \underbrace{{\cal{E}} \{ |\mathbf{w}^H \mathbf{x}- \mathbf{e}_m^T \mathbf{x}|^2 \}}_{\psi_{\mathbf{x}}} +  \mu \underbrace{{\cal{E}} \{ |\mathbf{w}^H \mathbf{v}|^2}_{\psi_{\mathbf{v}}} \}, 
+\end{align}
+with ${\cal{E}}$ the expected value operator, $\mathbf{e}_m$ the $M$-dimensional selector vector, i.e.,~a vector whose $m$-th element is equal to $1$ and all other elements are equal to $0$, $\psi_{\mathbf{x}}$ the speech distortion, and $\psi_{\mathbf{v}}$ the noise power.
+The filter minimizing the cost function in~(\ref{eq: cost_wmwf}) is given by
+\begin{align}
+  \label{eq: w_wmwf}
+  \mathbf{w} & = \left[ \mathbf{R}_{\mathbf{x}} + \mu \mathbf{R}_{\mathbf{v}} \right]^{-1} \mathbf{R}_{\mathbf{x}}\mathbf{e}_m,
+\end{align}
+with $\mathbf{R}_{\mathbf{x}}$ and $\mathbf{R}_{\mathbf{v}}$ the speech and noise correlation matrices, defined as
+\begin{align}
+  \label{eq: corr}
+  \mathbf{R}_{\mathbf{x}} & = {\cal{E}}\{ \mathbf{x}\mathbf{x}^H \} = P_s \mathbf{a} \mathbf{a}^H \; \; \text{and} \; \; \mathbf{R}_{\mathbf{v}} = {\cal{E}} \{ \mathbf{v}\mathbf{v}^H \},
+\end{align}
+where $P_s = {\cal{E}} \{|S|^2 \}$ is the power spectral density of the speech source and $\mathbf{a} = [A_1 \; \ldots \; A_M]^T$ is the vector of the acoustic transfer functions.
+The SDW-MWF in~(\ref{eq: w_wmwf}) can be decomposed into a Minimum Variance Distortionless Response~(MVDR) beamformer $\mathbf{w}_{\text{MVDR}}$ and a single channel Wiener postfilter $G$ applied to the MVDR output~\cite{Simmer_book_2001}, i.e.,
+\begin{align}
+  \label{eq: decomp}
+  \mathbf{w} &= \underbrace{A_m^{*}\frac{\mathbf{R}^{-1}_{\mathbf{v}}\mathbf{a}}{\mathbf{a}^H \mathbf{R}^{-1}_{\mathbf{v}}\mathbf{a}}}_{\mathbf{w}_\text{MVDR}} \; \underbrace{\frac{\rho}{\mu + \rho}}_{G},
+\end{align}
+with $A_m = \mathbf{e}_m^T \mathbf{a}$ and $\rho$ the SNR at the MVDR output, i.e., 
+\begin{align}
+\label{eq: rho}
+\rho &= P_s \mathbf{a}^H\mathbf{R}^{-1}_{\mathbf{v}}\mathbf{a}.
+\end{align}
+By setting $\mu = 0$ in~(\ref{eq: decomp}) the SDW-MWF results in the MVDR beamformer, which reduces the noise while keeping the speech component in the reference microphone undistorted, i.e.,~$\mathbf{w}_{{\text{ MVDR}}}^H \mathbf{a} = A_m$.
+Using $\mu > 0$, the residual noise at the MVDR output can be further suppressed at the cost of introducing speech distortion.
+Setting $\mu=1$, the SDW-MWF results in the MWF. 
+If $\mu > 1$, the noise power is further reduced at the expense of increased speech distortion. 
+Hence the selection of the trade-off parameter in the SDW-MWF is of crucial importance. 
+
+\section{Trade-off Parameter Selection}
+\label{sec: par}
+In the following, the L-curve method~\cite{Hansen_SIAM_1993} used in regularized acoustic multichannel equalization~\cite{Kodrasi_ITASLP_2013} is exploited to derive an analytical expression for a time-frequency dependent trade-off parameter.
+Furthermore, insights on the resulting postfilter and its robustness to SNR estimation errors will be provided.
+
+\subsection{Parameter derivation}
+Using~(\ref{eq: cost_wmwf}),~(\ref{eq: corr}),~(\ref{eq: decomp}), and~(\ref{eq: rho}), speech distortion and noise power can be expressed as
+\begin{align}
+  \label{eq: eps}
+  \psi_{\mathbf{x}} & = P_s |A_m|^2 \frac{\mu^2}{(\mu+\rho)^2} \; \; \text{and} \; \; \psi_{\mathbf{v}} = P_s |A_m|^2 \frac{\rho}{(\mu+\rho)^2}.
+\end{align}
+Fig.~\ref{fig: lcurve}(a) depicts a typical parametric plot of $\psi_{\mathbf{v}}$ versus $\psi_{\mathbf{x}}$ for $50$ trade-off parameters linearly spaced between $10^{-4}$ and $5$, with the marked points showing the value of $\mu$ at the given positions.
+Due to the nature of the arising trade-off between $\psi_{\mathbf{v}}$ and $\psi_{\mathbf{x}}$~(cf.~(\ref{eq: eps})), this parametric plot has an L-shape, with the corner, i.e.,~point of maximum curvature, located where the filter $\mathbf{w}$ changes in nature from being dominated by large noise power to being dominated by large speech distortion.
+At the point of maximum curvature, i.e.,~$\mu = 1$ in the depicted example, speech distortion and noise power are simultaneously minimized.
+Hence we propose to select the trade-off parameter in the SDW-MWF as the point of maximum curvature of the parametric plot of $\psi_{\mathbf{v}}$ versus $\psi_{\mathbf{x}}$. \newline 
+\begin{figure}[t!]
+  \centering
+  \input{Plots/lcurve.tikz} 
+  \caption{Typical parametric plot of (a) noise power versus speech distortion and (b) (weighted) noise power versus (weighted) speech distortion}
+  \label{fig: lcurve}
+\end{figure}
+Using such a parameter inherently implies that the performance in terms of speech distortion and noise reduction is equally valuable in all frequency bands and for all speech communication systems.
+However, depending on the system as well as on the frequency band under consideration, one performance measure might be more important than the other. 
+To account for this difference, we propose introducing weighting functions, i.e.,
+\begin{equation}
+  \psi_{\alpha \mathbf{x}} = \alpha \psi_{\mathbf{x}}  \; \; \text{and} \; \; \psi_{\beta \mathbf{v}} = \beta \psi_{\mathbf{v}},
+\end{equation}
+with $\alpha$ and $\beta$ being the speech distortion and noise power weighting functions, defined e.g.~based on psychoacoustically motivated measures such as average masking threshold~\cite{Painter_IEEE_2000} or speech intelligibility weighting~\cite{ASA}~(cf.~Section~\ref{sec: exp}).
+Introducing a weighting function changes the point of maximum curvature as shown in Fig.~\ref{fig: lcurve}(b), which depicts the parametric plots of $\psi_{\beta \mathbf{v}}$ versus $\psi_{\alpha \mathbf{x}}$ for different weights.
+Weighting the speech distortion term more yields a lower trade-off parameter, i.e.,~the point of maximum curvature is at $\mu = 0.25$.
+On the other hand weihgting the noise power more yields a higher trade-off parameter, i.e.,~$\mu = 4$.
+These points are also marked in the original plot in Fig.~\ref{fig: lcurve}(a), showing the impact of introducing weighting functions on the resulting trade-off. \newline
+The curvature $\kappa$ of $\psi_{\beta \mathbf{v}}(k)$ versus $\psi_{\alpha \mathbf{x}}(k)$ is defined as~\cite{Sternberg_book_2012}
+\begin{align}
+  \label{eq: curv}
+  \kappa = \frac{ \psi'_{\alpha\mathbf{x}} \psi''_{\beta\mathbf{v}} - \psi''_{\alpha\mathbf{x}} \psi'_{\beta\mathbf{v}}}{\{(\psi'_{\alpha \mathbf{x}})^{2} + (\psi'_{\beta\mathbf{v}})^{2}\}^{\frac{3}{2}}},
+\end{align}
+where $\{ \cdot \}^{'}$ and $\{ \cdot \}^{''}$ denote the first and second derivative with respect to $\mu$.
+The computation of the derivatives yields
+\begin{align}
+  \label{eq: psii}
+  \psi'_{\alpha\mathbf{x}} &\!\! = \! \!\frac{2 \alpha P_s|A_m|^2 \mu \rho}{(\mu+\rho)^3}, \; \; \psi''_{\alpha\mathbf{x}} \!\! = \!\! \frac{2  \alpha P_s|A_m|^2\rho(-2\mu+\rho)}{(\mu+\rho)^4}, \\
+  \psi'_{\beta\mathbf{v}} &\!\!= \!\! \frac{-2 \beta P_s|A_m|^2\rho}{(\mu+\rho)^3}, \; \; \psi''_{\beta\mathbf{v}}\!\!=\!\! \frac{6 \beta P_s|A_m|^2\rho}{(\mu+\rho)^4}.
+\end{align}
+Using the computed derivatives, $\kappa$ can be written as
+\begin{equation}
+  \label{eq: ccurv}
+  \kappa = \frac{\alpha\beta (\mu + \rho)^3}{2 P_s |A_m|^2 \rho (\alpha^2 \mu^2 + \beta^2)^{\frac{3}{2}}}.
+\end{equation}
+To compute the point of maximum curvature,~(\ref{eq: ccurv}) is maximized by setting its derivative to $0$, i.e.,
+\begin{align}
+  \label{eq: opteq}
+  \kappa' & = \frac{3\alpha\beta(\mu+\rho)^2 (\beta^2- \alpha^2\mu \rho)}{2 P_s|A_m|^2\rho (\alpha^2 \mu + \beta^2)^{\frac{5}{2}}} = 0.
+\end{align}
+The solution to~(\ref{eq: opteq}) yields
+\begin{equation}
+  \label{eq: optpar}
+  \mu = \frac{\beta^2}{\alpha^2 \rho}.
+\end{equation}
+The point of maximum curvature in~(\ref{eq: optpar}) only depends on the user-defined weighting functions $\alpha$, $\beta$, and on the SNR at the MVDR output, which can be estimated by employing an SNR estimator~\cite{Martin_ITSAP_2001,Cohen_ITSAP_2003,Gerkmann_ITASLP_2012,Ephraim_ITASSP_1984,Breihaupt_ICASSP_2008}. \newline
+In summary, three choices of the trade-off parameter will be analyzed, i.e., the point of maximum curvature when no additional weights are applied $\mu_{\rm o} = \frac{1}{\rho}$, when a higher weight is put on the speech distortion term $\mu_{\rm sd} = \frac{1}{\alpha^2 \rho}$, and when a  higher weight is put on the noise reduction term $\mu_{\rm nr} = \frac{\beta^2}{\rho}$. 
+The weighting functions used in this paper are discussed in Section~\ref{sec: exp}.
+\subsection{Robustness to SNR estimation errors}
+Different choices of the trade-off parameter clearly yield different postfilters.
+Defining a postfilter to be the optimal one is not feasible, since different postfilters might be optimal for different applications.
+However, for a given desired postfilter, its robustness to SNR estimation errors can be evaluated.
+The robustness of a postfilter to SNR estimation errors can be evaluated by analyzing its derivative with respect to the SNR $\rho$~\cite{Demiroglu_thesis,Whitehead_ICASSP_2011}.
+If the derivative is large, misestimating the SNR will yield a large deviation between the desired and the applied postfilter. On the contrary, a low derivative value will not cause a large fluctuation in the postfilter. \newline
+Table~\ref{tbl: postfilters} summarizes the postfilters and their derivatives obtained by using $\mu = 1$ and the proposed trade-off parameters.
+These different postfilters and the respective derivatives are also depicted in Figs.~\ref{fig: gain}(a) and~\ref{fig: gain}(b) for $-10~\text{dB} \leq \rho \leq 10~{\text{dB}}$ and for weighting parameters $\alpha = 2$ and $\beta = 2$.
+Fig.~\ref{fig: gain}(a) shows that for $\rho < 0$~dB, using $\mu_{\rm o}$ yields a more aggressive postfilter than using $\mu = 1$, i.e.,~a higher noise reduction performance as well as a higher speech distortion.
+For $\rho > 0$~dB the proposed postfilter is less aggressive, yielding a lower speech distortion as well as a lower  noise reduction.
+Weighting the speech distortion or the noise power more shifts the postfilter to the left or right respectively.  
+The derivatives depicted in Fig.~\ref{fig: gain}(b) show that using $\mu_{\rm o}$ is more robust to SNR estimation errors than using $\mu = 1$ for $\rho < -4.6$~dB and $\rho > 4.6$~dB.
+Furthermore, using $\mu_{\rm sd}$ yields a generally more sensitive postfilter, whereas using $\mu_{\rm nr}$ yields a generally more robust postfilter.
+As the SNR increases, it can be seen that all postfilters exhibit a low sensitivity to SNR estimation errors. 
+\begin{table}[b!]
+\begin{center}
+  \caption{Postfilter and derivative for different choices of the trade-off parameter}
+  \label{tbl: postfilters}
+  \begin{tabularx}{\linewidth}{Xrr}
+    \toprule
+    Trade-off parameter & Postfilter  & Derivative\\
+    \midrule
+    MWF with $\mu = 1$ & $\frac{\rho}{1+\rho}$ & $\frac{1}{(1+\rho)^2}$ \\
+    SDW-MWF with $\mu_{\rm o} = \frac{1}{\rho}$ & $\frac{\rho^2}{1+\rho^2}$ & $\frac{2 \rho}{(1+\rho^2)^2}$ \\
+    SDW-MWF with $\mu_{\rm sd} = \frac{1}{\alpha^2 \rho}$ & $\frac{\rho^2}{\alpha^{-2}+\rho^2}$ & $\frac{2 \alpha^{-2} \rho}{(\alpha^{-2}+\rho^2)^2}$ \\
+    SDW-MWF with $\mu_{\rm nr} = \frac{\beta^2}{\rho}$ & $\frac{\rho^2}{\beta^{2}+\rho^2}$ & $\frac{2 \beta^{2} \rho}{(\beta^{2}+\rho^2)^2}$ \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\end{table}
+\begin{figure}[t]
+  \centering
+  \input{Plots/gain.tikz}
+  \caption{(a) Postfilter and (b) postfilter derivative as a function of the SNR $\rho$ for different choices of the trade-off parameter}
+  \label{fig: gain}
+\end{figure} 
+
+\section{Experimental Results}
+\label{sec: exp}
+In this section, the MWF is compared to the SDW-MWF using the different proposed trade-off parameters. 
+The weights $\alpha$ and $\beta$ are determined based on the speech intelligibility index~\cite{ASA}, where each frequency band is assigned an importance weight to reflect how much a performance improvement in that band contributes to the overall speech intelligibility improvement. 
+In this work, the intelligibility indices are arbitrarily scaled between $1$ and $10$.
+By setting $\alpha$ or $\beta$ to the scaled intelligibility indices, speech distortion or noise power are weighted more in more important frequency bands.
+\subsection{Setup and performance measures}
+We have considered a scenario with $M= 2$ microphones placed $5$~cm apart and a speech source located at $0^\circ$. 
+The speech components were generated using measured room impulse responses with reverberation time $T_{60} \approx 450$~ms~\cite{Wen_IWAENC_2006}.
+The noise components consisted of spatially diffuse nonstationary babble speech generated using~\cite{Habets2008}.
+Several broadband input SNRs ranging from $-10$~dB to $10$~dB have been evaluated.
+The MVDR filter coefficients have been computed using anechoic steering vectors assuming knowledge of the direction-of-arrival of the speech source and a theoretically diffuse noise correlation matrix.
+The signals were processed at a sampling frequency $f_s = 16$~kHz using a weighted overlap-add framework with a block size of $512$ samples and an overlap of $50\%$ between successive blocks. 
+The SNR at the MVDR output has been estimated using the minimum statistics-based estimator~\cite{Martin_ITSAP_2001} combined with the cepstral smoothing approach~\cite{Breihaupt_ICASSP_2008}.
+The true SNR has also been computed using the periodograms of the speech and noise component.
+The minimum gain for all postfilters has been set to $-10$~dB. \newline
+The performance is evaluated in terms of segmental noise reduction ($\text{NR}_{\rm seg}$)~\cite{Lotter_EURASIP_2005}, segmental speech SNR ($\text{SSNR}_{\rm seg}$) reflecting the speech preservation performance~\cite{Lotter_EURASIP_2005}, and the segmental SNR improvement ($\Delta \text{SNR}_{\rm seg}$) reflecting the overall improvement in terms of both noise reduction and speech preservation.
+To evaluate the robustness of the postfilters to SNR estimation errors, the mismatch between the postfilter $G$ computed based on the true SNR and the postfilter $\hat{G}$ computed based on the estimated SNR has been calculated as
+\begin{align*}
+M_{G} = 10 \log_{10} \sum_{l = 1}^L \sum_{k = 1}^K |G(k,l) - \hat{G}(k,l)|^2,
+\end{align*}
+with $L$ and $K$ being the total number of time and frequency bins respectively. 
+\subsection{Results}
+The performance for different trade-off parameters when the SNR at the MVDR output is known is depicted in Fig.~\ref{fig: perfect}.
+As illustrated in Figs.~\ref{fig: perfect}(a) and~\ref{fig: perfect}(b), using $\mu=1$ or $\mu_{\rm o}$ yields a very similar performance in terms of noise reduction and speech SNR. 
+As a result, the overall $\Delta \text{SNR}_{\rm seg}$ depicted in Fig.~\ref{fig: perfect}(c) achieved by both the MWF and the SDW-MWF is very similar.
+Furthermore, using $\mu_{\rm sd}$ yields as expected a loss in noise reduction and a gain in speech SNR, whereas using $\mu_{\rm nr}$ increases the noise reduction performance at the cost of a decrease in speech SNR.
+Finally, Fig.~\ref{fig: perfect}(c) shows that when the true SNR is known, weighting the speech distortion or noise power more yields a lower $\Delta \text{SNR}_{\rm seg}$ than when no weights are applied. \newline
+\begin{figure}[t]
+\centering
+\input{Plots/perfect_mod.tikz}
+\caption{(a) Segmental noise reduction, (b) segmental speech SNR, and (c) segmental SNR improvement based on the true SNR for different trade-off parameters}
+\label{fig: perfect}
+\end{figure}
+\begin{figure}[t]
+\centering
+\input{Plots/estimated_mod.tikz}
+\caption{(a) Segmental noise reduction, (b) segmental speech SNR, and (c) segmental SNR improvement based on the estimated SNR for different trade-off parameters}
+\label{fig: estimated}
+\end{figure}
+Fig.~\ref{fig: estimated} depicts the performance in the realistic scenario of using an SNR estimator for computing the postfilters. 
+As illustrated, using $\mu_{\rm o}$ instead of $\mu = 1$ yields a significantly higher noise reduction performance in particular for low input SNRs without significantly worsening the speech SNR. 
+This performance increase is reflected in achieving a higher $\Delta \text{SNR}_{\rm seg}$ over all input SNRs as depicted in Fig.~\ref{fig: estimated}(c).
+Since the proposed trade-off parameter outperforms $\mu = 1$ only when the SNR is estimated, i.e., in the likely presence of SNR estimation errors, this performance gain can be explained by the higher robustness of the resulting postfilter.  \newline
+Weighting the speech distortion or noise power terms yields as expected similar results as before.
+Since at low input SNRs by using $\mu_{\rm nr}$ the increase in noise reduction does not cause a significant decrease in speech SNR, using this trade-off parameter yields the highest $\Delta \text{SNR}_{\rm seg}$ in this input SNR region.   
+However, as the input SNR increases also the loss in speech SNR increases, leading to $\mu_{\rm nr}$ yielding the lowest $\Delta \text{SNR}_{\rm seg}$.
+The latter can also be explained by the previous robustness analysis suggesting that at higher input SNRs, the postfilter derived using $\mu_{\rm nr}$ is the most sensitive one to SNR estimation errors. \newline
+Finally, Table~\ref{tbl: err} presents the mismatch between the desired and estimated postfilters averaged over all input SNRs. 
+As expected from the theoritcal robustness analysis, using $\mu_{\rm nr}$ yields the lowest mismatch value whereas using $\mu_{\rm sd}$ reults in the highest mismatch value. 
+Furthermore, the proposed trade-off parameter $\mu_{\rm o}$ results in a more robust postfilter than $\mu = 1$.
+\begin{table}[t]
+\begin{center}
+  \caption{Postfilter mismatch for different trade-off parameters averaged over all input SNRs}
+  \label{tbl: err}
+  \begin{tabularx}{\linewidth}{Xrrrr}
+    \toprule
+      Trade-off parameter & $\mu = 1$ & $\mu_{\rm o}$ & $\mu_{\rm sd}$ & $\mu_{\rm nr}$\\
+      \midrule
+      Postfilter mismatch $M_G$ [dB] & $6.77$ & $6.39$ & $8.32$ & $4.84$ \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\end{table}
+
+\section{Conclusion}
+In this letter it has been proposed to compute the trade-off parameter in the SDW-MWF as the one that maximizes the curvature of the parametric plot of noise power versus speech distortion.
+Based on what is more important for the speech communication application or on perceptually motivated criteria, speech distortion and noise power can also be weighted in advance.
+Theoretical and experimental results have shown that the proposed parameter results in a more robust filter to SNR estimation errors than the traditional MWF, significantly improving the performance.
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}

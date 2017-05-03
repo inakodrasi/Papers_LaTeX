@@ -1,0 +1,2193 @@
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+clip=false,
+scale only axis,
+xmin=0,
+xmax=50,
+area legend,
+xtick={5,18,31,44},
+xticklabels={S$_1$-NPM$_1$, S$_2$-NPM$_1$, S$_1$-NPM$_2$, S$_2$-NPM$_2$},
+xlabel absolute, xlabel style={yshift=0.2em},
+xlabel={Scenario},
+xmajorgrids,
+ymin=-5,
+ymax=105,
+ylabel={Score},
+ytick = {0,20,40,60,80,100},
+ylabel absolute, ylabel style={yshift=-1.0em},
+ymajorgrids,
+ legend style={at={(.5,1.07)},anchor=south, inner sep = 0pt,font = \footnotesize},
+    legend cell align=left,
+    legend columns=9,
+]
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+1 100\\
+1 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+2 15\\
+2 22\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+3 37\\
+3 72\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+4 34.75\\
+4 49\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+5 61.5\\
+5 90\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+6 72\\
+6 98\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+7 49.25\\
+7 60\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+8 84.5\\
+8 96\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+9 90\\
+9 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+14 100\\
+14 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+15 20.75\\
+15 46\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+16 37.75\\
+16 58\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+17 11.25\\
+17 16\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+18 57.75\\
+18 72\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+19 67.5\\
+19 81\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+20 37\\
+20 63\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+21 83.25\\
+21 96\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+22 77.75\\
+22 92\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+27 100\\
+27 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+28 12.75\\
+28 17\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+29 44\\
+29 81\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+30 52.5\\
+30 80\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+31 80\\
+31 95\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+32 58.25\\
+32 97\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+33 50\\
+33 73\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+34 78\\
+34 97\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+35 60.25\\
+35 94\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+40 100\\
+40 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+41 24.75\\
+41 37\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+42 45\\
+42 63\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+43 17.5\\
+43 35\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+44 65\\
+44 81\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+45 51.25\\
+45 74\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+46 61.75\\
+46 70\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+47 67.75\\
+47 90\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+48 53.75\\
+48 78\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+1 100\\
+1 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+2 0\\
+2 3\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+3 3\\
+3 10.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+4 0\\
+4 9.5\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+5 10\\
+5 39.5\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+6 21\\
+6 51.25\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+7 3\\
+7 29.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+8 40\\
+8 50.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+9 64\\
+9 74\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+14 100\\
+14 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+15 0\\
+15 2.5\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+16 0\\
+16 13\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+17 0\\
+17 0\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+18 6\\
+18 29.25\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+19 2\\
+19 34.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+20 3\\
+20 19.25\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+21 48\\
+21 60\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+22 27\\
+22 54.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+27 100\\
+27 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+28 0\\
+28 1\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+29 0\\
+29 14.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+30 0\\
+30 30\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+31 26\\
+31 49\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+32 5\\
+32 18\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+33 0\\
+33 26.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+34 40\\
+34 56.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+35 3\\
+35 33.5\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+40 100\\
+40 100\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+41 0\\
+41 4\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+42 0\\
+42 26\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+43 0\\
+43 2.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+44 3\\
+44 29.25\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+45 0\\
+45 23\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+46 6\\
+46 31.75\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+47 24\\
+47 47.25\\
+};
+\addplot [
+color=black,
+dashed,
+forget plot
+]
+table[row sep=crcr]{
+48 2\\
+48 18.75\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+0.875 100\\
+1.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+1.875 22\\
+2.125 22\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+2.875 72\\
+3.125 72\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+3.875 49\\
+4.125 49\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+4.875 90\\
+5.125 90\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+5.875 98\\
+6.125 98\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+6.875 60\\
+7.125 60\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+7.875 96\\
+8.125 96\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+8.875 100\\
+9.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+13.875 100\\
+14.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+14.875 46\\
+15.125 46\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+15.875 58\\
+16.125 58\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+16.875 16\\
+17.125 16\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+17.875 72\\
+18.125 72\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+18.875 81\\
+19.125 81\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+19.875 63\\
+20.125 63\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+20.875 96\\
+21.125 96\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+21.875 92\\
+22.125 92\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+26.875 100\\
+27.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+27.875 17\\
+28.125 17\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+28.875 81\\
+29.125 81\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+29.875 80\\
+30.125 80\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+30.875 95\\
+31.125 95\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+31.875 97\\
+32.125 97\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+32.875 73\\
+33.125 73\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+33.875 97\\
+34.125 97\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+34.875 94\\
+35.125 94\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+39.875 100\\
+40.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+40.875 37\\
+41.125 37\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+41.875 63\\
+42.125 63\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+42.875 35\\
+43.125 35\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+43.875 81\\
+44.125 81\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+44.875 74\\
+45.125 74\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+45.875 70\\
+46.125 70\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+46.875 90\\
+47.125 90\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+47.875 78\\
+48.125 78\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+0.875 100\\
+1.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+1.875 0\\
+2.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+2.875 3\\
+3.125 3\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+3.875 0\\
+4.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+4.875 10\\
+5.125 10\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+5.875 21\\
+6.125 21\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+6.875 3\\
+7.125 3\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+7.875 40\\
+8.125 40\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+8.875 64\\
+9.125 64\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+13.875 100\\
+14.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+14.875 0\\
+15.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+15.875 0\\
+16.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+16.875 0\\
+17.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+17.875 6\\
+18.125 6\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+18.875 2\\
+19.125 2\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+19.875 3\\
+20.125 3\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+20.875 48\\
+21.125 48\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+21.875 27\\
+22.125 27\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+26.875 100\\
+27.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+27.875 0\\
+28.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+28.875 0\\
+29.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+29.875 0\\
+30.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+30.875 26\\
+31.125 26\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+31.875 5\\
+32.125 5\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+32.875 0\\
+33.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+33.875 40\\
+34.125 40\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+34.875 3\\
+35.125 3\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+39.875 100\\
+40.125 100\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+40.875 0\\
+41.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+41.875 0\\
+42.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+42.875 0\\
+43.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+43.875 3\\
+44.125 3\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+44.875 0\\
+45.125 0\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+45.875 6\\
+46.125 6\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+46.875 24\\
+47.125 24\\
+};
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+47.875 2\\
+48.125 2\\
+};
+\addplot [
+color=black,
+solid,
+legend image code/.code = {\draw[black] (0,0) -- (0.6cm,0); \draw[black] (0.2cm,0) circle (1.5pt); \draw[black] (0.4cm,0) circle (1.5pt);},
+mark = o,
+mark size = 1.5pt,
+thick,
+]
+table[row sep=crcr]{
+0.75 100\\
+0.75 100\\
+1.25 100\\
+1.25 100\\
+0.75 100\\
+};
+\addlegendentry{Ref.};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!70!white,
+]
+table[row sep=crcr]{
+1.75 3\\
+1.75 15\\
+2.25 15\\
+2.25 3\\
+1.75 3\\
+};
+\addlegendentry{Anchor};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = crosshatch,
+]
+table[row sep=crcr]{
+2.75 10.75\\
+2.75 37\\
+3.25 37\\
+3.25 10.75\\
+2.75 10.75\\
+};
+\addlegendentry{$x_1(n)$};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!30!white
+]
+table[row sep=crcr]{
+3.75 9.5\\
+3.75 34.75\\
+4.25 34.75\\
+4.25 9.5\\
+3.75 9.5\\
+};
+\addlegendentry{L-RMCLS};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = north east lines,
+]
+table[row sep=crcr]{
+4.75 39.5\\
+4.75 61.5\\
+5.25 61.5\\
+5.25 39.5\\
+4.75 39.5\\
+};
+\addlegendentry{R-RMCLS};
+\addplot [
+color=black,
+solid,
+thick,
+fill = white,
+]
+table[row sep=crcr]{
+5.75 51.25\\
+5.75 72\\
+6.25 72\\
+6.25 51.25\\
+5.75 51.25\\
+};
+\addlegendentry{S-RMCLS};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = dots,
+]
+table[row sep=crcr]{
+6.75 29.75\\
+6.75 49.25\\
+7.25 49.25\\
+7.25 29.75\\
+6.75 29.75\\
+};
+\addlegendentry{L-PMINT};
+\addplot [
+color=black,
+solid,
+fill = black!50!white,
+thick,
+]
+table[row sep=crcr]{
+7.75 50.75\\
+7.75 84.5\\
+8.25 84.5\\
+8.25 50.75\\
+7.75 50.75\\
+};
+\addlegendentry{R-PMINT};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = north west lines,
+]
+table[row sep=crcr]{
+8.75 74\\
+8.75 90\\
+9.25 90\\
+9.25 74\\
+8.75 74\\
+};
+\addlegendentry{S-PMINT};
+\addplot [
+color=black,
+solid,
+thick,
+mark = o,
+mark size = 1.5pt,
+forget plot
+]
+table[row sep=crcr]{
+13.75 100\\
+13.75 100\\
+14.25 100\\
+14.25 100\\
+13.75 100\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!70!white,
+forget plot
+]
+table[row sep=crcr]{
+14.75 2.5\\
+14.75 20.75\\
+15.25 20.75\\
+15.25 2.5\\
+14.75 2.5\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = crosshatch,
+forget plot
+]
+table[row sep=crcr]{
+15.75 13\\
+15.75 37.75\\
+16.25 37.75\\
+16.25 13\\
+15.75 13\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!30!white,
+forget plot
+]
+table[row sep=crcr]{
+16.75 0\\
+16.75 11.25\\
+17.25 11.25\\
+17.25 0\\
+16.75 0\\
+};
+\addplot [
+color=black,
+solid,
+pattern = north east lines,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+17.75 29.25\\
+17.75 57.75\\
+18.25 57.75\\
+18.25 29.25\\
+17.75 29.25\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = white,
+forget plot
+]
+table[row sep=crcr]{
+18.75 34.75\\
+18.75 67.5\\
+19.25 67.5\\
+19.25 34.75\\
+18.75 34.75\\
+};
+\addplot [
+color=black,
+solid,
+pattern = dots,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+19.75 19.25\\
+19.75 37\\
+20.25 37\\
+20.25 19.25\\
+19.75 19.25\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!50!white,
+forget plot
+]
+table[row sep=crcr]{
+20.75 60\\
+20.75 83.25\\
+21.25 83.25\\
+21.25 60\\
+20.75 60\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = north west lines,
+forget plot
+]
+table[row sep=crcr]{
+21.75 54.75\\
+21.75 77.75\\
+22.25 77.75\\
+22.25 54.75\\
+21.75 54.75\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+mark = o,
+mark size = 1.5pt,
+forget plot
+]
+table[row sep=crcr]{
+26.75 100\\
+26.75 100\\
+27.25 100\\
+27.25 100\\
+26.75 100\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!70!white,
+forget plot
+]
+table[row sep=crcr]{
+27.75 1\\
+27.75 12.75\\
+28.25 12.75\\
+28.25 1\\
+27.75 1\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = crosshatch,
+forget plot
+]
+table[row sep=crcr]{
+28.75 14.75\\
+28.75 44\\
+29.25 44\\
+29.25 14.75\\
+28.75 14.75\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!30!white,
+forget plot
+]
+table[row sep=crcr]{
+29.75 30\\
+29.75 52.5\\
+30.25 52.5\\
+30.25 30\\
+29.75 30\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = north east lines,
+forget plot
+]
+table[row sep=crcr]{
+30.75 49\\
+30.75 80\\
+31.25 80\\
+31.25 49\\
+30.75 49\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = white,
+forget plot
+]
+table[row sep=crcr]{
+31.75 18\\
+31.75 58.25\\
+32.25 58.25\\
+32.25 18\\
+31.75 18\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = dots,
+forget plot
+]
+table[row sep=crcr]{
+32.75 26.75\\
+32.75 50\\
+33.25 50\\
+33.25 26.75\\
+32.75 26.75\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!50!white,
+forget plot
+]
+table[row sep=crcr]{
+33.75 56.75\\
+33.75 78\\
+34.25 78\\
+34.25 56.75\\
+33.75 56.75\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = north west lines,
+forget plot
+]
+table[row sep=crcr]{
+34.75 33.5\\
+34.75 60.25\\
+35.25 60.25\\
+35.25 33.5\\
+34.75 33.5\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+mark = o,
+mark size = 1.5pt,
+forget plot
+]
+table[row sep=crcr]{
+39.75 100\\
+39.75 100\\
+40.25 100\\
+40.25 100\\
+39.75 100\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!70!white,
+forget plot
+]
+table[row sep=crcr]{
+40.75 4\\
+40.75 24.75\\
+41.25 24.75\\
+41.25 4\\
+40.75 4\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = crosshatch,
+forget plot
+]
+table[row sep=crcr]{
+41.75 26\\
+41.75 45\\
+42.25 45\\
+42.25 26\\
+41.75 26\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!30!white,
+forget plot
+]
+table[row sep=crcr]{
+42.75 2.75\\
+42.75 17.5\\
+43.25 17.5\\
+43.25 2.75\\
+42.75 2.75\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = north east lines,
+forget plot
+]
+table[row sep=crcr]{
+43.75 29.25\\
+43.75 65\\
+44.25 65\\
+44.25 29.25\\
+43.75 29.25\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = white,
+forget plot
+]
+table[row sep=crcr]{
+44.75 23\\
+44.75 51.25\\
+45.25 51.25\\
+45.25 23\\
+44.75 23\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+pattern = dots,
+forget plot
+]
+table[row sep=crcr]{
+45.75 31.75\\
+45.75 61.75\\
+46.25 61.75\\
+46.25 31.75\\
+45.75 31.75\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+fill = black!50!white,
+forget plot
+]
+table[row sep=crcr]{
+46.75 47.25\\
+46.75 67.75\\
+47.25 67.75\\
+47.25 47.25\\
+46.75 47.25\\
+};
+\addplot [
+color=black,
+solid,
+pattern = north west lines,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+47.75 18.75\\
+47.75 53.75\\
+48.25 53.75\\
+48.25 18.75\\
+47.75 18.75\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+0.5 100\\
+1.5 100\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+1.5 9\\
+2.5 9\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+2.5 24\\
+3.5 24\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+3.5 30\\
+4.5 30\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+4.5 47\\
+5.5 47\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+5.5 66\\
+6.5 66\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+6.5 40\\
+7.5 40\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+7.5 72\\
+8.5 72\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+8.5 83\\
+9.5 83\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+13.5 100\\
+14.5 100\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+14.5 8\\
+15.5 8\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+15.5 28\\
+16.5 28\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+16.5 4\\
+17.5 4\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+17.5 42\\
+18.5 42\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+18.5 45\\
+19.5 45\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+19.5 28\\
+20.5 28\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+20.5 72\\
+21.5 72\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+21.5 71\\
+22.5 71\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+26.5 100\\
+27.5 100\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+27.5 7\\
+28.5 7\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+28.5 23\\
+29.5 23\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+29.5 43\\
+30.5 43\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+30.5 61\\
+31.5 61\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+31.5 34\\
+32.5 34\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+32.5 38\\
+33.5 38\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+33.5 71\\
+34.5 71\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+34.5 44\\
+35.5 44\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+39.5 100\\
+40.5 100\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+40.5 6\\
+41.5 6\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+41.5 39\\
+42.5 39\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+42.5 11\\
+43.5 11\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+43.5 45\\
+44.5 45\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+44.5 39\\
+45.5 39\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+45.5 50\\
+46.5 50\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+46.5 55\\
+47.5 55\\
+};
+\addplot [
+color=black,
+solid,
+thick,
+forget plot
+]
+table[row sep=crcr]{
+47.5 29\\
+48.5 29\\
+};
+
+\end{axis}
+\end{tikzpicture}%

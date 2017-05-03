@@ -1,0 +1,53 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+%
+\pgfplotsset{every tick label/.append style={font=\footnotesize}}
+\begin{tikzpicture}[font = \small] 
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+axis on top,
+scale only axis,
+xmin=0.5,
+xmax=9.5,
+xtick={1,2,3,4,5,6,7,8,9},
+title = {Noise reduction factor [dB]},
+title style = {yshift = -0.5em},
+xticklabels={$-7$, $-6$, $-5$, $-4$, $-3$, $-2$, $-1$, $0$, $1$},
+xlabel={$\log_{10} \delta$},
+ylabel absolute, ylabel style={yshift=-1.3em},
+xlabel absolute, xlabel style={yshift=0.5em},
+y dir=reverse,
+ymin=0.5,
+ymax=9.5,
+ytick={1,2,3,4,5,6,7,8,9},
+yticklabels={$1$, $0$, $-1$, $-2$, $-3$, $-4$, $-5$, $-6$, $-7$},
+ylabel={$\log_{10} \mu$},
+colormap/hot2,
+colorbar,
+colorbar style={at={(1.01,1)},
+	 ytick = {-5,10,25,40,55,70},
+	 yticklabels = {-5,10,25,40,55,70},
+      	   yticklabel style={
+	 text width=1em,
+	 align=left,
+        }   
+    },	
+point meta min=-9.08238095452346,
+point meta max=57.0904058366795
+]
+\addplot graphics [xmin=0.5,xmax=9.5,ymin=0.5,ymax=9.5] {Plots2/nr_rpdnr_ex-1.png};
+\addplot[only marks,mark=*,color=green, mark size = 2pt, very thick] plot coordinates{
+(5,2)
+};
+
+\end{axis}
+\end{tikzpicture}%

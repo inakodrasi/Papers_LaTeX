@@ -1,0 +1,112 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.20810,0.16630,0.52920}%
+\definecolor{mycolor2}{rgb}{0.21783,0.72504,0.61926}%
+\definecolor{mycolor3}{rgb}{0.97630,0.98310,0.05380}%
+%
+\begin{tikzpicture}[font = \footnotesize]
+
+\begin{axis}[%
+width=0.17\figurewidth,
+height=0.8\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+bar shift auto,
+xmin=1.5,
+xmax=4.5,
+xlabel={$M$ \\ (a)},
+ymin=0,
+ymax=3.5,
+ytick = {0,0.5,1,1.5,2,2.5,3,3.5},
+ylabel={$\Delta$fwSSNR [dB]},
+xlabel absolute, xlabel style={align = center, yshift=0.6em},
+ylabel absolute, ylabel style={yshift=-1.0em},
+xmajorgrids,
+ymajorgrids,
+legend style={at={(1.15,1.07)},anchor=south},
+legend cell align=left,
+legend columns=4
+]
+\addplot[ybar, bar width=3, fill=mycolor1, draw=black, pattern = north east lines, area legend] table[row sep=crcr] {%
+2	2.93287323591108\\
+3	3.17599522535554\\
+4	3.27872433208642\\
+};
+\addlegendentry{$\hat{\mathbf{d}}_{_{\rm CW}}$}
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+1	0\\
+5	0\\
+};
+\addplot[ybar, bar width=3, fill=white!70!black, draw=black, area legend] table[row sep=crcr] {%
+2	2.93287323591108\\
+3	3.17809882295623\\
+4	3.26383179437226\\
+};
+\addlegendentry{$\hat{\mathbf{d}}_{_{\rm CS}}$}
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+1	0\\
+5	0\\
+};
+\addplot[ybar, bar width=3, fill=mycolor3, draw=black, pattern = horizontal lines, area legend] table[row sep=crcr] {%
+2	2.77268958794257\\
+3	3.02384594733633\\
+4	2.84730038109254\\
+};
+\addlegendentry{$\hat{\mathbf{d}}_{_{\rm LS}}$}
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+1	0\\
+5	0\\
+};
+\end{axis}
+
+\begin{axis}[%
+width=0.17\figurewidth,
+height=0.8\figureheight,
+at={(0.25\figurewidth,0\figureheight)},
+scale only axis,
+bar shift auto,
+xmin=1.5,
+xmax=4.5,
+xlabel={$M$ \\ (b)},
+ymin=-0.5,
+xlabel absolute, xlabel style={align = center, yshift=0.6em},
+ylabel absolute, ylabel style={yshift=-1.0em},
+ymax=0,
+ytick = {0,-0.1,-0.2,-0.3,-0.4,-0.5},
+ylabel={$\Delta$CD [dB]},
+xmajorgrids,
+ymajorgrids,
+]
+\addplot[ybar, bar width=3, fill=mycolor1, draw=black, pattern = north east lines, area legend] table[row sep=crcr] {%
+2	-0.205686533845965\\
+3	-0.25278337608806\\
+4	-0.275982218739137\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+1	0\\
+5	0\\
+};
+\addplot[ybar, bar width=3, fill=white!70!black, draw=black, area legend] table[row sep=crcr] {%
+2	-0.205686533845963\\
+3	-0.251211319570035\\
+4	-0.273276155090767\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+1	0\\
+5	0\\
+};
+\addplot[ybar, bar width=3, fill=mycolor3, draw=black, pattern = horizontal lines, area legend] table[row sep=crcr] {%
+2	-0.167738813586639\\
+3	-0.165390710720178\\
+4	-0.110448582133262\\
+};
+\addplot[forget plot, color=white!15!black] table[row sep=crcr] {%
+1	0\\
+5	0\\
+};
+\end{axis}
+\end{tikzpicture}%

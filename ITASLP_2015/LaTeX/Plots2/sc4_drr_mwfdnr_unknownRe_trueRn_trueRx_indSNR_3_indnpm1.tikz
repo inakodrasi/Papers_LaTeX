@@ -1,0 +1,52 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\pgfplotsset{every tick label/.append style={font=\tiny}}
+\begin{tikzpicture}[font = \footnotesize] 
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+axis on top,
+scale only axis,
+xmin=0.5,
+xmax=12.5,
+xtick={1,2,3,4,5,6,7,8,9,10,11,12},
+xticklabels={$10^{\textendash 7}$, $10^{\textendash 6}$, $10^{\textendash 5}$, $10^{\textendash 4}$, $10^{\textendash 3}$, $10^{\textendash 2}$, $10^{\textendash 1}$, $1$, $3$, $5$, $7$, $10$},
+xlabel absolute, xlabel style={yshift=0.5em},
+xlabel={$\delta$},
+y dir=reverse,
+title = {DRR improvement [dB]},
+title style = {yshift = -0.5em},
+ymin=0.5,
+ymax=12.5,
+ytick={1,2,3,4,5,6,7,8,9,10,11,12},
+yticklabels={$10$, $7$, $5$, $3$, $1$, $10^{\textendash 1}$, $10^{\textendash 2}$, $10^{\textendash 3}$, $10^{\textendash 4}$, $10^{\textendash 5}$, $10^{\textendash 6}$, $10^{\textendash 7}$},
+ylabel={$\mu$},
+ylabel absolute, ylabel style={yshift=-0.7em},
+colormap/hot2,
+colorbar,
+colorbar style={at={(1.01,1)},
+	 ytick = {0, 2,4,6,8,10,12},
+	 yticklabels = {0,2,4,6,8,10},
+      	   yticklabel style={
+	 text width=0.5em,
+	 align=left,
+        }   
+    },	
+point meta min=-2.35758694802397,
+point meta max=12.1097396769352
+]
+\addplot graphics [xmin=0.5,xmax=12.5,ymin=0.5,ymax=12.5] {Plots2/sc4_drr_mwfdnr_unknownRe_trueRn_trueRx_indSNR_3_indnpm1-1.png};
+\addplot[only marks,mark=*,color=green, mark size = 2pt, very thick] plot coordinates{
+(5,6)
+};
+
+\end{axis}
+\end{tikzpicture}%

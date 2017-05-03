@@ -1,0 +1,63 @@
+  \begin{tikzpicture}
+    % Adjustments
+    \def\micd{.1cm}                % mic diameter
+    \def\micl{.6cm}                % mic length
+    \def\micw{.15cm}                % mic width
+    \def\micbend{10}               % mic bottom bend
+    \def\micdistance{.8cm}         % distance between microphones
+    \def\filterdistance{1.9cm}     % distance between microphone and filter
+    \def\filteroutline{.9cm}       % length of line which gets out of filter
+    \def\sumdistance{1.5cm}        % distance of sum node to the filter
+    \def\sumoutline{1cm}           % length of line which gets out of sum
+    \def\headdistance{2.4cm}       % distance between microphone and head
+%
+    % Styles
+    \tikzset{%
+      mic head/.style={fill=black,draw=black,circle,minimum size=\micd},
+      filter/.style={draw,minimum width=1.1cm,inner sep=2pt},
+      sum/.style={draw,circle},
+      xlabel/.style={inner sep=1pt,above,midway},
+      sumlabel/.style={xlabel},
+      hlabel/.style={xlabel,sloped,pos=.4},
+      head/.style={font=\Large}
+    }   %
+    % Draw Microphones
+    \begin{scope}[start chain=going below,every node/.style={on chain},node distance=\micdistance]
+      \node[mic head] (mic1) {};
+      \node[mic head] (mic2) {};
+      \node[mic head,yshift=-0.5*\micdistance] (mic3) {};
+    \end{scope}
+    \node[yshift=12pt] at ($(mic2)!.5!(mic3)$) {$\vdots$};
+    %
+    \foreach \m in {1,2,3} {%
+      \coordinate (m1) at ($(mic\m)+(\micl,\micw/2)$);
+      \coordinate (m2) at ($(mic\m)+(\micl,-\micw/2)$);
+      \draw (tangent cs:node=mic\m,point={(m1)},solution=1) -- (m1) to[bend left=\micbend] (m2) -- (tangent cs:node=mic\m,point={(m2)},solution=2);
+    }%
+    % Draw Filter
+    \foreach \m/\i in {1/1,2/2,3/M} {%
+      \node[filter,right=\filterdistance of mic\m] (filter\m) {\footnotesize $W^{*}_{\i}(k,l)$};
+      \draw ($(mic\m)+(\micl,0)$) to node[xlabel] (x\m) {\footnotesize $Y_{\i}(k,l)$} (filter\m);
+    }
+    \node[yshift=3pt] at ($(filter2)!.5!(filter3)$) {$\vdots$};
+    \node[yshift=3pt] at ($(x2)!.5!(x3)$) {$\vdots$};
+    % Sum Node
+    \node[sum] (sum) at ($(filter1)!.5!(filter3)+(\sumdistance,0)$) {$\Sigma$};
+    \draw[->] (sum) -- node[above] {\footnotesize $Z(k,l)$} ++(1.3,0);
+    % Connect filter with sum
+    \foreach \m in {1,2,3} {%
+      \draw (filter\m) -- ++(\filteroutline,0) -- (sum);
+    }%
+    % Head
+    \node[head] (head) at ($(mic1)!.5!(mic3)-(\headdistance,0)$) {\PHtattooedHead};
+    \node[fill=white,minimum width=4.8pt,minimum height=5.7pt,inner sep=0pt] at ($(head.center)+(2.3pt,-2.5pt)$) {};
+    %\node at ($(head.center)+(0.0pt,-20.5pt)$) {\footnotesize $S(k,l)$};
+    % Connect head with mics
+    \foreach \m/\i in {1/1,2/2,3/M} {%
+      \draw[->] (head) -- node[hlabel] {\footnotesize $X_{\i}(k,l)$} (mic\m);
+    }
+    % Draw noise
+    \draw[<-] (mic1) -- node[above=0.1cm] {\footnotesize $V_1(k,l)$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+    \draw[<-] (mic2) -- node[above=0.1cm] {\footnotesize $V_2(k,l)$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+    \draw[<-] (mic3) -- node[above=0.1cm] {\footnotesize $V_M(k,l)$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+  \end{tikzpicture}

@@ -1,0 +1,762 @@
+\documentclass[twocolumn]{bmcart}% uncomment this for twocolumn layout and comment line below
+%\documentclass{bmcart}
+
+%%% Load packages
+\usepackage{etex}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{amsmath,graphicx}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage[caption=no]{subfig}
+\usetikzlibrary{backgrounds,shapes,snakes}
+\usetikzlibrary{calc,chains,positioning}
+\usepackage{phaistos}
+\usepackage{cases}
+\usepackage{pgfplots}
+%\usepackage{empheq}
+\usepackage{cite}
+\usepackage{url}
+
+\begin{document}
+
+\newlength\figureheight
+\newlength\figurewidth
+\setlength\figureheight{3cm}
+\setlength\figurewidth{0.37\textwidth}
+
+%%% Start of article front matter
+\begin{frontmatter}
+
+\begin{fmbox}
+\dochead{Research}
+
+\title{Improving the Conditioning of the Optimization Criterion in Acoustic Multi-Channel Equalization}
+
+
+\author[
+   addressref={aff1},                   % id's of addresses, e.g. {aff1,aff2}
+   corref={aff1},                       % id of corresponding address, if any
+   email={ina.kodrasi@uni-oldenburg.de}   % email address
+]{\inits{IK}\fnm{Ina} \snm{Kodrasi}}
+\author[
+   addressref={aff1},
+   email={simon.doclo@uni-oldenburg.de}
+]{\inits{SD}\fnm{Simon} \snm{Doclo}}
+
+\address[id=aff1]{%                           % unique id
+  \orgname{Department of Medical Physics and Acoustics and Cluster of Excellence Hearing4All}, % university, etc
+  \street{University of Oldenburg},                     %
+  %\postcode{}                                % post or zip code
+  \city{Oldenburg},                              % city
+  \cny{Germany}                                    % country
+}
+
+%\end{fmbox}% comment this for two column layout
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Abstract begins here                 %%
+%%                                          %%
+%% Please refer to the Instructions for     %%
+%% authors on http://www.biomedcentral.com  %%
+%% and include the section headings         %%
+%% accordingly for your article type.       %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstractbox}
+
+  \begin{abstract} % abstract
+    In least-squares acoustic multi-channel equalization techniques, i.e., the multiple-input/output inverse theorem~(MINT), relaxed multi-channel least-squares~(RMCLS), and partial multi-channel equalization based on MINT~(PMINT), the length of the reshaping filters is generally chosen such that perfect dereverberation is achieved for perfectly estimated room impulse responses~(RIRs).
+    Since in practice however the available RIRs typically differ from the true ones, this choice of the reshaping filter length may not be optimal.
+    This paper proposes to increase the robustness of equalization techniques against RIR perturbations by using a shorter reshaping filter length than conventionally used, such that a better conditioned optimization criterion is obtained.
+    Based on the condition number of the convolution matrix of the RIRs, a mathematical link between the reshaping filter length and the robustness against RIR perturbations is established.
+ It is shown that shorter reshaping filters than conventionally used yield a smaller condition number, i.e., a higher robustness against RIR perturbations.
+    In addition, we propose a novel automatic non-intrusive procedure for determining the reshaping filter length based on the L-curve.
+    Simulation results using measured RIRs confirm that using a shorter reshaping filter length than conventionally used yields a significant increase in robustness against RIR perturbations for the MINT, RMCLS, and PMINT techniques.
+    Furthermore, it is shown that the PMINT technique using an optimal intrusively determined reshaping filter length outperforms all other considered techniques in terms of perceptual speech quality.
+    Finally, it is shown that the automatic non-intrusively determined reshaping filter length in the PMINT technique yields a similar performance as the optimal intrusively determined reshaping filter length. 
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The keywords begin here                  %%
+%%                                          %%
+%% Put each keyword in separate \kwd{}.     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{keyword}
+\kwd{speech dereverberation}
+\kwd{condition number}
+\kwd{reshaping filter length}
+\kwd{L-curve}
+\end{keyword}
+
+
+\end{abstractbox}
+%
+\end{fmbox}% uncomment this for twcolumn layout
+
+\end{frontmatter}
+
+\section{Introduction}
+The microphone signals recorded in many hands-free communication applications, such as teleconferencing, voice-controlled systems, or hearing aids, do not only contain the desired speech signal but also attenuated and delayed copies due to reverberation.
+Reverberation degrades the intelligibility of the speech signal~\cite{Beutelmann_2006,Warzybok_IWAENC_2014} as well as the performance of automatic speech recognition systems~\cite{Yoshioka_ISPM_2012,Xiong_EURASIP_2015}.
+
+In order to mitigate these detrimental effects of reverberation, several single- and multi-channel dereverberation techniques have been proposed~\cite{Naylor_Derev_book}, with multi-channel techniques being generally preferred since they exploit both the spectro-temporal and the spatial characteristics of the received microphone signals.
+Existing multi-channel dereverberation techniques can be broadly classified into spectral enhancement techniques~\cite{Lebart_ACUSTICA_2001,Habets2009a,Braun_EURASIP_2015,Kuklasinski_ITASLP_2016}, probabilistic modelling-based techniques~\cite{Nakatani_ITASLP_2010,Schmid_ITASLP_2014,Schwartz_ITASLP_2015,Jukic_ITASLP_2015}, and acoustic multi-channel equalization techniques~\cite{Miyoshi_ITASS_1988, Kallinger_ICASSP_2006,Jungmann_ITASLP_2012, Hikichi_EURASIP_2007, Lim_ITASLP_2014, Kodrasi_ITASLP_2013, Rashobh_ITASLP_2014}.
+Acoustic multi-channel equalization techniques aim to reshape the available room impulse responses (RIRs) between the speaker and the microphone array.
+They can in theory achieve perfect dereverberation~\cite{Miyoshi_ITASS_1988,Hacihabibouglu_ITASLP_2012}, and hence, comprise an attractive approach to speech dereverberation.
+
+A well-known multi-channel equalization technique aiming at acoustic system inversion is the multiple-input/output inverse theorem~(MINT) technique~\cite{Miyoshi_ITASS_1988}, which however suffers from drawbacks in practice. 
+Since the available RIRs typically differ from the true RIRs due to fluctuations~(e.g., temperature or position variations~\cite{Radlovic_ITSA_2000}) or due to the sensitivity of blind system identification~(BSI) and supervised system identification~(SSI) methods to near-common zeros or interfering noise~\cite{Khong_ICASSP_2008,Haque_SPL_2008,Hu_EUSIPCO_2015}, MINT fails to invert the true RIRs, possibly leading to severe distortions in the output signal~\cite{Hikichi_EURASIP_2007,Kodrasi_ITASLP_2013,Lim_ITASLP_2014}.
+In order to increase the robustness against RIR perturbations, partial multi-channel equalization techniques such as relaxed multi-channel least-squares~(RMCLS)~\cite{Lim_ITASLP_2014} and partial multi-channel equalization based on MINT~(PMINT)~\cite{Kodrasi_ITASLP_2013} have been recently proposed. 
+Since early reflections tend to improve speech intelligibility~\cite{Arweiler_JASA_2011,Warzybok_JASA_2012} and late reflections are the major cause of speech intelligibility degradation, the objective of these techniques is to shorten the overall impulse response by suppressing only the late reflections.
+While RMCLS imposes no constraints on the remaining early reflections, PMINT is more perceptually advantageous since it aims to also control the remaining early reflections.
+Although partial equalization techniques can be significantly more robust than MINT, their performance still remains rather susceptible to RIR perturbations~\cite{Lim_ITASLP_2014,Kodrasi_ITASLP_2013}.
+
+The length of the reshaping filters in MINT, RMCLS, and PMINT has been conventionally chosen such that perfect dereverberation can be achieved for perfectly estimated RIRs.
+Since in practice the available RIRs typically differ from the true ones, this choice of the reshaping filter length yields a high sensitivity of acoustic multi-channel equalization techniques to RIR perturbations.
+In this paper we propose to increase the robustness by decreasing the reshaping filter length, such that a better conditioned optimization criterion is obtained.
+A mathematical link between the reshaping filter length and the condition number of the multi-channel convolution matrix of the available RIRs, hence, the sensitivity of equalization techniques to RIR perturbations, is derived. 
+We show that shorter reshaping filters than conventionally used yield a smaller condition number, i.e., a higher robustness against RIR perturbations.
+Although this result is rather intuitive, to the best of our knowledge it has not been mathematically analysed or investigated in the context of acoustic multi-channel equalization.
+In general, the optimal reshaping filter length yielding the highest performance needs to be determined intrusively (i.e., using a dereverberated reference signal and knowledge of the true RIRs), limiting the practical applicability of using shorter reshaping filter lengths in acoustic multi-channel equalization techniques.
+In this paper, we also propose and investigate an automatic non-intrusive selection procedure for the reshaping filter length based on the L-curve~\cite{Castellanos_2002}.
+Some preliminary results on using shorter reshaping filters in acoustic multi-channel equalization techniques are presented in~\cite{Kodrasi_EUSIPCO_2012}.
+
+Simulation results for several measured acoustic systems and RIR perturbations show by means of instrumental measures that using shorter reshaping filters in MINT, RMCLS, and PMINT significantly increases the robustness against RIR perturbations.
+In addition, it is demonstrated that the P-MINT technique using the optimal intrusively determined reshaping filter length outperforms the other considered techniques, yielding a high reverberant energy suppression and perceptual speech quality improvement.
+Furthermore, it is shown that the non-intrusively determined reshaping filter length yields a nearly optimal performance in P-MINT, making this technique a practically applicable multi-channel equalization technique for speech dereverberation.
+
+The paper is organized as follows.
+In Section~\ref{sec: conf} the considered acoustic configuration and the used notation is introduced.
+In Section~\ref{sec: ame} state-of-the-art least-squares acoustic multi-channel equalization techniques, i.e., MINT, RMCLS, and PMINT, are briefly reviewed.
+In Section~\ref{sec: cond_no} their sensitivity to RIR perturbations is evaluated by means of the condition number and analytical insights on increasing the robustness by decreasing the reshaping filter length are provided.
+In Section~\ref{sec: lauto} the automatic procedure for determining the reshaping filter length is discussed.
+Using instrumental measures, the dereverberation performance of all considered techniques is compared in Section~\ref{sec: exp}.
+
+\section{Configuration and notation}
+\label{sec: conf}
+We consider an acoustic system with a single speech source and $M$ microphones, as depicted in Figure~\ref{fig: ac_sys}.
+The $m$-th microphone signal, $m = 1, \; 2, \; \ldots, \; M,$ at time index $n$ is given by
+\begin{align}
+  y_m(n) &= \underbrace{h_m(n) \ast s(n)}_{x_m(n)} + v_m(n)  \\
+  & = x_m(n) + v_m(n),
+\end{align}
+where $\ast$ denotes convolution, $s(n)$ is the clean speech signal, $h_m(n)$ is the RIR between the source and the $m$-th microphone, $x_{m}(n)$ is the reverberant speech component, and $v_{m}(n)$ is the noise component.
+Since acoustic multi-channel equalization techniques generally design dereverberation filters disregarding the presence of the additive noise, in the following it is assumed that $v_m(n) = 0$, hence, $y_m(n) = x_m(n)$.
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}
+    % Adjustments
+    \def\micd{.1cm}                % mic diameter
+    \def\micl{.6cm}                % mic length
+    \def\micw{.15cm}                % mic width
+    \def\micbend{10}               % mic bottom bend
+    \def\micdistance{.8cm}         % distance between microphones
+    \def\filterdistance{1.9cm}     % distance between microphone and filter
+    \def\filteroutline{.9cm}       % length of line which gets out of filter
+    \def\sumdistance{1.5cm}        % distance of sum node to the filter
+    \def\sumoutline{1cm}           % length of line which gets out of sum
+    \def\headdistance{2.4cm}       % distance between microphone and head
+    % Styles
+    \tikzset{%
+      mic head/.style={fill=black,draw=black,circle,minimum size=\micd},
+      filter/.style={draw,minimum width=1.1cm,inner sep=2pt},
+      sum/.style={draw,circle},
+      xlabel/.style={inner sep=1pt,above,midway},
+      sumlabel/.style={xlabel},
+      hlabel/.style={xlabel,sloped,pos=.4},
+      head/.style={font=\Large}
+    }%
+    % Draw Microphones
+    \begin{scope}[start chain=going below,every node/.style={on chain},node distance=\micdistance]
+      \node[mic head] (mic1) {};
+      \node[mic head] (mic2) {};
+      \node[mic head,yshift=-0.5*\micdistance] (mic3) {};
+    \end{scope}
+    \node[yshift=12pt] at ($(mic2)!.5!(mic3)$) {$\vdots$};
+    \foreach \m in {1,2,3} {%
+      \coordinate (m1) at ($(mic\m)+(\micl,\micw/2)$);
+      \coordinate (m2) at ($(mic\m)+(\micl,-\micw/2)$);
+      \draw (tangent cs:node=mic\m,point={(m1)},solution=1) -- (m1) to[bend left=\micbend] (m2) -- (tangent cs:node=mic\m,point={(m2)},solution=2);
+    }%
+    % Draw Filter
+    \foreach \m/\i in {1/1,2/2,3/M} {%
+      \node[filter,right=\filterdistance of mic\m] (filter\m) {\footnotesize $w_{\i}(n)$};
+      \draw ($(mic\m)+(\micl,0)$) to node[xlabel] (x\m) {\footnotesize $y_{\i}(n)$} (filter\m);
+    }%
+    \node[yshift=3pt] at ($(filter2)!.5!(filter3)$) {$\vdots$};
+    \node[yshift=3pt] at ($(x2)!.5!(x3)$) {$\vdots$};
+    % Sum Node %
+    \node[sum] (sum) at ($(filter1)!.5!(filter3)+(\sumdistance,0)$) {$\Sigma$};
+    \draw[->] (sum) -- node[above] {\footnotesize $z(n)$} ++(1.0,0);
+    % Connect filter with sum %
+    \foreach \m in {1,2,3} {%
+      \draw (filter\m) -- ++(\filteroutline,0) -- (sum);
+    }%
+    % Head
+    \node[head] (head) at ($(mic1)!.5!(mic3)-(\headdistance,0)$) {\PHtattooedHead};
+    \node[fill=white,minimum width=4.8pt,minimum height=5.7pt,inner sep=0pt] at ($(head.center)+(2.3pt,-2.5pt)$) {};
+    \node at ($(head.center)+(0.0pt,-20.5pt)$) {\footnotesize $s(n)$};
+    % Connect head with mics
+    \foreach \m/\i in {1/1,2/2,3/M} {%
+      \draw[->] (head) -- node[hlabel] {\footnotesize $h_{\i}(n)$} (mic\m);
+    }%
+    % Draw noise
+    \draw[<-] (mic1) -- node[above=0.1cm] {\footnotesize $v_1(n)$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+    \draw[<-] (mic2) -- node[above=0.1cm] {\footnotesize $v_2(n)$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+    \draw[<-] (mic3) -- node[above=0.1cm] {\footnotesize $v_M(n)$} node[right = -0.1cm] {\footnotesize ${}_{+}$} ++(0,0.5);
+  \end{tikzpicture}
+  \caption{Acoustic system configuration.}
+  \label{fig: ac_sys}
+\end{figure}
+
+Using the filter-and-sum structure in Figure~\ref{fig: ac_sys}, the output signal $z(n)$ is equal to the sum of the filtered microphone signals, i.e.,
+\begin{align}
+  z(n)  & = \sum_{m=1}^{M} x_m(n) \ast  w_m(n) \\
+  \label{eq: outcomp}
+  & = s(n) \ast \underbrace{\sum_{m=1}^{M} h_m(n) \ast  w_m(n)}_{c(n)},
+\end{align}
+where $w_m(n)$ is the filter applied to the $m$-th microphone signal and $c(n)$ denotes the equalized impulse response (EIR) between the source and the output of the system.
+In vector notation, the RIR $\mathbf{h}_m$ and the filter $\mathbf{w}_m$ are given by 
+\begin{align}
+\mathbf{h}_m  & = [h_m(0) \; h_m(1) \; \ldots \; h_m(L_h-1)]^T, \\
+\mathbf{w}_m  & = [w_m(0) \; w_m(1) \; \ldots \; w_m(L_w-1)]^T,
+\end{align}
+where $L_h$ and $L_w$ denote the RIR length and the filter length, respectively.
+Using the $M L_w$--dimensional stacked filter vector $\mathbf{w} = [\mathbf{w}^T_1 \; \mathbf{w}^T_2 \; \ldots \; \mathbf{w}^T_M]^T$, the EIR vector $\mathbf{c}$ of length $L_c = L_h + L_w - 1$, i.e., $\mathbf{c} = [c(0) \; c(1) \; \ldots \; c(L_c-1)]^T$, can be expressed as~\cite{Miyoshi_ITASS_1988, Kodrasi_ITASLP_2013}
+\begin{equation}
+\label{eq: eir}
+\mathbf{c} = \mathbf{H}\mathbf{w},
+\end{equation}
+with $\mathbf{H}$ the $L_c \times ML_w$--dimensional multi-channel convolution matrix of the RIRs, i.e., $\mathbf{H}  = [\mathbf{H}_1 \; \mathbf{H}_2 \; \ldots \; \mathbf{H}_M]$, and
+\begin{equation}
+\mathbf{H}_m \! = \! \begin{bmatrix}
+    h_m(0) & 0 &  \ldots & 0 \\
+    h_m(1) & h_m(0) & \ddots & \vdots \\
+    \vdots & h_m(1) & \ddots & 0 \\
+    h_m(L_h\!-\!1) & \vdots & \ddots & h_m(0) \\
+    0 & h_m(L_h\!-\!1) & \ddots & h_m(1) \\
+    \vdots & \ddots & \ddots & \vdots \\
+    0 & \ldots & 0 & h_m(L_h\!-\!1)
+   \end{bmatrix}.
+ \end{equation}
+Using the $L_c$-dimensional clean speech vector $\mathbf{s}(n) = [s(n) \; s(n-1) \; \ldots \; s(n-L_c+1)]^T$, the output signal in~(\ref{eq: outcomp}) can be expressed as
+\begin{equation}
+\label{eq: out_vec}
+z(n) = \mathbf{w}^T\mathbf{H}^T \mathbf{s}(n) = \mathbf{c}^T\mathbf{s}(n).
+\end{equation}
+The reshaping filter $\mathbf{w}$ can be constructed based on different design objectives for the EIR $\mathbf{c}$.
+
+\section{Acoustic multi-channel equalization}
+\label{sec: ame}
+Acoustic multi-channel equalization techniques aim at speech dereverberation by designing a filter $\mathbf{w}$ such that the EIR $\mathbf{c}$ in~(\ref{eq: eir}) is equal to a dereverberated target EIR $\mathbf{c}_{\rm d}$.
+It should be realized that in practice however, only the perturbed RIRs $\hat{h}_m$ are available, i.e., $\hat{h}_m = h_m + e_m$, where $e_m$ represents the RIR perturbations due to fluctuations~(e.g., temperature or position fluctuations~\cite{Radlovic_ITSA_2000}) or due to the sensitivity of BSI and SSI methods to near-common zeros or interfering noise~\cite{Khong_ICASSP_2008,Haque_SPL_2008,Hu_EUSIPCO_2015}.
+Hence, for the filter design, the perturbed convolution matrix $\hat{\mathbf{H}} = \mathbf{H} + \mathbf{E}$ is used, where $\mathbf{E}$ represents the convolution matrix of the RIR perturbations.
+
+State-of-the-art least-squares acoustic multi-channel equalization techniques seek to compute the filter $\mathbf{w}$ as the solution to the system of equations
+\begin{equation}
+\label{eq: syseq}
+\mathbf{W}\hat{\mathbf{H}}\mathbf{w} = \mathbf{W}\mathbf{c}_{\rm d},
+\end{equation}
+with $\mathbf{W}$ an $L_c \times L_c$--dimensional diagonal weighting matrix.
+The definition of the weighting matrix $\mathbf{W}$ and target EIR $\mathbf{c}_{\rm d}$ for the equalization techniques considered in this paper, i.e., MINT~\cite{Miyoshi_ITASS_1988}, RMCLS~\cite{Lim_ITASLP_2014}, and PMINT~\cite{Kodrasi_ITASLP_2013}, is presented in Table~\ref{tbl: weighting}, where $\mathbf{I}$ denotes the $L_c \times L_c$--dimensional identity matrix, $\tau$ denotes a delay, $L_d$ denotes the length of the direct path and early reflections, and $p \in \{1, \; \ldots, \; M \}$.
+The delay $\tau$ is incorporated in order to relax the causality constraints on the filter design~\cite{Hikichi_EURASIP_2007}.
+The length of the direct path and early reflections $L_d$ in the RMCLS and PMINT techniques is typically considered to be between $10$-$50$ ms~\cite{Lim_ITASLP_2014, Kodrasi_ITASLP_2013}.
+\begin{table*}[t]
+\begin{center}
+  \caption{Definition of the weighting matrix $\mathbf{W}$ and target EIR $\mathbf{c}_{\rm d}$ for state-of-the-art least-squares equalization techniques.}
+  \label{tbl: weighting}
+  \begin{tabularx}{\linewidth}{Xrr}
+    \toprule
+    Technique & Weighting matrix $\mathbf{W}$ & Target EIR $\mathbf{c}_{\rm d}$\\
+    \midrule
+    MINT & {\color{white}{${\rm{diag}}\{[\underbrace{1 \; \ldots \; 1}_{\tau} \; \underbrace{1 \; 0 \; \ldots \; 0}_{L_d} \; 1 \; \ldots 1]^{T}\}$}} $\mathbf{I}$ & $[\underbrace{0 \; \ldots \; 0}_{\tau} \; 1 \; 0 \; \ldots \; 0 ]^T$ \\
+    RMCLS & ${\rm{diag}}\{[\underbrace{1 \; \ldots \; 1}_{\tau} \; \underbrace{1 \; 0 \; \ldots \; 0}_{L_d} \; 1 \; \ldots 1]^{T}\}$ & $[\underbrace{0 \; \ldots \; 0}_{\tau} \; 1 \; 0 \; \ldots \; 0 ]^T$\\
+    PMINT & $\mathbf{I}$ & $[\underbrace{0\phantom{\rlap{$(L_d-1)$}} \ldots 0 }_{\tau} \underbrace{\hat{h}_p(0) \ldots \hat{h}_p(L_d-1)}_{L_d} 0 \ldots 0 ]^{T}$\\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\end{table*}
+Based on these definitions of $\mathbf{W}$ and $\mathbf{c}_{\rm d}$ it can be said that on the one hand, the MINT and PMINT techniques constrain all taps of the EIR (i.e., $\mathbf{W} = \mathbf{I}$), which results in a good perceptual speech quality but high sensitivity to RIR perturbations~\cite{Hikichi_EURASIP_2007,Kodrasi_ITASLP_2013}, while on the other hand, the RMCLS technique does not constrain all taps of the EIR (i.e., $\mathbf{W} \neq \mathbf{I}$), which results in a lower sensitivity to RIR perturbations but decreased perceptual speech quality~\cite{Lim_ITASLP_2014, Kodrasi_ITASLP_2013}.
+
+For all considered equalization techniques, the filter solving~(\ref{eq: syseq}) is computed by minimizing the least-squares cost function
+\begin{equation}
+\label{eq: ls_cost}
+J_{_{\text{LS}}} = \|\mathbf{W} (\hat{\mathbf{H}}\mathbf{w} - \mathbf{c}_{\rm d}) \|_2^2.
+\end{equation} 
+As shown in~\cite{Miyoshi_ITASS_1988,Lim_ITASLP_2014,Kodrasi_ITASLP_2013}, assuming that the RIRs do not share any common zeros and using a reshaping filter length 
+\begin{equation}
+\label{eq: trad_Lw}
+L_w \geq \left\lceil{\frac{L_h-1}{M-1}}\right\rceil,
+\end{equation} 
+with $\left\lceil{\cdot}\right\rceil$ the ceiling operator, the least-squares filter solving~(\ref{eq: syseq}) and hence, minimizing~(\ref{eq: ls_cost}) to $0$, can be computed as~\cite{Miyoshi_ITASS_1988, Lim_ITASLP_2014, Kodrasi_ITASLP_2013}
+\begin{equation}
+\label{eq: w_ls}
+\mathbf{w}_{_{\text{LS}}} = (\mathbf{W}\hat{\mathbf{H}})^+(\mathbf{W}\mathbf{c}_{\rm d}),
+\end{equation}
+where $\{ \cdot \}^+$ denotes the matrix pseudo-inverse. 
+When the true RIRs are available, i.e., $\hat{\mathbf{H}} = \mathbf{H}$, the least-squares filter of length according to~(\ref{eq: trad_Lw}) yields perfect dereverberation, i.e., $\mathbf{W}\mathbf{H}\mathbf{w}_{_{\text{LS}}} = \mathbf{W}\mathbf{c}_{\rm d}$.
+However, in the presence of RIR perturbations, i.e., $\hat{\mathbf{H}} \neq \mathbf{H}$, this least-squares filter typically fails to achieve dereverberation, i.e., $\mathbf{W}\mathbf{H}\mathbf{w}_{_{\text{LS}}} \neq \mathbf{W}\mathbf{c}_{\rm d}$, possibly causing severe distortions in the output signal~\cite{Kodrasi_ITASLP_2013}.
+In this paper, the sensitivity of the least-squares filter to RIR perturbations is evaluated by the so-called condition number of the matrix $\mathbf{W}\hat{\mathbf{H}}$.
+
+\section{Robust acoustic multi-channel equalization}
+\label{sec: cond_no}
+In this section, the Wedin theorem~\cite{Wedin_1973} relating the condition number of the matrix being inverted to the sensitivity of least-squares solutions to perturbations is briefly reviewed.
+In addition, it is analytically shown that using shorter reshaping filters than conventionally used decreases the condition number of the matrix $\mathbf{W}\hat{\mathbf{H}}$, increasing the robustness of acoustic multi-channel equalization techniques against RIR perturbations.
+For clarity of presentation, the notation summarized in Table~\ref{tbl: notation} is used in the following.
+
+{\textit{\textbf{Wedin theorem~\cite{Wedin_1973}:} \enspace
+Consider the system of equations $\mathbf{A}\mathbf{q} = \mathbf{b}$, where the matrix $\mathbf{A}$ has dimensions $u \times v$ and rank $r \leq \min\{u,v\}$. 
+Let $\mathbf{A}$ be perturbed to $\mathbf{A} + \Delta{\mathbf{A}}$.
+The pseudo-inverse solution $\mathbf{q} = \mathbf{A}^+\mathbf{b}$ is then perturbed to $\mathbf{q} + \Delta\mathbf{q} = (\mathbf{A} + \Delta{\mathbf{A}})^+\mathbf{b}$, where $\Delta\mathbf{q}$ is the deviation between the true and the perturbed solution.
+The condition number $\chi_{_{\mathbf{A}}}$ of the matrix $\mathbf{A}$ is defined as
+\begin{equation}
+\label{eq: cond_def}
+\chi_{_{\mathbf{A}}} = \frac{\|\mathbf{A}\|_2}{\|\mathbf{A}^+\|_2} = \frac{\sigma_{\mathbf{A}}(1)}{\sigma_{\mathbf{A}}(r)},
+\end{equation}
+with $\sigma_{\mathbf{A}}(i)$ the $i$-th singular value of the matrix $\mathbf{A}$, ordered such that $\sigma_{\mathbf{A}}(1) \geq \sigma_{\mathbf{A}}(2) \geq \cdots \geq \sigma_{\mathbf{A}}(r) > 0$.
+Using $\chi_{_{\mathbf{A}}}$ and defining the variable $\xi$ as
+\begin{equation}
+  \xi = \frac{\|\Delta \mathbf{A}\|_2}{\| \mathbf{A}\|_2},
+\end{equation}
+the norm of the deviation between the true and the perturbed solution is bounded by
+\begin{equation}
+\label{eq: wedin_ineq}
+\|\Delta\mathbf{q} \|_2 \leq \frac{\chi_{_{\mathbf{A}}} \xi \| \mathbf{q} \|_2}{1 - \chi_{_{\mathbf{A}}} \xi} + \|(\mathbf{A}\mathbf{A}^T)^+\mathbf{b} \|_2 \|\mathbf{A} \|_2,
+\end{equation}
+where it is assumed that $\chi_{_{\mathbf{A}}} \xi < 1$.
+}}
+
+The relation in~(\ref{eq: wedin_ineq}) shows that a large condition number $\chi_{_{\mathbf{A}}}$ can result (and typically does) in a large deviation between the true and the perturbed solution~\cite{Wedin_1973,Golub_Matrix_book}.
+
+\begin{table*}[t!]
+\begin{center}
+  \caption{Notation for different reshaping filter lengths and the corresponding least-squares matrices.}
+  \label{tbl: notation}
+  \begin{tabularx}{\linewidth}{Xl}
+    \toprule
+    Variable & Denotes \\
+    \midrule
+    $L^{\rm t}_w = \left\lceil{\frac{L_h-1}{M-1}} \right\rceil$ & Reshaping filter length conventionally used in acoustic multi-channel equalization techniques\\
+    $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ & Least-squares matrix when the used reshaping filter length is $L^{\rm t}_w$ \\
+    {$p_{\rm t} = L_h + L^{\rm t}_w - 1$} & Number of rows in $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ \\
+    $q_{\rm t} = M L^{\rm t}_w $ & Number of columns in $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ \\
+    {$r_{\rm t} \leq p_{\rm t}$} & Rank of $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ \\
+    \hline
+    $L^{\rm s}_w < L^{\rm t}_w $ & Reshaping filter length smaller than $L^{\rm t}_w$ \\
+    $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ & Least-squares matrix when the used reshaping filter length is $L^{\rm s}_w$ \\
+    {$p_{\rm s} = L_h + L^{\rm s}_w - 1$} & Number of rows in $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ \\
+    $q_{\rm s} = M L^{\rm s}_w $ & Number of columns in $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ \\
+    {$r_{\rm s} = q_{\rm s}$} & Rank of $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\end{table*}
+
+In order to satisfy~(\ref{eq: trad_Lw}), reshaping filters in acoustic multi-channel equalization techniques are conventionally designed using the filter length $L^{\rm t}_w$, i.e., based on the $p_{\rm t} \times q_{\rm t}$-dimensional matrix $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ with $p_{\rm t} \leq q_{\rm t}$ and rank $r_{\rm t} \leq p_{\rm t}$.
+However, reshaping filters can also be designed using a shorter filter length $L^{\rm s}_w$, i.e., based on the $p_{\rm s} \times q_{\rm s}$-dimensional matrix $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$.
+Considering that $L^{\rm s}_w < \left\lceil{\frac{L_h-1}{M-1}}\right\rceil$, which implies that $L^{\rm s}_w < \frac{L_h-1}{M-1}$, the matrix $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ is a full column-rank matrix with fewer columns than rows, i.e., $q_{\rm s} < p_{\rm s}$, since
+\begin{equation}
+(M-1)L^{\rm s}_w < L_h-1 \Rightarrow \underbrace{ML^{\rm s}_w}_{q_{\rm s}} < \underbrace{L_h + L^{\rm s}_w -1}_{p_{\rm s}}.
+\end{equation}
+%Furthermore, the matrix $\mathbf{W}_s\hat{\mathbf{H}}_s$ is a full column-rank matrix, i.e., ${\rm{rank}}(\mathbf{W}_s\hat{\mathbf{H}}_s) = r_s = q_s$.
+In addition, the matrix $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ is a sub-matrix of $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$, constructed by deleting $L^{\rm t}_w - L^{\rm s}_w$ rows and $M (L^{\rm t}_w - L^{\rm s}_w)$ columns from $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$.
+Aiming at establishing a relation between the condition numbers of the matrices $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ and $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$, with 
+\begin{align}
+\label{eq: cond_no_t}
+  \chi_{_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}} & = \frac{\sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(1)}{\sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(r_{\rm t})}, \\
+    \label{eq: cond_no_s}
+  \chi_{_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}} &= \frac{\sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(1)}{\sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(r_{\rm s})},
+\end{align}
+we consider the interlacing inequalities~\cite{Horn_Mat_book} between the singular values of a matrix and its sub-matrices presented in the following.
+
+{\textit{\textbf{Interlacing inequalities~\cite{Horn_Mat_book}:} \enspace
+Given a matrix $\mathbf{A}$ of dimensions $u \times v$ and a sub-matrix $\mathbf{B}$ obtained by deleting $l$ rows and/or columns from $\mathbf{A}$, the singular values of $\mathbf{A}$ and $\mathbf{B}$ interlace as
+\begin{equation}
+\label{eq: inter_sing}
+\sigma_{\mathbf{A}}(i) \geq \sigma_{\mathbf{B}}(i) \geq \sigma_{\mathbf{A}}(i+l),
+\end{equation}
+for $i = 1, \; \ldots, \; \min\{u-l,v-l\}$.
+}}%
+
+Using~(\ref{eq: inter_sing}), in Appendix A we derive the following inequalities relating the largest and smallest non-zero singular values of $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ and $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$:
+\begin{align}
+\label{eq: inter_singapp1}
+  \sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(1) & \geq \sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(1), \\
+  \label{eq: inter_singapp2}
+  \sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(r_{\rm s}) & \geq \sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(r_t).
+\end{align}
+It readily follows from~(\ref{eq: inter_singapp1}) and~(\ref{eq: inter_singapp2}) that the condition number of $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ is smaller or equal than the condition number of $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$, i.e.,
+\begin{equation}
+\chi_{_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}} = \frac{\sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(1)}{\sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(r_{\rm s})} \leq \frac{\sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(1)}{\sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(r_{\rm t})} = \chi_{_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}}.
+\end{equation}
+Hence, using a shorter reshaping filter than conventionally used in least-squares equalization techniques can result~(and based on simulations it always does) in a lower condition number of the matrix being inverted.
+
+Figure~\ref{fig: svd} depicts the singular values of an exemplary matrix $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ for the PMINT technique, constructed using the conventional reshaping filter length $L^{\rm t}_w = 1947$.
+\begin{figure}[t!]
+\centering
+%\subfloat[\label{fig: singval_pmint}]{%
+  % \includegraphics[scale = 0.9]{Plots/sing_val_pmint}
+  \input{Plots/svd_pmint.tikz}
+%}
+
+% \subfloat[\label{fig: singval_rmcls}]{%
+%   % \includegraphics[scale = 0.9]{Plots/sing_val_rmcls}
+%     \input{Plots/svd_rmcls.tikz}
+%}
+\caption{Singular values of an exemplary matrix $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ ($L^{\rm t}_w = 1947$) and of two sub-matrices $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ ($L^{\rm s}_w = 1000$ and $L^{\rm s}_w = 300$) for the PMINT technique. The largest and smallest non-zero singular values of each matrix are explicitly denoted. The considered acoustic system is system $S_1$ described in Section~\ref{sec: acsys}.}
+\label{fig: svd}
+\end{figure}
+The used acoustic system is system $S_1$ described in Section~\ref{sec: acsys}, with $M = 4$ microphones and $L_h = 5840$.
+The singular values of two exemplary sub-matrices $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$, constructed using $L^{\rm s}_w = 1000$ and $L^{\rm s}_w = 300$, are also depicted.
+The largest and smallest non-zero singular values of each matrix are marked in order to illustrate the inequalities presented in~(\ref{eq: inter_singapp1}) and~(\ref{eq: inter_singapp2}).
+Using these singular values, the condition numbers of the different matrices are presented in Table~\ref{tbl: cond_num}, where it is illustrated that using a shorter reshaping filter length than conventionally used decreases the condition number of the matrix $\mathbf{W}\hat{\mathbf{H}}$.
+\begin{table}[t!]
+\begin{center}
+  \caption{Condition number of an exemplary matrix $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ ($L^{\rm t}_w = 1947$) and of two sub-matrices $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ ($L^{\rm s}_w = 1000$ and $L^{\rm s}_w = 300$) for the PMINT technique. The considered acoustic system is system $S_1$ described in Section~\ref{sec: acsys}.}
+  \label{tbl: cond_num}
+  \begin{tabularx}{\linewidth}{Xr}
+    \toprule
+    Filter length & Condition number \\
+    \midrule
+    $L^{\rm t}_w = 1947$ & $\chi_{_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}} = 1.65 \times 10^{7}$ \\
+    $L^{\rm s}_w = 1000$ & $\chi_{_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}} = 4.91 \times 10^{3}$ \\
+    $L^{\rm s}_w = 300$ & $\chi_{_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}} = 6.23 \times 10^{2}$ \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\end{table}
+
+Using a shorter reshaping filter can be considered as a method of regularizing the least-squares solution, yielding a trade-off between equalization performance when the true RIRs are available and robustness in the presence of RIR perturbations.
+Designing shorter reshaping filters is not only desirable to increase the robustness of least-squares equalization techniques against RIR perturbations, but also because of the lower computational complexity of the reshaping filter design.
+
+\section{Automatic non-intrusive reshaping filter length}
+\label{sec: lauto}
+Decreasing the reshaping filter length in acoustic multi-channel equalization techniques decreases the condition number of the matrix being inverted, increasing the robustness against RIR perturbations.
+However, decreasing the reshaping filter length also reduces the equalization performance with respect to the true RIRs, resulting in a trade-off between equalization performance for perfectly estimated RIRs and robustness in the presence of RIR perturbations.
+Obviously, different reshaping filter lengths yield a different performance in acoustic multi-channel equalization techniques.
+The optimal length $L^{\rm opt}_{w}$ yielding the highest performance depends on the acoustic system being equalized and the RIR perturbation level.
+While in simulations $L^{\rm opt}_{w}$ can be intrusively determined exploiting the true known RIRs (cf. Section~\ref{sec: acsys}), an automatic non-intrusive procedure is required in practice.
+Motivated by the simplicity and the applicability of the L-curve to automatically determine a regularization parameter in regularized least-squares techniques~\cite{hansen1992analysis,Hansen_1993, Kodrasi_ITASLP_2013}, in this section we propose to use the L-curve to automatically determine the reshaping filter length $L^{\rm auto}_w$ in acoustic multi-channel equalization techniques.
+
+As previously mentioned, using a shorter reshaping filter introduces a trade-off between the condition number $\chi_{_{\mathbf{W}\hat{\mathbf{H}}}}$ and the least-squares error $\|\mathbf{W}(\hat{\mathbf{H}}\mathbf{w} - \mathbf{c}_{\rm d})\|^2_2$.
+An appropriate filter length should incorporate knowledge about both $\chi_{_{\mathbf{W}\hat{\mathbf{H}}}}$ and $\|\mathbf{W}(\hat{\mathbf{H}}\mathbf{w} - \mathbf{c}_{\rm d})\|^2_2$, such that both quantities are kept small.
+Due to the arising trade-off between these quantities, the parametric plot of the condition number versus the least-squares error for several reshaping filter lengths has an L-shape with the corner (i.e., point of maximum curvature) located where the least-squares filter changes from being dominated by a large condition number to being dominated by a large error.
+Hence, we propose to automatically select the reshaping filter length $L^{\rm auto}_{w}$ in acoustic multi-channel equalization techniques as the one corresponding to the corner of the parametric plot of the condition number $\chi_{_{\mathbf{W}\hat{\mathbf{H}}}}$ versus the least-squares error $\|\mathbf{W}(\hat{\mathbf{H}}\mathbf{w} - \mathbf{c}_{\rm d})\|^2_2$.
+%As is experimentally validated in Section~\ref{sec: filt_auto} such a filter length also leads to a high performance.
+
+Figure~\ref{fig: auto_Lw} depicts a typical L-curve obtained using PMINT to equalize acoustic system $S_1$ described in Section~\ref{sec: acsys}.
+As illustrated in this figure, decreasing the reshaping filter length decreases the condition number but at the same time increases the least-squares error.
+Although from such a curve it seems easy to determine the reshaping filter length that corresponds to the corner of the L-curve (i.e., $L^{\rm s}_w = 1000$ in this example), numerical problems may occur, and hence, a numerically stable algorithm is required.
+As in~\cite{Kodrasi_ITASLP_2013}, in this work we use the triangle method~\cite{Castellanos_2002} for locating the corner of the L-curve.
+\begin{figure}[t!]
+\centering
+\input{Plots/lcurve_ex.tikz}
+\caption{Typical L-curve obtained using PMINT with several reshaping filter lengths ranging from $L^{\rm t}_w = 1947$ to $L^{s}_w = 300$. The considered acoustic system is system $S_1$ described in Section~\ref{sec: acsys}.}
+\label{fig: auto_Lw}
+\end{figure}
+
+\section{Simulation results}
+\label{sec: exp}
+In this section we investigate the dereverberation performance of all considered acoustic multi-channel equalization techniques when using shorter reshaping filters lengths.
+In Section~\ref{sec: acsys} the considered acoustic systems, algorithmic settings, and instrumental measures are introduced.
+In Section~\ref{sec: robustness_increase} the increase in robustness when using shorter reshaping filter lengths in all considered equalization techniques is investigated.
+In Section~\ref{sec: lcomp} the performance of all considered techniques using the intrusively determined filter length $L^{\rm opt}_w$ is compared for several acoustic systems and RIR perturbation levels.
+In Section~\ref{sec: filt_auto} the performance of the PMINT technique using the automatic non-intrusively determined filter length $L^{\rm auto}_w$ is investigated.
+%Exemplary sound samples from each simulation can be found at \url{http://bit.ly/2cPDnsN}.
+\subsection{Acoustic systems, instrumental measures, and algorithmic settings}
+\label{sec: acsys}
+\vskip 5pt
+\textit{Acoustic systems} 
+\vskip 5pt
+We have considered three different reverberant acoustic systems with a single speech source placed at a distance of $2$ m from $M=4$ omni-directional microphones.
+The RIRs between the speech source and the microphones are measured using the swept-sine technique~\cite{Farina_2000} and the reverberant signals are generated by convolving $10$ sentences (approximately $17$ s long) from the HINT database~\cite{Nilsson_JASA_1994} with the measured RIRs.
+For each acoustic system, Table~\ref{tbl: ac_sys} presents the reverberation time $T_{60}$ of the room and the length of the RIRs $L_h$ at a sampling frequency $f_{s} = 8$ kHz.
+\begin{table}[t!]
+\begin{center}
+  \caption{Characteristics of the considered measured acoustic systems.}
+  \label{tbl: ac_sys}
+  \begin{tabularx}{\linewidth}{Xrr}
+    \toprule
+    Acoustic system & $T_{60}$ [ms] & $L_h$  \\
+    \midrule
+    $\text{S}_1$ & $730$ &  $5840$ \\
+    $\text{S}_2$ & $610$ & $4880$ \\
+    $\text{S}_3$ & $360$ & $2880$ \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\end{table}
+In order to simulate RIR perturbations, the measured RIRs are perturbed by proportional Gaussian distributed errors as proposed in~\cite{Zhang_HINDAWI_2008}, such that a desired level of normalized projection misalignment~(NPM), i.e.,
+\begin{equation}
+{\text{NPM}} = 20 \log_{10} \frac{ \left\| \mathbf{h} - \frac{\mathbf{h}^T\hat{\mathbf{h}}}{\hat{\mathbf{h}}^T\hat{\mathbf{h}}}\hat{\mathbf{h}}\right\|_2}{\left\| \mathbf{h} \right\|_2},
+\end{equation}
+is generated.
+The considered NPMs for each acoustic system are
+\begin{equation}
+\label{eq: npm}
+{\text{NPM}} \in \{ -33~{\rm dB}, \; -30~{\rm dB}, \; \ldots, \; -15~{\rm dB} \},
+\end{equation}
+with $-33$ dB a moderate perturbation level and $-15$ dB a larger perturbation level.
+It should be noted that the NPMs achieved by state-of-the-art BSI methods (for relatively short RIRs) range between $-10$ dB and $-20$ dB, hence, the values in~(\ref{eq: npm}) can be considered as rather realistic~\cite{Hu_EUSIPCO_2015}.
+\vskip 5pt
+\textit{Performance measures} 
+\vskip 5pt
+
+The performance of the equalization techniques is evaluated in terms of the reverberant energy suppression and perceptual speech quality improvement. 
+The reverberant energy suppression is evaluated using the improvement in direct-to-reverberant ratio~($\Delta$DRR)~\cite{Naylor_Derev_book}, i.e., $\Delta {\text{DRR}} = {\text{oDRR}} - {\text{iDRR}}$, with
+\begin{equation}
+{\text{oDRR}}\!\! = \!\!10 \log_{10} \frac{\sum\limits_{n=0}^{n_d-1} c^2(n)}{\sum\limits_{n=n_d}^{L_c-1} c^2(n)}, \; \; {\text{iDRR}}\!\! = \!\!10 \log_{10} \frac{\sum\limits_{n=0}^{n_d-1} h_1^2(n)}{\sum\limits_{n=n_d}^{L_h-1} h_1^2(n)},
+\end{equation}
+where the first $n_d = 0.008 \times f_s$ samples of $c(n)$ and $h_1(n)$ represent the direct path propagation and the remaining samples represent reflections.
+Although the $\Delta$DRR exactly describes the reverberant energy suppression, it cannot be solely used to evaluate the dereverberation performance of equalization techniques, since it does not provide any insights on the reverberant energy decay rate.
+To evaluate the reverberant energy decay rate, the energy decay curve~(EDC)~\cite{Naylor_Derev_book} of the EIR $c(n)$ is compared to the energy decay curve of the true RIR $h_1(n)$.
+The EDC of the EIR is computed as
+\begin{equation}
+\label{eq: edc}
+{\text{EDC}}_{\mathbf{c}}(n) = \frac{1}{\| \mathbf{c} \|_2^2} \sum_{j=n}^{L_c-1}c^2(j), \; \; \; \; n = 0, \; 1, \; \ldots, \; L_c-1,
+\end{equation}
+and the EDC of the RIR is computed as
+\begin{equation}
+{\text{EDC}}_{\mathbf{h}_1}(n) = \frac{1}{\| \mathbf{h}_1 \|_2^2} \!\!\!\sum_{j=n}^{L_h-1}h_1^2(j), \; n = 0, \; 1, \; \ldots, \; L_h-1.
+\end{equation}
+The perceptual speech quality is evaluated using the frequency weighted segmental signal-to-noise-ratio (fSNR) and the cepstral distance (CD)~\cite{Hu_ITASLP_2008}.
+In~\cite{REVERB2016} it has been shown that measures such as fSNR and CD can exhibit a high correlation with subjective listening tests when evaluating the overall quality and the perceived amount of reverberation for a wide range of state-of-the-art dereverberation (and noise reduction) techniques.
+These signal-based measures are intrusive measures, generating a similarity score between a test signal and a reference signal.
+The reference signal employed here is the direct path and early reflections speech signal in the first microphone, i.e., the signal obtained by convolving the clean speech signal with the direct path and early reflections (considered to be $10$ ms long) of $\mathbf{h}_1$.
+The improvement in fSNR, i.e., $\Delta$fSNR, is computed as the difference between the fSNR of the output signal $z(n)$ and the fSNR of the first microphone signal $x_1(n)$.
+Similarly, the improvement in CD, i.e., $\Delta$CD, is computed as the difference between the CD of the output signal $z(n)$ and the CD of the first microphone signal $x_1(n)$.
+Note that a positive $\Delta$fSNR and a negative $\Delta$CD indicate a performance improvement.
+
+\vskip 5pt
+\textit{Algorithmic settings} 
+\vskip 5pt
+
+For all considered equalization techniques the conventionally used filter length is $L^{\rm t}_w =\left\lceil{\frac{L_h-1}{M-1}}\right\rceil$, i.e., $L^{\rm t}_w = 1947$ for system $\text{S}_1$, $L^{\rm t}_w = 1627$ for system $\text{S}_2$, and $L^{\rm t}_w = 960$ for system $\text{S}_3$.
+The delay is set to $\tau = 90$ and the length of the direct path and early reflections is set to $L_d = 0.01 \times f_s$, i.e., $10$ ms (cf. Table~\ref{tbl: weighting}).
+The target EIR $\mathbf{c}_{\rm d}$ for the PMINT technique is constructed using the first RIR, i.e., $p = 1$ (cf. Table~\ref{tbl: weighting}).
+
+We consider several shorter reshaping filter lengths for all equalization techniques, i.e., 
+\begin{equation}
+\label{eq: lws}
+L^{\rm s}_w \in \begin{cases} \{300, \; 330, \; \ldots, \; 1920\} &\mbox{for system } S_1 \\
+\{300, \; 330, \; \ldots, \; 1620\} & \mbox{for system } S_2 \\
+\{300, \; 330, \; \ldots, \; 930\} & \mbox{for system } S_3 \end{cases}.
+\end{equation}
+For each acoustic system, each NPM, and each equalization technique the optimal filter length $L^{\rm opt}_w$ is selected from~(\ref{eq: lws}) as the one yielding the lowest CD. 
+It should be noted that using the CD for determining the optimal reshaping filter length is an intrusive procedure not applicable in practice, since knowledge of the clean speech signal and of the true RIRs is required.
+In Section~\ref{sec: filt_auto} the performance when using the automatic non-intrusive procedure for selecting the reshaping filter length is investigated.
+% The method for selecting the parameter values $\delta$, $\eta$, and $\rho$ for the simulation results presented in the following is described at the beginning of each section.
+
+
+\subsection{Increasing robustness using shorter reshaping filters}
+\label{sec: robustness_increase}
+In this section the robustness of the MINT, RMCLS, and PMINT techniques is investigated when using the conventional reshaping filter length $L^{\rm t}_w$ and the optimal reshaping filter length $L_w^{\rm opt}$.
+Although similar results are obtained for all considered acoustic systems, in this section only results for acoustic system $S_1$ are presented.
+\begin{figure*}[t!]
+\centering
+\input{Plots/perf_mint.tikz}
+\caption{Performance of the MINT technique using the conventional filter length $L^{\rm t}_w$ and the intrusively determined optimal filter length $L^{\rm opt}_w$ for acoustic system $S_1$ in terms of (a) $\Delta$DRR, (b) EDC for an exemplary NPM of $-33$ dB, (c) $\Delta$fSNR, and (d) $\Delta$CD.}
+\label{fig: mint_lmint}
+\end{figure*}
+\begin{figure*}[t!]
+\centering
+\input{Plots/perf_rmcls.tikz}
+\caption{Performance of the RMCLS technique using the conventional filter length $L^{\rm t}_w$ and the intrusively determined optimal filter length $L^{\rm opt}_w$ for acoustic system $S_1$ in terms of (a) $\Delta$DRR, (b) EDC for an exemplary NPM of $-33$ dB, (c) $\Delta$fSNR, and (d) $\Delta$CD.}
+\label{fig: rmcls_lrmcls}
+\end{figure*}
+\begin{figure*}[t!]
+\centering
+\input{Plots/perf_pmint.tikz}
+\caption{Performance of the PMINT technique using the conventional filter length $L^{\rm t}_w$ and the intrusively determined optimal filter length $L^{\rm opt}_w$ for acoustic system $S_1$ in terms of (a) $\Delta$DRR, (b) EDC for an exemplary NPM of $-33$ dB, (c) $\Delta$fSNR, and (d) $\Delta$CD.}
+\label{fig: pmint_lpmint}
+\end{figure*}
+
+\emph{MINT using $L^{\rm t}_w$ and $L_w^{\rm opt}$.} \enspace Figure~\ref{fig: mint_lmint} depicts the performance of the MINT technique when using the filter lengths $L^{\rm t}_w$ and $L_w^{\rm opt}$ in terms of $\Delta$DRR, EDC, $\Delta$fSNR, and $\Delta$CD.
+As expected, the $\Delta$DRR values presented in Figure~\ref{fig: mint_lmint}(a) show that using the conventional filter length $L^{\rm t}_w$ in MINT fails to suppress the reverberant energy, even worsening the DRR by an average of $15$ dB in comparison to $\mathbf{h}_1$.
+Furthermore, it can be observed that using the shorter filter length $L^{\rm opt}_w$ significantly increases the robustness of MINT for all NPMs, improving the DRR by an average of $4$ dB in comparison to $\mathbf{h}_1$.
+These results are confirmed in Figure~\ref{fig: mint_lmint}(b), which depicts the EDC of $\mathbf{h}_1$ and the EDCs of the EIRs obtained using MINT with $L^{\rm t}_w$ and $L^{\rm opt}_w$ for an exemplary NPM of $-33$ dB.
+It can be observed that while using $L^{\rm t}_w$ completely fails to achieve dereverberation and results in a slower reverberant energy decay rate than $\mathbf{h}_1$, using $L^{\rm opt}_w$ yields a significantly faster reverberant energy decay rate.
+However, using $L^{\rm opt}_w$ yields only a slight improvement of the reverberant energy decay rate when compared to $\mathbf{h}_1$, even for the moderate NPM value of $-33$ dB.
+Again as expected, the $\Delta$fSNR and $\Delta$CD values depicted in Figures~\ref{fig: mint_lmint}(c) and \ref{fig: mint_lmint}(d) show that using the conventional filter length $L^{\rm t}_w$ in MINT yields a significantly worse quality than the unprocessed microphone signal $x_1(n)$ for all NPMs.
+While an increase in robustness is obtained for all NPMs using $L^{\rm opt}_w$, the performance in terms of the $\Delta$fSNR is still worse than for the unprocessed microphone signal $x_1(n)$.
+
+Therefore as expected from the theoretical analysis in Section~\ref{sec: cond_no}, these simulation results validate that using a shorter reshaping filter than conventionally used in MINT is advantageous to increase the robustness against RIR perturbations. 
+However, since acoustic system inversion using MINT is very sensitive to RIR perturbations, even a shorter reshaping filter is not sufficient to make the MINT technique fully robust against RIR perturbations.
+
+\emph{RMCLS using $L^{\rm t}_w$ and $L_w^{\rm opt}$.} \enspace Figure~\ref{fig: rmcls_lrmcls} depicts the performance of the RMCLS technique using the filter lengths $L^{\rm t}_w$ and $L_w^{\rm opt}$ in terms of $\Delta$DRR, EDC, $\Delta$fSNR, and $\Delta$CD.
+The $\Delta$DRR values presented in Figure~\ref{fig: rmcls_lrmcls}(a) show that for moderate NPMs using the conventional filter length $L^{\rm t}_w$ in RMCLS slightly suppresses the reverberant energy, whereas for NPMs larger than $-21$~dB using $L^{\rm t}_w$ in RMCLS fails to achieve dereverberation and worsens the DRR in comparison to $\mathbf{h}_1$.
+Furthermore, it can be observed that using the optimal reshaping filter length $L^{\rm opt}_w$ significantly increases the reverberant energy suppression, yielding on average a $6$ dB larger $\Delta$DRR in comparison to the $\Delta$DRR obtained using $L^{\rm t}_w$.
+To evaluate the reverberant energy decay rate, Figure~\ref{fig: rmcls_lrmcls}(b) depicts the EDC of $\mathbf{h}_1$ and the EDCs of the EIRs obtained using RMCLS with $L^{\rm t}_w$ and $L^{\rm opt}_w$ for an exemplary NPM of $-33$ dB.
+It can be observed that for this moderate NPM, a very similar reverberant energy decay rate is obtained for the RMCLS technique when using $L^{\rm t}_w$ and $L^{\rm opt}_w$. 
+Since the RMCLS technique using the conventional filter length $L^{\rm t}_w$ is rather robust yielding a fast reverberant energy decay rate, a shorter reshaping filter does not yield any improvement in the reverberant energy decay rate, but instead leads to a significant improvement in the perceptual speech quality.
+This is illustrated in Figures~\ref{fig: rmcls_lrmcls}(c) and~\ref{fig: rmcls_lrmcls}(d), which shows that using $L^{\rm opt}_w$ in RMCLS significantly improves the $\Delta$fSNR and $\Delta$CD for all NPMs.
+
+Therefore as expected from the theoretical analysis in Section~\ref{sec: cond_no}, these simulation results demonstrate that using a shorter reshaping filter than conventionally used in RMCLS is advantageous and increases the robustness against RIR perturbations.
+\begin{table*}[t!]
+\def\tabcolsep{3pt}
+\begin{center}
+  \caption{Average performance of the MINT, RMCLS, and PMINT techniques using the optimal reshaping filter length $L^{\rm opt}_w$.}
+  \label{tbl: opt_Lw}
+  \begin{tabularx}{\linewidth}{Xrrrrrrrrr}
+    \toprule
+    & \multicolumn{3}{c}{$S_1$} & \multicolumn{3}{c}{$S_2$} & \multicolumn{3}{c}{$S_3$} \\
+    \midrule
+      & $\Delta$DRR [dB] & $\Delta$fSNR [dB] & $\Delta$CD [dB] & $\Delta$DRR [dB] & $\Delta$fSNR [dB] & $\Delta$CD [dB] & $\Delta$DRR [dB] & $\Delta$fSNR [dB] & $\Delta$CD [dB] \\
+    \midrule
+       $L^{\rm opt}_{w}$-MINT & $3.69$ & $-0.55$ & $-1.31$ & $1.25$ & $-2.07$ & $0.07$ & $0.42$ & $-3.89$ & $-0.22$ \\
+       $L^{\rm opt}_{w}$-RMCLS & $\bf{11.68}$ & $3.53$ & $-1.77$ & $3.57$ & $-0.81$ & $-0.39$ & $3.96$ & $-0.61$ & $-0.52$\\
+       $L^{\rm opt}_{w}$-PMINT & $11.13$ & $\bf{8.65}$ & $\bf{-1.78}$ & $\bf{5.99}$ & $\bf{2.58}$ & $\bf{-0.66}$ & $\bf{4.33}$ & $\bf{1.88}$ & $\bf{-0.57}$ \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\end{table*}
+\begin{table*}[t!]
+\def\tabcolsep{3pt}
+\begin{center}
+  \caption{Average performance of the PMINT technique using the automatically non-intrusively determined reshaping filter length $L^{\rm auto}_w$.}
+  \label{tbl: auto_Lw}
+  \begin{tabularx}{\linewidth}{Xrrrrrrrrr}
+    \toprule
+    & \multicolumn{3}{c}{$S_1$} & \multicolumn{3}{c}{$S_2$} & \multicolumn{3}{c}{$S_3$} \\
+    \midrule
+      & $\Delta$DRR [dB] & $\Delta$fSNR [dB] & $\Delta$CD [dB] & $\Delta$DRR [dB] & $\Delta$fSNR [dB] & $\Delta$CD [dB] & $\Delta$DRR [dB] & $\Delta$fSNR [dB] & $\Delta$CD [dB] \\
+    \midrule
+%       $L^{\rm auto}_{w}$MINT & $1.92$ & $-1.15$ & $-1.09$ & $-9.93$ & $-5.36$ & $1.17$ & $-5.55$ & $-6.64$ & $0.57$ \\
+%       $L^{\rm auto}_{w}$RMCLS & $9.70$ & $1.41$ & $-1.33$ & $0.25$ & $-4.91$ & $0.51$ & $1.76$ & $-4.40$ & $0.04$\\
+       $L^{\rm auto}_{w}$-PMINT & $10.58$ & $7.90$ & $-1.68$ & $4.41$ & $1.62$ & $-0.33$ & $3.34$ & $0.14$ & $-0.29$ \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\end{table*}
+
+\emph{PMINT using $L^{\rm t}_w$ and $L_w^{\rm opt}$.} \enspace Figure~\ref{fig: pmint_lpmint} depicts the performance of the PMINT technique using the filter lengths $L^{\rm t}_w$ and $L_w^{\rm opt}$ in terms of $\Delta$DRR, EDC, $\Delta$fSNR, and $\Delta$CD.
+As expected, the $\Delta$DRR values presented in Figure~\ref{fig: pmint_lpmint}(a) show that the PMINT technique using the conventionally used filter length $L^{\rm t}_w$ fails to suppress the reverberant energy, even worsening the DRR in comparison to $\mathbf{h}_1$.
+Furthermore, it can be observed that using $L^{\rm opt}_w$ in PMINT significantly increases the robustness for all NPMs, improving the DRR by an average of $11$ dB in comparison to $\mathbf{h}_1$.
+These results are further confirmed in Figure~\ref{fig: pmint_lpmint}(b), which depicts the EDC of $\mathbf{h}_1$ and the EDCs of the EIRs obtained using PMINT with $L^{\rm t}_w$ and $L^{\rm opt}_w$ for an exemplary NPM of $-33$ dB.
+It can be observed that the PMINT technique using $L^{\rm t}_w$ completely fails to achieve dereverberation and even results in a slower reverberant energy decay rate than $\mathbf{h}_1$.
+Using the optimal reshaping filter length $L^{\rm opt}_w$ yields a significant increase in robustness, resulting in a much faster reverberant energy decay rate than $\mathbf{h}_1$.
+Furthermore, the $\Delta$fSNR and $\Delta$CD values depicted in Figures~\ref{fig: pmint_lpmint}(c) and~\ref{fig: pmint_lpmint}(d) show that while PMINT using $L^{\rm t}_w$ worsens the perceptual speech quality in comparison to the unprocessed microphone signal $x_1(n)$, using $L^{\rm opt}_w$ results in a significantly better performance.
+
+Therefore as expected from the theoretical analysis in Section~\ref{sec: cond_no}, decreasing the reshaping filter length in PMINT results in a significant increase in robustness against RIR perturbations, both in terms of reverberant energy suppression and perceptual speech quality improvement.
+
+
+\subsection{Performance of equalization techniques when using the optimal intrusive reshaping filter length}
+\label{sec: lcomp}
+Since it was shown in the previous section that using a shorter reshaping filter than conventionally used increases the robustness of the considered equalization techniques in terms of all performance measures, in this section the performance of the MINT, RMCLS, and PMINT techniques using the optimal intrusively determined filter length $L^{\rm opt}_w$ is extensively compared for all acoustic systems in Table~\ref{tbl: ac_sys} and all NPMs in~(\ref{eq: npm}).
+The performance of the different techniques is evaluated in terms of $\Delta$DRR, $\Delta$fSNR and $\Delta$CD, and the presented performance measures are averaged over all considered NPMs.
+
+Table~\ref{tbl: opt_Lw} presents the obtained $\Delta$DRR, $\Delta$fSNR, and $\Delta$CD for all considered techniques\footnote{It should be noted that the performance measures presented for system $S_1$ are an average of the results already presented in Section~\ref{sec: robustness_increase}.}.
+First it can be observed that the MINT technique using $L^{\rm opt}_w$ results in the lowest performance in terms of all performance measures, often worsening the perceptual speech quality in comparison to the unprocessed microphone signal $x_1(n)$.
+Since the MINT technique is very sensitive to RIR perturbations~(cf. Figure~\ref{fig: mint_lmint}), the robustness increase that can be obtained by using a shorter reshaping filter length is also limited.
+Second it can be observed that the RMCLS and PMINT techniques using $L^{\rm opt}_w$ result in a high reverberant energy suppression in terms of $\Delta$DRR, with the PMINT technique outperforming the RMCLS technique for system $S_2$ whereas a similar performance is obtained for systems $S_1$ and $S_3$.
+Finally it can be observed that for all considered acoustic systems the PMINT technique using the reshaping filter length $L^{\rm opt}_w$ yields the highest perceptual speech quality improvement, outperforming the RMCLS technique in terms of $\Delta$fSNR.
+While the PMINT technique always improves the perceptual speech quality in comparison to the unprocessed microphone signal $x_1(n)$, the RMCLS technique might fail to yield an improvement, as indicated by the negative $\Delta$fSNR for systems $S_2$ and $S_3$.
+The advantage of using the PMINT technique lies in its control of the early reflections in the EIR, hence better preserving the perceptual speech quality of the output signal.
+
+In summary, it can be said that the PMINT technique using the optimal intrusively determined reshaping filter length $L^{\rm opt}_w$ is a robust and perceptually advantageous equalization technique, yielding a high reverberant energy suppression and outperforming all other considered techniques in terms of perceptual speech quality improvement.
+
+
+
+\subsection{Performance of the PMINT technique when using the automatic non-intrusive reshaping filter length}
+\label{sec: filt_auto}
+In this section we investigate the performance of the PMINT technique when using the automatic non-intrusive and practically applicable procedure for determining the reshaping filter length $L^{\rm auto}_w$ (discussed in Section~\ref{sec: lauto}) instead of the optimal intrusively determined reshaping filter length $L^{\rm opt}_w$.
+Similarly as in Section~\ref{sec: lcomp}, we consider all acoustic systems in Table~\ref{tbl: ac_sys} and all NPMs in~(\ref{eq: npm}).
+For all reshaping filter lengths in~(\ref{eq: lws}) the matrix $\mathbf{W}\hat{\mathbf{H}}$ is constructed and the PMINT reshaping filter is designed.
+Furthermore, in order to generate the parametric L-curve the condition number $\chi_{\mathbf{W}\hat{\mathbf{H}}}$ and the least-squares error $\|\mathbf{W}(\hat{\mathbf{H}}\mathbf{w}-\mathbf{c}_{\rm d}) \|^2_2$ is computed. 
+Using the triangle method~\cite{Castellanos_2002}, the automatic reshaping filter length $L^{\rm auto}_w$ corresponding to the point of maximum curvature of the L-curve is determined.
+The performance of the PMINT technique using $L^{\rm auto}_w$ is evaluated in terms of $\Delta$DRR, $\Delta$fSNR, and $\Delta$CD, and the presented performance measures are averaged over all considered NPMs.
+
+Table~\ref{tbl: auto_Lw} presents the $\Delta$DRR, $\Delta$fSNR, and $\Delta$CD obtained using PMINT with $L^{\rm auto}_w$ for all considered acoustic systems.
+It can be observed that using the automatic non-intrusively determined reshaping filter length in PMINT yields a high dereverberation performance, both in terms of reverberant energy suppression and perceptual speech quality improvement.
+When comparing the performance measures presented in Table~\ref{tbl: auto_Lw} to the ones presented in Table~\ref{tbl: opt_Lw}, it can be said that the performance of PMINT when using $L^{\rm auto}_w$ is generally similar to the performance obtained when using $L^{\rm opt}_w$.
+More precisely, the average performance degradation over all considered acoustic systems when using the automatic non-intrusively determined reshaping filter length $L^{\rm auto}_w$ instead of the optimal intrusively determined reshaping filter length $L^{\rm opt}_w$ is only $1.04$ dB in terms of $\Delta$DRR, $2.29$ dB in terms of $\Delta$fSNR, and $0.24$ dB in terms of $\Delta$CD.
+
+In summary, the presented results show that the automatic non-intrusively determined reshaping filter length in PMINT yields a high performance in the presence of RIR perturbations, making the PMINT technique using a shorter reshaping filter length a robust, perceptually advantageous, and practically applicable technique.
+
+\section{Conclusion}
+In this paper we have proposed to use a shorter reshaping filter length than conventionally used in acoustic multi-channel equalization techniques, such that a better conditioned optimization criterion is obtained.
+We have analytically shown that using a shorter reshaping filter decreases the condition number of the convolution matrix, increasing as a result the robustness against RIR perturbations.
+In addition, we have proposed to automatically determine the reshaping filter length as the point of maximum curvature of the parametric plot of the condition number versus the least-squares error, such that both quantities are kept small.
+Using instrumental measures, it has been shown that using shorter reshaping filters indeed increases the robustness of MINT, RMCLS, and PMINT against RIR perturbations.
+In addition, it has been shown that PMINT using the optimal intrusively determined reshaping filter length outperforms MINT and RMCLS.
+Finally, it has been shown that the automatic non-intrusive procedure for selecting the reshaping filter length in PMINT yields a nearly optimal performance, confirming the practical applicability of using shorter reshaping filters in acoustic multi-channel equalization.
+\section*{Appendix A}
+\label{app: sing_vals}
+In order to construct the matrix $\mathbf{W}_s\hat{\mathbf{H}}_s$, we first create an intermediate $[p_{\rm t}-(L^{\rm t}_w-L^{\rm s}_w)] \times [q_{\rm t}-(L^{\rm t}_w-L^{\rm s}_w)]$-dimensional sub-matrix $\mathbf{T}$ by deleting $L^{\rm t}_w-L^{\rm s}_w$ rows and $L^{\rm t}_w-L^{\rm s}_w$ columns from $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$.
+The interlacing inequalities in~(\ref{eq: inter_sing}) for the matrices $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ and $\mathbf{T}$ can be written as
+\begin{equation}
+\label{eq: inter_singT}
+\sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(i) \geq \sigma_{\mathbf{T}}(i) \geq \sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(i+(L^{\rm t}_w-L^{\rm s}_w)),
+\end{equation}
+for $i = 1, \; \ldots, \; r_{\rm t}-(L^{\rm t}_w-L^{\rm s}_w), \; \ldots, \; p_{\rm t}-(L^{\rm t}_w-L^{\rm s}_w)$.
+Based on~(\ref{eq: inter_singT}), the following inequalities between the singular values of the matrices $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ and $\mathbf{T}$ can be established:
+\begin{align}
+\label{eq: ineq1}
+\sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(1) & \geq \sigma_{\mathbf{T}}(1), \\
+\label{eq: ineq2}
+\sigma_{\mathbf{T}}(r_{\rm t}-(L^{\rm t}_w-L^{\rm s}_w)) &\geq \sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(r_{\rm t}).
+\end{align}
+In order to construct the matrix $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$, $(M-1)(L^{\rm t}_w-L^{\rm s}_w)$ columns are now deleted from the matrix $\mathbf{T}$.
+The interlacing inequalities in~(\ref{eq: inter_sing}) for the matrices $\mathbf{T}$ and $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ can be written as
+\begin{equation}
+\label{eq: inter_singS}
+\sigma_{\mathbf{T}}(i) \geq \sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(i) \geq \sigma_{\mathbf{T}}(i+(M-1)(L^{\rm t}_w-L^{\rm s}_w)),  
+\end{equation}
+for $i = 1, \; \ldots, \; r_{\rm s}$.
+Using~(\ref{eq: inter_singS}), the following inequalities between the singular values of the matrices $\mathbf{T}$ and $\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}$ can be written:
+\begin{align}
+\label{eq: ineq3}
+\sigma_{\mathbf{T}}(1) & \geq \sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(1), \\
+\label{eq: ineq4}
+\sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(r_{\rm s}) & \geq \sigma_{\mathbf{T}}(r_{\rm s}+(M-1)(L^{\rm t}_w-L^{\rm s}_w)).
+\end{align}
+The index of the singular value in the right hand side of~(\ref{eq: ineq4}) can be written as
+\begin{align}
+\!\!\!\!\!\!\!\!\!& r_{\rm s}+(M-1)(L^{\rm t}_w-L^{\rm s}_w)  = ML^{\rm s}_w+(M-1)(L^{\rm t}_w-L^{\rm s}_w) \nonumber  \\
+\label{eq: ineq5}
+\!\!\!\!\!\!\!\!\!& = ML^{\rm t}_w - (L^{\rm t}_w - L^{\rm s}_w) \geq r_{\rm t} - (L^{\rm t}_w - L^{\rm s}_w),
+\end{align}
+with~(\ref{eq: ineq5}) clearly holding since the number of columns in $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ is greater or equal than its rank, i.e.,
+\begin{equation}
+q_{\rm t} = ML^{\rm t}_w \geq p_{\rm t} \geq r_{\rm t}.
+\end{equation}
+Based on~(\ref{eq: ineq5}) and the fact that the singular values of the matrices are sorted in descending order, one can write
+\begin{equation}
+\label{eq: ineq6}
+\sigma_{\mathbf{T}}(r_{\rm s}+(M-1)(L^{\rm t}_w-L^{\rm s}_w)) \geq  \sigma_{\mathbf{T}}(r_{\rm t} - (L^{\rm t}_w-L^{\rm s}_w)).
+\end{equation}
+Using~(\ref{eq: ineq6}), the inequality in~(\ref{eq: ineq4}) can also be written as
+\begin{equation}
+\label{eq: ineq77}
+\sigma_{\mathbf{W}_s\hat{\mathbf{H}}_s}(r_s)  \geq \sigma_{\mathbf{T}}(r_{\rm t}-(L^{\rm t}_w-L^{\rm s}_w)).
+\end{equation}
+Finally, combining~(\ref{eq: ineq1}),~(\ref{eq: ineq2}),~(\ref{eq: ineq3}), and~(\ref{eq: ineq77}) the following inequalities relating the largest and smallest non-zero singular values of $\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}$ and $\mathbf{W}_s\hat{\mathbf{H}}_s$ can be established:
+\begin{align}
+\sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(1) & \geq \sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(1), \\
+\sigma_{\mathbf{W}_{\rm s}\hat{\mathbf{H}}_{\rm s}}(r_{\rm s}) & \geq \sigma_{\mathbf{W}_{\rm t}\hat{\mathbf{H}}_{\rm t}}(r_{\rm t}).
+\end{align}
+
+\begin{backmatter}
+
+\section*{Competing interests}
+  The authors declare that they have no competing interests.
+
+  \section*{Acknowledgments}
+  This work was supported in part by the Cluster of Excellence 1077 ``Hearing4All'', funded by the German Research Foundation (DFG), the Marie Curie Initial Training Network DREAMS (Grant no. 316969), and the joint Lower Saxony-Israeli Project ATHENA, funded by the State of Lower Saxony.
+  
+\bibliographystyle{bmc-mathphys} 
+\bibliography{ref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{backmatter}
+\end{document}

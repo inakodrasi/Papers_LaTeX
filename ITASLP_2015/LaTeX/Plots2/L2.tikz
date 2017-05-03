@@ -1,0 +1,72 @@
+\definecolor{mycolor1}{rgb}{1,0,1}%
+\begin{tikzpicture}[font = \small]
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-1e-007,
+xmax=1.4e-006,
+xtick = {0, 2e-007, 4e-007, 6e-007, 8e-007, 1e-006,1.2e-006},
+xlabel={$\epsilon_x$},
+xlabel absolute, xlabel style={yshift=0.5em},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xmajorgrids,
+ymin=-1e-7,
+ymax=1.4e-005,
+ylabel={$\epsilon_v$},
+every y tick scale label/.style={
+            at={(yticklabel* cs:1.07,-0.5cm)},
+            anchor=near yticklabel
+        },
+every x tick scale label/.style={
+            at={(xticklabel* cs:1.06,-0.1cm)},
+            anchor=near xticklabel
+        },
+ymajorgrids
+]
+\addplot [
+color=mycolor1,
+dashed,
+line width=1.5pt,
+mark=o,
+mark size = 1.5pt,
+mark options={solid},
+forget plot
+]
+table[row sep=crcr]{
+2.99674225863987e-014 1.16884536797596e-005\\
+1.15369726169353e-012 9.2314788363928e-006\\
+1.5392409973194e-011 5.56112483430495e-006\\
+1.11697519029372e-010 2.81135169701038e-006\\
+1.60598449045356e-008 8.89422960664411e-007\\
+2.08066813953454e-007 4.13475022976742e-007\\
+5.68912679561751e-007 2.0924137508626e-007\\
+8.34037884177461e-007 1.40727406612076e-007\\
+1.04070879312214e-006 1.05739521875139e-007\\
+1.28269055823181e-006 7.67379601383499e-008\\
+};
+\addplot [
+color=black,
+only marks,
+mark=square*,
+thick,
+mark size = 2.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+1.60598449045356e-008 8.89422960664411e-007\\
+};
+\addlegendentry{Maximum curvature};
+\node at (axis cs:2.99674225863987e-014,1.16884536797596e-005) [anchor=west] {$10^{-7}$}; 
+\node at (axis cs:1.15369726169353e-012,9.2314788363928e-006) [anchor=west] {$10^{-6}$}; 
+\node at (axis cs:1.5392409973194e-011,5.56112483430495e-006) [anchor=west] {$10^{-5}$}; 
+\node at (axis cs:1.11697519029372e-010,2.31135169701038e-006) [anchor=south west] {$10^{-4}$}; 
+\node at (axis cs:1.60598449045356e-008,8.89422960664411e-007) [anchor=south west] {$10^{-1}$}; 
+\node at (axis cs:2.08066813953454e-007,4.13475022976742e-007) [anchor=south west] {$1$}; 
+\node at (axis cs:5.68912679561751e-007,2.0924137508626e-007) [anchor=south west] {$3$}; 
+\node at (axis cs:8.34037884177461e-007,1.40727406612076e-007) [anchor=south west] {$5$}; 
+\node at (axis cs:1.04070879312214e-006,1.05739521875139e-007) [anchor=south west] {$7$}; 
+\node at (axis cs:1.28269055823181e-006,7.67379601383499e-008) [anchor=south west] {$10$};
+\draw[<-,shorten <=3pt] (axis cs:1.60598449045356e-008,8.89422960664411e-007) -- ++(25:2cm) node[above right,align=center,inner sep=1pt,font=\scriptsize] {$\epsilon_x=1.6 \times 10^{-8}$ \\ $\epsilon_v=8.9 \times 10^{-7}$ };
+\end{axis}%
+\end{tikzpicture}%

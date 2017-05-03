@@ -1,0 +1,52 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+
+% defining custom colors
+\definecolor{mycolor1}{rgb}{0,0,0.5625}%
+
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+area legend,
+scale only axis,
+xmin=-8,
+xmax=12,
+xtick={-5,  0,  5, 10},
+xlabel={SIR [dB]},
+xmajorgrids,
+ymin=0,
+ymax=3,
+ylabel={$\Delta\text{ fwSSNR [dB]}$},
+ymajorgrids
+]
+\addplot[ybar,bar width=0.0571428571428571\figurewidth,bar shift=-0.0357142857142857\figurewidth,fill=mycolor1,draw=black] plot coordinates{(-5,0.144055722658052)
+(0,0.730074705953759)
+(5,1.19348885980111)
+(10,1.38086149822489)};
+
+\addplot [
+color=black,
+solid,
+forget plot
+]
+table[row sep=crcr]{
+-8 0\\
+12 0\\
+};
+\addplot[ybar,bar width=0.0571428571428571\figurewidth,bar shift=0.0357142857142857\figurewidth,fill=red!50!black,draw=black] plot coordinates{(-5,1.46720411543849)
+(0,2.24446496367937)
+(5,2.69372250380039)
+(10,2.62610745645293)};
+
+\end{axis}
+\end{tikzpicture}%

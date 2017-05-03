@@ -1,0 +1,295 @@
+% --------------------------------------------------------------------------
+% Template for WASPAA-2017 paper; to be used with:
+%          waspaa17.sty  - WASPAA 2017 LaTeX style file, and
+%          IEEEbib.bst - IEEE bibliography style file.
+%
+% --------------------------------------------------------------------------
+
+\documentclass{article}
+\usepackage{waspaa17,amsmath,graphicx,url,times}
+%\usepackage{waspaa17,amssymb,amsmath,graphicx,times,url}
+\usepackage{color}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usetikzlibrary{calc,chains,shapes,positioning,patterns}
+\usepackage{phaistos}
+\usepackage{pgfplots}
+\usepackage{cite}
+\usepackage{graphicx}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\def\ninept{\def\baselinestretch{.89}\let\normalsize\small\normalsize}
+% Title.
+% --------------------
+\title{Multi-channel late reverberation power spectral density estimation \\ based on nuclear norm minimization}
+\name{Ina Kodrasi, Simon Doclo
+\thanks{
+This work was supported in part by the Cluster of Excellence 1077 ``Hearing4All'', funded by the German Research Foundation (DFG), and the joint Lower Saxony-Israeli Project ATHENA, funded by the State of Lower Saxony.
+}}
+\address{
+University of Oldenburg, Department of Medical Physics and Acoustics  \\ and Cluster of Excellence Hearing4All, Oldenburg, Germany \\
+{\tt \{ina.kodrasi,simon.doclo\}@uni-oldenburg.de}\\
+}
+
+\begin{document}
+\newlength\figureheight
+\newlength\figurewidth
+\setlength\figureheight{2.1cm}
+\setlength\figurewidth{0.4\textwidth}
+\ninept
+\maketitle
+
+
+\begin{abstract} 
+  Multi-channel methods for estimating the late reverberation power spectral density (PSD) generally assume that the reverberant PSD matrix can be decomposed as the sum of a rank-$1$ matrix and a scaled diffuse coherence matrix.
+  To account for modeling or estimation errors in the estimated reverberant PSD matrix, in this paper we propose to decompose this matrix as the sum of a low rank (not necessarily rank-$1$) matrix and a scaled diffuse coherence matrix.
+  Among all pairs of scalars and matrices that yield feasible decompositions, the late reverberation PSD can then be estimated as the scalar associated with the matrix of minimum rank.
+  Since rank minimization is an intractable non-convex optimization problem, we propose to use a convex relaxation approach and estimate the late reverberation PSD based on nuclear norm minimization~(NNM).
+  Experimental results show the advantages of using the proposed NNM-based late reverberation PSD estimator in a multi-channel Wiener filter for speech dereverberation, significantly outperforming a state-of-the-art maximum likelihood-based PSD estimator and yielding a similar or better performance than a recently proposed eigenvalue decomposition-based PSD estimator. 
+\end{abstract}
+
+\begin{keywords}
+dereverberation, nuclear norm, convex optimization, MWF, PSD estimation
+\end{keywords}
+
+\section{Introduction}
+\label{sec:intro}
+In hands-free communication applications the recorded microphone signals are often corrupted by early and late reverberation, which arises from the superposition of delayed and attenuated copies of the anechoic speech signal.
+While early reverberation may be desirable~\cite{Bradley_JASA_2003}, late reverberation may degrade the perceived quality and hinder the intelligibility of speech~\cite{Warzybok_IWAENC_2014}.
+Hence, speech enhancement techniques which effectively suppress the late reverberation are required.
+In the last decades many single-channel and multi-channel dereverberation techniques have been proposed~\cite{Naylor_Derev_book}, with multi-channel techniques being generally preferred since they are able to exploit both the spectro-temporal and the spatial characteristics of the received microphone signals.
+Many such techniques require an estimate of the late reverberation power spectral density~(PSD), e.g.~\cite{Habets_PhD,OSchwartz_ITASLP_2015,Cauchi_EURASIP_2015}.
+
+The late reverberation PSD can be estimated either using single-channel estimators based on a temporal model of reverberation~\cite{Lebart_ACUSTICA_2001,Habets2009a} or multi-channel estimators based on a (spatial) diffuse sound field model of reverberation~\cite{Braun_EUSIPCO_2013,Kuklasinski_EUSIPCO_2014g,Schwartz_WASPAA_2015,Braun_EURASIP_2015,Schwartz_ICASSP_2016,Kuklasinski_ITASLP_2016,Schwartz_EUSIPCO_2016, Kodrasi_HSCMA_2017, Kodrasi_ICASSP_2017}.
+Most multi-channel PSD estimators~\cite{Braun_EUSIPCO_2013,Kuklasinski_EUSIPCO_2014g,Schwartz_WASPAA_2015,Braun_EURASIP_2015,Schwartz_ICASSP_2016,Kuklasinski_ITASLP_2016,Schwartz_EUSIPCO_2016} require an estimate of the relative early transfer functions~(RETFs) of the target signal from the reference microphone to all microphones, which may be difficult to accurately estimate, particularly in highly reverberant and noisy scenarios.
+Recently, we proposed a multi-channel late reverberation PSD estimator based on an eigenvalue decomposition (EVD), which does not require such RETF estimates~\cite{Kodrasi_HSCMA_2017,Kodrasi_ICASSP_2017}.
+Experimental results in~\cite{Kodrasi_ICASSP_2017} show the advantages of using this EVD-based estimator in a multi-channel Wiener filter~(MWF) for speech dereverberation, outperforming the maximum likelihood (ML)-based estimator in~\cite{Kuklasinski_EUSIPCO_2014g} both when the RETFs are perfectly estimated as well as in the presence of RETF estimation errors. 
+
+The EVD-based estimator in~\cite{Kodrasi_ICASSP_2017} relies on the assumption that the reverberant PSD matrix is equal to the sum of a rank-$1$ matrix (corresponding to the direct and early reverberation speech component) and a diffuse coherence matrix scaled with the late reverberation PSD.
+However, since the late reverberation is not truly diffuse and since the reverberant PSD matrix in practice is estimated using a signal realization, the estimated reverberant PSD matrix can deviate from this assumption.
+In order to account for this deviation, in this paper we propose to model the reverberant PSD matrix as the sum of a low rank (not necessarily rank-$1$) matrix and a scaled diffuse coherence matrix.
+  Among all pairs of scalars and matrices that yield feasible decompositions, the late reverberation PSD can be estimated as the scalar associated with the matrix of minimum rank.
+   However, since the rank of a matrix is non-convex and non-convex optimization problems are typically hard (if not impossible) to solve, we propose to estimate the late reverberation PSD based on nuclear norm minimization (NNM)~\cite{Fazel_phd,Candes_ACM_2011, Liu_ITPAMI_2013} instead.
+The nuclear norm is a convex relaxation of the rank, and hence, NNM-based optimization problems can be efficiently solved~\cite{Fazel_phd}.
+Experimental results for several acoustic systems and configurations illustrate the advantages of using the NNM-based PSD estimator in an MWF for speech dereverberation, yielding a similar or better performance than the ML-based and EVD-based PSD estimators.
+
+\section{Configuration and Notation}
+\label{sec:intro}
+Consider a reverberant and noisy acoustic system with a single speech source and $M \geq 2$ microphones, as depicted in Fig.~\ref{fig: ac_sys}.
+In the short-time Fourier transform (STFT) domain, the $M$-dimensional vector of the microphone signals $\mathbf{y}(k,l) = [Y_1(k,l) \; \ldots \; Y_M(k,l)]^T$ at frequency index $k$ and frame index $l$ is given by
+\begin{equation}
+  \mathbf{y}(k,l)  = \underbrace{\mathbf{x}_{\rm e}(k,l) + \mathbf{x}_{\rm{r}}(k,l)}_{\mathbf{x}(k,l)} + \mathbf{v}(k,l),
+\end{equation} 
+with $\mathbf{x}(k,l)$ the speech component, $\mathbf{v}(k,l)$ the noise component, $\mathbf{x}_{\rm e}(k,l)$ the direct and early reverberation speech component, and $\mathbf{x}_{\rm r}(k,l)$ the late reverberation speech component.
+%The vectors $\mathbf{x}(k,l)$, $\mathbf{v}(k,l)$, $\mathbf{x}_{\rm e}(k,l)$, and $\mathbf{x}_{\rm r}(k,l)$  are defined similarly as $\mathbf{x}(k,l)$.
+For simplicity, in the following we assume that the noise component is equal to zero, i.e., $\mathbf{y}(k,l) = \mathbf{x}(k,l)$.
+However, the late reverberation PSD estimator proposed in this paper can also be used in noisy scenarios, cf. Section~\ref{sec: nnm}.
+% This corresponds to the assumption that the noise is negligible in comparison to the late reverberation, which can be a realistic assumption in several scenarios.
+% % For conciseness the frequency index $k$ is omitted in the remainder of this paper.
+
+The direct and early reverberation speech component $\mathbf{x}_{\rm e}(k,l)$ can be expressed as
+\begin{figure}[t!]
+  \input{Plots/conf1.tikz}
+  \caption{Acoustic system configuration.}
+  \label{fig: ac_sys}
+\end{figure} %
+\begin{equation}
+\label{eq: direct}
+\mathbf{x}_{\rm e}(k,l) = S(k,l)\mathbf{d}(k),
+\end{equation}
+with $S(k,l)$ the target signal (i.e., direct and early reverberation speech component) received by the reference microphone and $\mathbf{d}(k) = [D_1(k) \; \ldots \; D_M(k)]^T$ the vector of RETFs of the target signal from the reference microphone to all microphones.
+% The target signal is often defined as the direct component only, such that the vector $\mathbf{d}$ can be computed based on the direction of arrival of the speech source and the geometry of the microphone array~\cite{Braun_EUSIPCO_2013,Kuklasinski_EUSIPCO_2014g,Kuklasinksi_ICASSP_2015,Braun_EURASIP_2015,Schwartz_WASPAA_2015,Schwartz_ICASSP_2016,Kuklasinski_ITASLP_2016,kuklasinski_AES_2016}.
+The late reverberation speech component $\mathbf{x}_{\rm r}(k,l)$ is commonly modeled as a diffuse sound component and is assumed to be uncorrelated with the direct and early reverberation speech component $\mathbf{x}_{\rm e}(k,l)$ ~\cite{Braun_EUSIPCO_2013,Kuklasinski_EUSIPCO_2014g,Schwartz_WASPAA_2015,Braun_EURASIP_2015,Schwartz_ICASSP_2016,Kuklasinski_ITASLP_2016,Schwartz_EUSIPCO_2016, Kodrasi_HSCMA_2017, Kodrasi_ICASSP_2017}.
+% The uncorrelatedness assumption is based on the intuition that for the typical STFT lengths used in speech enhancement, the late reverberation component within a frame is caused by the direct sound component in previous frames, and hence, it is uncorrelated with the direct and early reverberation component within the same frame.
+Hence, the reverberant PSD matrix can be written as
+\begin{align}
+  \boldsymbol{\Phi}_{\mathbf{x}}(k,l) & = {\cal{E}} \{\mathbf{x}(k,l) \mathbf{x}^H(k,l)\} \\
+  & = {\cal{E}} \{\mathbf{x}_{\rm e}(k,l) \mathbf{x}_{\rm e}^H(k,l)\} + {\cal{E}} \{\mathbf{x}_{\rm r}(k,l) \mathbf{x}_{\rm r}^H(k,l)\},
+\end{align}
+with ${\cal{E}}$ the expectation operator.
+Based on~(\ref{eq: direct}) and on a diffuse sound field model for the late reverberation, the PSD matrix $\boldsymbol{\Phi}_{\mathbf{x}}(k,l)$ can be expressed as the sum of a rank-1 matrix and a scaled diffuse coherence matrix, i.e.,
+\begin{equation}
+  \label{eq: phi_x}
+\boldsymbol{\Phi}_{\mathbf{x}}(k,l) = \Phi_{\rm s}(k,l) \mathbf{d}(k)\mathbf{d}^H(k) + \Phi_{\rm r}(k,l) \boldsymbol{\Gamma}(k),
+\end{equation}
+with $\Phi_{\rm s}(k,l) = {\cal{E}}\{|S(k,l)|^2\}$ the (time-varying) PSD of the target signal, $\Phi_{\rm r}(k,l)$ the (time-varying) PSD of the late reverberation, and ${\boldsymbol{\Gamma}}(k)$ the (time-invariant) coherence  matrix of a diffuse sound field, which can be analytically computed based on the microphone array geometry~\cite{Cook_JASA_1955}.
+In practice, an estimate of the PSD matrix $\boldsymbol{\Phi}_{\mathbf{x}}(k,l)$ is obtained using recursive averaging with a smoothing factor $\alpha$, i.e.,
+\begin{equation}
+  \label{eq: rec_av}
+  \hat{\boldsymbol{\Phi}}_{\mathbf{x}}(k,l) = \alpha \mathbf{x}(k,l) \mathbf{x}^H(k,l) + (1-\alpha) \hat{\boldsymbol{\Phi}}_{\mathbf{x}}(k,l-1).
+\end{equation}
+Given the filter vector $\mathbf{w}(k,l) = [W_1(k,l) \; \ldots \; W_M(k,l)]^T$, the output signal $Z(k,l)$ of the speech enhancement system in Fig.~\ref{fig: ac_sys} can be computed as
+\begin{equation}
+Z(k,l) = \mathbf{w}^H(k,l)\mathbf{x}(k,l) = \mathbf{w}^H(k,l)\mathbf{x}_{\rm e}(k,l) + \mathbf{w}^H(k,l)\mathbf{x}_{\rm r}(k,l).
+\end{equation}
+Speech dereverberation techniques aim at designing the filter $\mathbf{w}(k,l)$ such that the output signal $Z(k,l)$ is as close as possible to the target signal $S(k,l)$.
+Many such techniques require an estimate of the late reverberation PSD $\Phi_{\rm r}(k,l)$, e.g.~\cite{Habets_PhD,OSchwartz_ITASLP_2015,Cauchi_EURASIP_2015}.
+
+
+\section{Late reverberation PSD estimator}
+In this section, the ML-based estimator~\cite{Kuklasinski_EUSIPCO_2014g} and the EVD-based estimator~\cite{Kodrasi_ICASSP_2017} are briefly reviewed and a novel nuclear norm minimization-based estimator is proposed. 
+Since the estimation is performed independently in each frequency bin, the frequency index $k$ will be omitted in the remainder of this paper.
+
+\subsection{Maximum likelihood-based estimator}
+In order to derive the ML-based estimator in~\cite{Kuklasinski_EUSIPCO_2014g}, the early and late reverberation speech components are assumed to be circularly-symmetric complex Gaussian distributed.
+These distributions are then used to construct and maximize a likelihood function, yielding the ML-based late reverberation PSD estimate
+\begin{equation}
+\label{eq: phir_ml}
+\hat{\Phi}_{\rm r}^{\rm ml}(l)  = \frac{1}{M-1} {\rm tr} \left\{  \left( \mathbf{I} - \mathbf{d} \frac{\mathbf{d}^{H}\boldsymbol{\Gamma}^{-1}}{\mathbf{d}^H\boldsymbol{\Gamma}^{-1}\mathbf{d}} \right) \hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l)\boldsymbol{\Gamma}^{-1}\right\},
+%\hat{\Phi}_{\rm s}^{\rm ml}(l) & = \frac{\mathbf{d}^{H}\boldsymbol{\Gamma}^{-1}}{\mathbf{d}^H\boldsymbol{\Gamma}^{-1}\mathbf{d}} \left[\boldsymbol{\Phi}_{\mathbf{x}}%(l) - \hat{\Phi}_{\rm r}^{\rm ml}(l) \boldsymbol{\Gamma} \right] \frac{\boldsymbol{\Gamma}^{-1}\mathbf{d}}{\mathbf{d}^H\boldsymbol{\Gamma}^{-1}\mathbf{d}},
+\end{equation}
+%\end{subequations}
+where $\mathbf{I}$ denotes the $M \times M$-dimensional identity matrix and ${\rm tr}\{ \cdot \}$ denotes the matrix trace operator.
+Note that the PSD estimate in~(\ref{eq: phir_ml}) requires knowledge of the RETF vector $\mathbf{d}$, which may be difficult to estimate accurately.
+% While $\mathbf{R}_{\mathbf{x}}(l)$ can be estimated from the received signal $\mathbf{x}(l)$ and $\boldsymbol{\Gamma}$ can be constructed assuming a reasonable sound field model for the late reverberation, accurately estimating the vector $\mathbf{d}$ may be difficult.
+% As is experimentally validated in~\cite{kuklasinski_AES_2016}, estimation errors in the vector $\mathbf{d}$ degrade the PSD estimation accuracy of the ML estimator in~(\ref{eq: phir_ml}), yielding as a result a degradation in the dereverberation performance of the used speech enhancement system.
+
+\subsection{Eigenvalue decomposition-based estimator}
+\label{sec: evd_psd}
+To remove the dependency of the PSD estimate on the RETF vector $\mathbf{d}$, we recently proposed to estimate the late reverberation PSD using the EVD of the prewhitened reverberant PSD matrix $\boldsymbol{\Gamma}^{-1}\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l)$~\cite{Kodrasi_ICASSP_2017}.
+Based on the model in~(\ref{eq: phi_x}), the EVD-based late reverberation PSD estimate is computed as
+\begin{equation}
+  \label{eq: phir_evd}
+  \hat{\Phi}^{\rm evd}_{\rm r}(l) = \frac{1}{M-1} \left( {\rm tr} \{ \boldsymbol{\Gamma}^{-1}\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l) \} - \lambda_{\max}\{ \boldsymbol{\Gamma}^{-1}\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l) \} \right),
+\end{equation}
+where $\lambda_{\max}\{\boldsymbol{\Gamma}^{-1}\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l) \}$ denotes the maximum eigenvalue of the prewhitened reverberant PSD matrix.
+Unlike the ML-based estimate in~(\ref{eq: phir_ml}), the EVD-based estimate in~(\ref{eq: phir_evd}) does not require knowledge of the RETF vector $\mathbf{d}$, which is advantageous in order to avoid propagation of RETF estimation errors into the PSD estimate.
+As has been experimentally validated in~\cite{Kodrasi_ICASSP_2017}, using the EVD-based PSD estimate in an MWF yields a better dereverberation performance than the ML-based estimate, both for perfectly estimated RETFs as well as in the presence of RETF estimation errors.
+
+
+\subsection{Nuclear norm minimization-based estimator}
+\label{sec: nnm}
+The EVD-based PSD estimator in~(\ref{eq: phir_evd}) relies on the assumptions that 1) the late reverberation can be modeled as a diffuse sound field, 2) the components $\mathbf{x}_{\rm e}(l)$ and $\mathbf{x}_{\rm r}(l)$ are uncorrelated, and 3) the estimated PSD matrix $\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l)$ in~(\ref{eq: rec_av}) is equal to the PSD matrix $\boldsymbol{\Phi}_{\mathbf{x}}(l)$ in~(\ref{eq: phi_x}). %, i.e., $\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l)$ is equal to the sum of the rank-1 matrix $\Phi_{\rm s}(l) \mathbf{d} \mathbf{d}^H$ and the scaled spatial coherence matrix $\Phi_{\rm r}(l)\boldsymbol{\Gamma}$.
+However, the late reverberation is not perfectly diffuse. 
+Furthermore, even if the components $\mathbf{x}_{\rm e}(l)$ and $\mathbf{x}_{\rm r}(l)$ were truly uncorrelated, the PSD matrix $\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l)$ in~(\ref{eq: rec_av}) estimated using a realization of $\mathbf{x}(l)$ will likely contain non-zero contributions of the cross-terms $\mathbf{x}_{\rm e}(l) \mathbf{x}^{H}_{\rm r}(l)$ and $\mathbf{x}_{\rm r}(l) \mathbf{x}^{H}_{\rm e}(l)$.
+As a result, in practice $\hat{\boldsymbol{\Phi}}_{\rm x}(l)$ differs from $\boldsymbol{\Phi}_{\rm x}(l)$, i.e.,
+\begin{equation}
+  \label{eq: corr_err}
+  \hat{\boldsymbol{\Phi}}_{\rm x}(l) = \mathbf{E}(l) + \boldsymbol{\Phi}_{\rm x}(l) = \underbrace{\mathbf{E}(l) + \Phi_{\rm s}(l) \mathbf{d}\mathbf{d}^H}_{\mathbf{\Delta}(l)} + \Phi_{\rm r}(l) \boldsymbol{\Gamma},
+\end{equation}
+with $\mathbf{E}(l)$ an $M \times M$-dimensional Hermitian error matrix and the matrix $\mathbf{\Delta}(l) = \mathbf{E}(l) + \Phi_{\rm s}(l) \mathbf{d}\mathbf{d}^H$ defined to simplify the notation.
+Assuming that the matrix $\mathbf{\Delta}(l)$ can be modeled as a low rank (however, not necessarily rank-$1$) matrix, we propose to estimate the late reverberation PSD $\Phi_{\rm r}(l)$ by decomposing the estimated PSD matrix $\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l)$ into the sum of an unknown low rank Hermitian matrix and a scaled diffuse coherence matrix. 
+This corresponds to solving the constrained minimization problem
+\begin{equation}
+  \label{eq: rank_min}
+  \min_{\Phi_{\rm r}(l),\mathbf{\Delta}(l)} {\cal{ R}}\{\mathbf{\Delta}(l)\} \; \; \text{subject to} \; \; \begin{cases}
+    \hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l) = \mathbf{\Delta}(l) + \Phi_{\rm r}(l)\boldsymbol{\Gamma},\\
+    \Phi_{\rm r}(l) \geq 0,\\
+    \mathbf{\Delta}(l) = \mathbf{\Delta}^H(l),
+  \end{cases}
+\end{equation}
+where ${\cal R}\{\mathbf{\Delta}(l)\}$ denotes the rank of $\mathbf{\Delta}(l)$, defined as the number of nonzero singular values $\sigma_p\{\mathbf{\Delta}(l)\}$, $p = 1, \; \ldots, \; M$.
+Rank minimization problems arise in many statistical modeling and signal processing applications such as in robust principal component analysis~\cite{Candes_ACM_2011} and subspace segmentation~\cite{Liu_ITPAMI_2013}.
+However, the matrix rank is non-convex and it is well known that non-convex optimization problems are typically hard (if not impossible) to solve.
+A common alternative to rank minimization problems is to use a convex relaxation approach and replace the non-convex rank ${\cal{R}}\{ \mathbf{\Delta}(l) \}$ with the convex nuclear norm $\| \mathbf{\Delta}(l)\|_{*}$~\cite{Fazel_phd,Candes_ACM_2011, Liu_ITPAMI_2013}, defined as
+\begin{equation}
+\| \mathbf{\Delta}(l)\|_{*} = \sum_{p = 1}^M \sigma_p\{\mathbf{\Delta}(l)\}. 
+\end{equation}
+Whereas the rank counts the number of nonzero singular values, the nuclear norm sums the amplitude of the singular values, and it can be shown that under certain conditions low rank solutions can be perfectly recovered via nuclear norm minimization~\cite{Recht_SIAM_2010}.
+%Since the nuclear norm is convex, it can be efficiently optimized using convex optimization tools~\cite{Candes_ACM_2012}.
+Hence, we propose to estimate the late reverberation PSD by solving the nuclear norm minimization problem
+\begin{equation}
+  \label{eq: norm_min}
+\hat{\Phi}^{\rm nnm}_{\rm r}(l) \!=\!  \argmin_{\Phi_{\rm r}(l), \mathbf{\Delta}(l)}  \|\mathbf{\Delta}(l)\|_{*}  \; \text{subject to}  \begin{cases}
+    \!\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l) \!=\! \mathbf{\Delta}(l) + \Phi_{\rm r}(l)\boldsymbol{\Gamma},\\
+    \!\Phi_{\rm r}(l) \!\geq\! 0,\\
+    \!\mathbf{\Delta}(l) \!=\! \mathbf{\Delta}^H(l).
+  \end{cases}
+\end{equation}
+Since the optimization problem in~(\ref{eq: norm_min}) is convex, it can be efficiently solved using existing optimization tools, e.g. the Matlab software CVX~\cite{cvx}.
+
+It should be noted that although a noise-free scenario is assumed in this paper, the proposed NNM-based estimator can also be used in a noisy scenario, as long as an estimate of the PSD matrix $\boldsymbol{\Phi}_{\mathbf{x}}(l)$ can be obtained.
+An estimate of $\boldsymbol{\Phi}_{\mathbf{x}}(l)$ can in practice be computed by, e.g., subtracting an estimate of the noise PSD matrix from the noisy signal PSD matrix.
+However, if the noise can also be modeled as a diffuse sound field, the NNM-based estimator can be readily used to estimate the joint late reverberation and noise PSD.
+
+\section{Experimental Results}
+\label{sec: exp}
+In this section, the dereverberation performance of an MWF using the proposed NNM-based PSD estimator is investigated and compared to the ML-based~\cite{Kuklasinski_EUSIPCO_2014g} and EVD-based~\cite{Kodrasi_ICASSP_2017} PSD estimators, both for perfectly as well as for erroneously estimated RETFs.
+The MWF is implemented as an MVDR beamformer ${\mathbf{w}_{_{\text{MVDR}}}}$ followed by a single-channel Wiener postfilter $G(l)$, i.e.,
+\begin{equation}
+\label{eq: decomp}
+\mathbf{w}_{_{\text{MWF}}}(l) = \underbrace{\frac{\boldsymbol{{\Gamma}}^{-1}\mathbf{d}}{\mathbf{d}^H\boldsymbol{{\Gamma}}^{-1}\mathbf{d}}}_{\mathbf{w}_{_{\text{MVDR}}}} \underbrace{\frac{\hat{\Phi}_{\rm s}(l)}{\hat{\Phi}_{\rm s}(l) + \frac{\hat{\Phi}_{\rm r}(l)}{\mathbf{d}^H\boldsymbol{\Gamma}^{-1}\mathbf{d}}}}_{G(l)},
+\end{equation}
+with $\hat{\Phi}_{\rm s}(l)$ and $\hat{\Phi}_{\rm r}(l)$ the estimated target signal and late reverberation PSDs.
+When using the ML-based late reverberation PSD estimate $\hat{\Phi}^{\rm ml}_{\rm r}(l)$, the target signal PSD $\hat{\Phi}_{\rm s}(l)$ is estimated within the ML framework as proposed in~\cite{Kuklasinski_EUSIPCO_2014g}, whereas when using the EVD-based and NNM-based late reverberation PSD estimates $\hat{\Phi}^{\rm evd}_{\rm r}(l)$ and $\hat{\Phi}^{\rm nnm}_{\rm r}(l)$ respectively, the target signal $\hat{\Phi}_{\rm s}(l)$ is estimated using the decision directed approach~\cite{Ephraim_ITASSP_1984}.
+It should be noted that independently of the late reverberation PSD estimator used, the MWF implemented according to~(\ref{eq: decomp}) is sensitive to estimation errors in the RETF vector $\mathbf{d}$ due to the sensitivity of the MVDR beamformer to RETF errors.
+However, as will be illustrated in Section~\ref{sec: exp2}, a significantly higher sensitivity of the MWF is observed when the late reverberation PSD estimator is also affected by RETF errors.
+
+\subsection{Setup}
+We consider two multi-channel acoustic systems with a single speech source and $M \in \{2, 4, 6 \}$ microphones.
+The first acoustic system consists of a uniform linear microphone array with an inter-microphone distance of $8$~cm, placed in a room with reverberation time $T_{60} \approx 0.61$ s \cite{hadad_IWAENC_2014}.
+The speech source is located at an angle $\theta = 45^{\circ}$ and distance $d_{\rm sm} = 2$~m from the microphone array.
+The second acoustic system consists of a uniform linear microphone array with an inter-microphone distance of $6$~cm, placed in a room with reverberation time~$T_{60} \approx 1.25$~ms~\cite{Eaton_WASPAA_2015}.
+The speech source is located at an angle $\theta = -65^{\circ}$ and distance $d_{\rm sm} = 2.1$~m from the microphone array.
+The sampling frequency is $f_s = 16$ kHz and the received reverberant signals are generated by convolving clean speech signals from the HINT database~\cite{Nilsson_JASA_1994} with measured RIRs. 
+
+The signals are processed using a weighted overlap-add STFT framework with a frame size of $1024$ samples and an overlap of $75 \%$ between successive frames. 
+The first microphone is arbitrarily selected as the reference microphone.
+The RETF vector $\mathbf{d}$ is computed from the truncated RIRs containing only the direct path and early reflections (up to $10$ ms).
+The diffuse coherence matrix $\boldsymbol{\Gamma}$ is computed based on the microphone array geometry, assuming a spherically diffuse sound field. 
+To estimate the reverberant PSD matrix $\hat{\boldsymbol{\Phi}}_{\mathbf{x}}(l)$, recursive averaging with a smoothing factor $\alpha$ corresponding to a time constant of $40$ ms is used, cf.~(\ref{eq: rec_av}).
+The minimum gain of the single-channel Wiener postfilter $G(l)$ in~(\ref{eq: decomp}) is $-20$~dB.
+
+The performance is evaluated in terms of the improvement in PESQ ($\Delta$PESQ) \cite{PESQ} and cepstral distance~($\Delta$CD)~\cite{Quackenbush_book} between the output signal and the reference microphone signal.
+The PESQ and CD measures are intrusive measures comparing the signal being evaluated to a reference signal. 
+The reference signal used in this paper is the anechoic speech signal.
+It should be noted that a positive $\Delta$PESQ and a negative $\Delta$CD indicate a performance improvement.
+
+The performance of the MVDR beamformer and the MWF implemented according to~(\ref{eq: decomp}) using the ML-, EVD-, and proposed NNM-based PSD estimators is investigated for 
+\begin{itemize}
+\item[i)] both acoustic systems with different number of microphones $M \in \{2, 4, 6 \}$ assuming {\emph{perfectly estimated RETFs}}, i.e., $\mathbf{d}$ is computed from the truncated RIRs measured for the true direction of arrival~(DOA) $\theta$ of the speech source (Section~\ref{sec: exp1}), 
+\item[ii)] the first acoustic system with $M = 4$ microphones assuming {\emph{erroneously estimated RETFs}}, i.e., $\mathbf{d}$ is computed from the truncated RIRs measured for DOAs $\hat{\theta}$ which differ from the true DOA $\theta$~(Section~\ref{sec: exp2}).
+\end{itemize}
+%Exemplary sound samples for each experimental part can be found at \url{bit.ly/nnmpsd}. 
+
+\subsection{Perfectly estimated RETFs}
+\label{sec: exp1}
+In this section, the performance of the MVDR beamformer and the MWF using the considered late reverberation PSD estimators is investigated for perfectly estimated RETFs.
+Fig.~\ref{fig: perfect} depicts the $\Delta$PESQ and $\Delta$CD obtained for all considered acoustic systems and configurations.
+As expected, it can be observed that for all acoustic systems and configurations, the MWF using any of the considered PSD estimators improves the performance in comparison to the MVDR beamformer in terms of both instrumental measures.
+In terms of $\Delta$PESQ, Fig.~\ref{fig: perfect}(a) shows that the proposed NNM-based PSD estimator typically results in the best performance (except for $T_{60} \approx 0.61$ s and $M = 2$ microphones), yielding a $\Delta$PESQ increase of up to $0.2$ in comparison to the ML-based and EVD-based PSD estimators.
+In terms of $\Delta$CD, Fig.~\ref{fig: perfect}(b) shows that for the first acoustic system all considered PSD estimators yield a similar performance.
+For the second acoustic system, Fig.~\ref{fig: perfect}(b) shows that the NNM-based PSD estimator outperforms the ML-based PSD estimator and results in a similar or slightly better performance than the EVD-based PSD estimator.
+Informal listening tests suggest that the NNM-based PSD estimator typically yields a larger suppression of the late reverberation, introducing as a result slightly more signal distortions than the ML-based and EVD-based PSD estimators.
+
+In summary, instrumental measures show that the proposed NNM-based PSD estimator generally yields a better performance than the ML-based and EVD-based PSD estimators when used in an MWF with perfectly estimated RETFs.
+%In the future, formal listening tests should be conducted to truly assess the perceptual quality of these different late reverberation PSD estimators.
+\begin{figure}[t!]
+  \input{Plots/perfectSteering.tikz}
+\caption{Performance of the MVDR beamformer and the MWF using different late reverberation PSD estimators with perfectly estimated RETFs: (a)~$\Delta$PESQ and (b) $\Delta$CD.}
+\label{fig: perfect}
+\end{figure}
+\subsection{Erroneously estimated RETFs}
+\label{sec: exp2}
+In this section, the performance of the MVDR beamformer and the MWF using the considered late reverberation PSD estimators is investigated for erroneously estimated RETFs.
+Fig.~\ref{fig: erroneous} depicts the $\Delta$PESQ and $\Delta$CD obtained for the first acoustic system and $M = 4$ microphones when the RETF vector $\mathbf{d}$ is computed from the truncated RIRs measured for several erroneous DOAs.
+For completeness, the performance obtained for the perfectly estimated RETF vector $\mathbf{d}$ (i.e., $\hat{\theta} = 45^{\circ}$) is also depicted.
+As expected, Fig.~\ref{fig: erroneous} shows that the performance of the MVDR beamformer deteriorates in the presence of RETF estimation errors in terms of both instrumental measures.
+Since the MWF is equivalent to an MVDR beamformer followed by a single-channel Wiener postfilter, cf.~(\ref{eq: decomp}), it can be observed that RETF estimation errors yield a performance deterioration also for the MWF using any of the considered PSD estimators.
+However, since the ML-based PSD estimator additionally relies on the RETF vector, Fig.~\ref{fig: erroneous} shows that the ML-based PSD estimator even worsens the performance in comparison to the MVDR beamformer, resulting in a significantly faster and larger performance deterioration than the EVD-based or the proposed NNM-based PSD estimators.
+When comparing the EVD-based and NNM-based PSD estimators, Fig.~\ref{fig: erroneous}(a) shows that in terms of $\Delta$PESQ, the proposed NNM-based PSD estimator typically results in a similar or slightly better performance than the EVD-based estimator (except for $\hat{\theta} = -30^{\circ}$ and $\hat{\theta} = -15^{\circ}$).
+Fig.~\ref{fig: erroneous}(b) shows that in terms of $\Delta$CD, the proposed NNM-based PSD estimator yields a very similar performance as the EVD-based PSD estimator.
+Informal listening test suggest that in the presence of RETF estimation errors, using the NNM-based PSD estimator in an MWF yields a larger suppression of the late reverberation than using the EVD-based PSD estimator.
+
+In summary, instrumental measures show that the proposed NNM-based PSD estimator results in a significantly better performance than the ML-based PSD estimator and a similar or slightly better performance than the EVD-based PSD estimator when used in an MWF with erroneously estimated RETFs.
+%Similarly as before, formal listening test should be conducted in the future to truly compare the perceptual quality of the EVD-based and NNM-based PSD estimators in the presence of RETF estimation errors.
+\begin{figure}[t!]
+  \input{Plots/pesq_erroneous_DOA_610ms_M4.tikz}
+  \input{Plots/cd_erroneous_DOA_610ms_M4.tikz}
+\caption{Performance of the MVDR beamformer and the MWF using different late reverberation PSD estimators with erroneously estimated RETFs: (a)~$\Delta$PESQ and (b) $\Delta$CD ($T_{60} \approx 0.61$ s, $M =~4$).}
+\label{fig: erroneous}
+\end{figure}
+
+\section{Conclusion}
+In this paper a multi-channel late reverberant PSD estimator based on nuclear norm minimization has been proposed, which does not require an estimate of the RETFs.
+In order to account for modeling or estimation errors in the estimated reverberant PSD matrix, this matrix is modeled as the sum of a low rank matrix and a scaled diffuse coherence matrix.
+Among all pairs of scalars and matrices which yield feasible decompositions, the late reverberation PSD is estimated as the scalar associated with the matrix of minimum rank.
+Instead of minimizing the non-convex matrix rank, it has been proposed to use a convex relaxation approach and estimate the late reverberation PSD by minimizing the nuclear norm.
+Experimental results have shown that using the proposed NNM-based PSD estimator in an MWF for speech dereverberation yields a similar or better performance than the ML-based and EVD-based estimators.
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+
+\end{document}
+

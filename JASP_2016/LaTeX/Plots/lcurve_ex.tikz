@@ -1,0 +1,92 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-0.005,
+xmax=0.12,
+xtick = {0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12},
+xticklabels = {0, 0.02, 0.04, 0.06, 0.08, 0.1},
+xlabel={Least-squares error},
+xmajorgrids,
+ymin=-5000,
+ymax=120000,
+ytick = {0,20000,40000,60000,80000,100000},
+ylabel={Condition number},
+ylabel absolute, ylabel style={yshift=-1.0em},
+xlabel style={yshift=0.2em, align = center},
+ymajorgrids
+]
+\addplot [
+color=blue,
+dashed,
+line width=1.2pt,
+mark size=2.2pt,
+mark=o,
+mark options={solid},
+forget plot
+]
+table[row sep=crcr]{
+0.101683347794715 619.327594930765\\
+0.070745345298329 910.163142451782\\
+0.0518215776650418 1446.05932037595\\
+0.034064480268289 2236.23282740251\\
+0.021490164999668 3212.3656467179\\
+0.0146601306623177 4065.52058480655\\
+0.00974151392832193 5104.23809281723\\
+0.0063666801741859 7587.91061319979\\
+0.00413442371755222 10938.5138981644\\
+0.0028143172811875 15047.1511902914\\
+0.00179731470310589 20720.8208654107\\
+0.00107409629745723 42007.5584351387\\
+0.000651664771825611 102481.015352579\\
+};
+\addplot [
+color=green!50!black,
+only marks,
+mark=square*,
+mark size=1.5pt,
+thick,
+mark options={solid},
+]
+table[row sep=crcr]{
+0.00413442371755222 10938.5138981644\\
+};
+\addplot [
+color=red,
+only marks,
+mark=asterisk,
+mark size=2.3pt,
+thick,
+mark options={solid},
+]
+table[row sep=crcr]{
+0.000651664771825611 102481.015352579\\
+};
+\addplot [
+color=yellow!30!black,
+only marks,
+mark=triangle*,
+mark size=2.3pt,
+thick,
+mark options={solid},
+]
+table[row sep=crcr]{
+0.101683347794715 619.327594930765\\
+};
+\node at (axis cs:0.003, 105000) [anchor=west] {\color{red}{$L^{\rm t}_w = 1947$}}; 
+\node at (axis cs:0.09, 17000) [anchor=west] {\color{yellow!30!black}{$L^{\rm s}_w = 300$}}; 
+\node at (axis cs:0.008, 20000) [anchor=west] {\color{green!50!black}{$L^{\rm s}_w = 1000$}}; 
+\end{axis}
+\end{tikzpicture}%

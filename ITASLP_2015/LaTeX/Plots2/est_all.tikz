@@ -1,0 +1,300 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+%
+\definecolor{mycolor1}{rgb}{1,0,1}%
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+name = drr,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-5.5,
+xmax=10.5,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (a)},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xtick = {-5,0,5,10},
+xticklabels = {-5,0,5,10},
+ytick = {0, 2, 4, 6, 8, 10, 12},
+yticklabels = {0, 2, 4, 6, 8, 10, 12},
+xmajorgrids,
+ymin=0,
+ymax=10,
+ylabel={$\Delta$DRR [dB]},
+ymajorgrids
+]
+\addplot [
+color=black,
+dashed,
+line width=1.5pt,
+mark=o,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 9.31978455770385\\
+-2.5 9.31412862945906\\
+0 9.33128607197658\\
+2.5 9.34720365856264\\
+5 9.36499521801198\\
+7.5 9.3722055429641\\
+10 9.37340328277981\\
+};
+\addplot [
+color=mycolor1,
+dashed,
+line width=1.5pt,
+mark=square,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 0.946371746871295\\
+-2.5 1.08787292107083\\
+0 3.42851389430732\\
+2.5 5.63142623062875\\
+5 6.30076325259081\\
+7.5 6.23624507533723\\
+10 6.13573659761002\\
+};
+\end{axis}
+
+\begin{axis}[%
+name = pesq,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-5.5,
+xmax=10.5,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (b)},
+xtick = {-5,0, 5,10},
+xticklabels = {-5,0,5,10},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xmajorgrids,
+ymin=0,
+ymax=0.65,
+ylabel={$\Delta$PESQ},
+ymajorgrids,
+at={($(drr.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+]
+\addplot [
+color=black,
+dashed,
+line width=1.5pt,
+mark=o,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 0.5965\\
+-2.5 0.59475\\
+0 0.60275\\
+2.5 0.60925\\
+5 0.615\\
+7.5 0.615750000000001\\
+10 0.616000000000001\\
+};
+\addplot [
+color=mycolor1,
+dashed,
+line width=1.5pt,
+mark=square,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 0.044\\
+-2.5 0.1115\\
+0 0.2285\\
+2.5 0.33475\\
+5 0.385\\
+7.5 0.40875\\
+10 0.42725\\
+};
+\end{axis}
+
+\begin{axis}[%
+name = nr,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-5.5,
+xmax=10.5,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (c)},
+xtick = {-5,0,5,10},
+xticklabels = {-5,0,5,10},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xmajorgrids,
+ymin=0,
+ymax=22,
+ylabel={$\psi_{_{\rm NR}}$ [dB]},
+ymajorgrids,
+at={($(pesq.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+]
+\addplot [
+color=black,
+dashed,
+line width=1.5pt,
+mark=o,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 5.3446708300213\\
+-2.5 5.30523440872317\\
+0 4.42192896578351\\
+2.5 3.51235048432049\\
+5 2.46197284439052\\
+7.5 1.80683047268147\\
+10 1.54695584479899\\
+};
+\addplot [
+color=mycolor1,
+dashed,
+line width=1.5pt,
+mark=square,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 20.850870851566\\
+-2.5 20.1160894330727\\
+0 15.8983788571621\\
+2.5 11.714058786725\\
+5 10.0026501439313\\
+7.5 9.16760146595738\\
+10 8.4177452398359\\
+};
+\end{axis}
+
+\begin{axis}[%
+name = sir,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-5.5,
+xmax=10.5,
+xtick = {-5,0,5,10},
+xticklabels = {-5,0,5,10},
+ytick = {3,5,7,9},
+yticklabels = {3,5,7,9},
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (d)},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xmajorgrids,
+ymin=1.5,
+ymax=11,
+legend style={at={(-1.88,1.01)},anchor=south west,row sep = -1pt,draw=black,fill=white,legend cell align=left, inner sep = 1pt},
+legend columns = 2,
+legend image post style={xscale=0.8},
+legend entries = {RP-DNR, MWF-DNR},
+at={($(nr.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+ylabel={$\Delta$SRNR [dB]},
+ymajorgrids
+]
+\addplot [
+color=black,
+dashed,
+line width=1.5pt,
+mark=o,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 4.7946076058636\\
+-2.5 4.52578721173842\\
+0 3.77323612490486\\
+2.5 3.17014502217622\\
+5 2.65884152229035\\
+7.5 2.43992382471763\\
+10 2.41889336115309\\
+};
+\addplot [
+color=mycolor1,
+dashed,
+line width=1.5pt,
+mark=square,
+mark options={solid},
+mark size = 1.5pt,
+]
+table[row sep=crcr]{
+-5 10.6458377914862\\
+-2.5 8.96075599866556\\
+0 7.0077898744069\\
+2.5 5.38127941428725\\
+5 4.48998220232595\\
+7.5 3.96941606916342\\
+10 3.64463424098248\\
+};
+\end{axis}
+
+\begin{axis}[%
+name = fwssnr,
+width=0.35\figurewidth,
+height=0.8\figureheight,
+scale only axis,
+xmin=-5.5,
+xmax=10.5,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={SIR [dB] \\ (e)},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xtick = {-5, 0, 5, 10},
+xticklabels = {-5,0,5,10},
+xmajorgrids,
+ymin=0.5,
+ymax=4.5,
+ylabel={$\Delta$fwSSNR [dB]},
+ymajorgrids,
+at={($(sir.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+]
+\addplot [
+color=black,
+dashed,
+line width=1.5pt,
+mark=o,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 0.644727473453544\\
+-2.5 0.930842693328236\\
+0 1.18217529686048\\
+2.5 1.39174968728379\\
+5 1.59411651732495\\
+7.5 1.71491801936679\\
+10 1.77073410405489\\
+};
+\addplot [
+color=mycolor1,
+dashed,
+line width=1.5pt,
+mark=square,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 3.90551876328948\\
+-2.5 4.12448990416023\\
+0 3.76403546182929\\
+2.5 3.31100600186841\\
+5 3.26611514883162\\
+7.5 3.24199999156111\\
+10 3.16535995673054\\
+};
+\end{axis}
+
+\end{tikzpicture}%
