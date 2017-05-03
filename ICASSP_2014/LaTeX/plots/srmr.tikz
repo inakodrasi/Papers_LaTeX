@@ -1,0 +1,69 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\definecolor{mycolor1}{rgb}{0,0.75,0.75}%
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=0.45\figurewidth,
+height=0.55\figureheight,
+scale only axis,
+xmin=-34,
+xmax=-8,
+xlabel={$N_{\rm M}$ [dB]},
+xlabel absolute, xlabel style={yshift=0.5em},
+xmajorgrids,
+ymin=-3,
+ymax=6,
+ylabel={$\Delta$ SRMR [dB]},
+ylabel absolute, ylabel style={yshift=-1.6em},
+ymajorgrids,
+legend style={at=({0.005,0.005}),anchor=south west,draw=black,fill=white,legend cell align=left,row sep = -2pt}
+]
+\addplot [
+color=blue,
+dashed,
+line width=1.2pt,
+mark size=1.7pt,
+mark=o,
+mark options={solid},
+]
+table[row sep=crcr]{
+-33 -0.181850344950451\\
+-30 -0.517395573137211\\
+-27 0.384383313367636\\
+-24 -0.397024682435076\\
+-21 0.480783567614018\\
+-18 -0.63631685721368\\
+-15 1.11798170226275\\
+-12 -2.05719843072604\\
+-9 -2.75795246963211\\
+};
+\addplot [
+color=black,
+dashed,
+line width=1.0pt,
+mark size=2.5pt,
+mark=triangle,
+mark options={solid},
+]
+table[row sep=crcr]{
+-33 5.35139747786209\\
+-30 5.31320702754899\\
+-27 5.41467597144835\\
+-24 5.1604741832141\\
+-21 5.28289856769956\\
+-18 4.45939236228628\\
+-15 5.40507513902725\\
+-12 3.26580823612649\\
+-9 1.98060078152327\\
+};
+\end{axis}
+\end{tikzpicture}%

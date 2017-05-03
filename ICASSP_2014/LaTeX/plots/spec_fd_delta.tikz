@@ -1,0 +1,42 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\figurewidth,
+height=0.4\figureheight,
+axis on top,
+scale only axis,
+xmin=-0.00808465676229508,
+xmax=3.9533971567623,
+xtick={0.5, 1.5, 2.5, 3.5},
+y dir=reverse,
+ymin=-15.625,
+ymax=8015.625,
+ytick={0,2000,4000,6000,8000},
+yticklabels={8,6,4,2,0},
+ylabel={Frequency [kHz]},
+ylabel absolute, ylabel style={yshift=-2em}, 
+colormap/hot2,
+colorbar,
+colorbar style={at={(1.01,1)},
+	 font = \footnotesize,
+        yticklabel style={
+            text width=0.5em,
+            align=left,
+        }
+    },
+point meta min=-40,
+point meta max=20
+]
+\addplot graphics [xmin=-0.00808465676229508,xmax=3.9533971567623,ymin=-15.625,ymax=8015.625] {plots/spec_fd_delta-1.png};
+\end{axis}
+\end{tikzpicture}%

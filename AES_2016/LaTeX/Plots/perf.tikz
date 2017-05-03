@@ -1,0 +1,105 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}
+
+\begin{axis}[%
+name = drr,
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-5,
+xmax=5,
+ymin=8.0,
+ymax=9,
+xlabel absolute, xlabel style={align = center, text width=3cm, yshift=0.5em},
+xlabel={Input SIR [dB] \\ (a)},
+ylabel absolute, ylabel style={yshift=-1.5em},
+xtick = {-5,-2.5,0,2.5,5},
+xmajorgrids,
+ylabel={$\Delta$DRR [dB]},
+ymajorgrids
+]
+\addplot [
+color=black,
+dashed,
+mark=o,
+line width = 1.5pt,
+mark size = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 8.80112686352667\\
+-2.5 8.80112686352667\\
+0 8.80112686352667\\
+2.5 8.80112686352667\\
+5 8.80112686352667\\
+};
+\addplot [
+color=red,
+dashed,
+mark=square,
+mark size = 1.5pt,
+line width = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 8.74959626203335\\
+-2.5 8.74394033378855\\
+0 8.76109777630608\\
+2.5 8.77701536289213\\
+5 8.79480692234148\\
+};
+\end{axis}
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+name = pesq,
+xmin=-5,
+xmax=5,
+ymin=0.5,
+ymax=0.6,
+at={($(drr.south east)+(3.5cm,0cm)$)},
+anchor=south east,
+]
+\addplot [
+color=black,
+dashed,
+mark=o,
+mark size = 1.5pt,
+line width = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 0.6125\\
+-2.5 0.6125\\
+0 0.6125\\
+2.5 0.6125\\
+5 0.6125\\
+};
+\addplot [
+color=red,
+dashed,
+mark=square,
+mark size = 1.5pt,
+line width = 1.5pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 0.5965\\
+-2.5 0.59475\\
+0 0.60275\\
+2.5 0.60925\\
+5 0.615\\
+};
+\end{axis}
+\end{tikzpicture}%

@@ -1,0 +1,146 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+
+% defining custom colors
+\definecolor{mycolor1}{rgb}{0,0.75,0.75}%
+\definecolor{mycolor2}{rgb}{0.75,0,0.75}%
+\definecolor{mycolor3}{rgb}{0.75,0.75,0}%
+
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=0.43\figurewidth,
+height=0.6\figureheight,
+scale only axis,
+xmin=-0.1,
+xmax=1.8,
+xlabel={$\psi_{\mathbf{x}}(k)$},
+xlabel absolute, xlabel style={yshift=0.7em},
+ylabel absolute, ylabel style={yshift=-1.6em},
+ymin=0,
+xmajorgrids,
+ymax=1.05,
+ymajorgrids,
+ytick = {0,0.5,1},
+ylabel={$\psi_{\mathbf{v}}(k)$},
+legend style={at=({0.99,0.99}),anchor=north east,row sep = -2pt,draw=black,fill=white,legend cell align=left},
+legend entries={$\mu(k) = 0.5$,
+       		$\mu(k) = 0.1$,
+		$\mu(k) = 2.0$,
+                },
+]
+%\addlegendimage{green!50!black, line width = 1.5pt}
+\addlegendimage{line width = 1.5,mark = o, fill = green, green!50!black, mark size = 1.3pt, only marks}
+\addlegendimage{line width = 1.5,mark = diamond, fill = mycolor1, mycolor1, mark size = 1.4pt, only marks}
+\addlegendimage{line width = 1.5,mark = x, fill = red, red, mark size = 1.9pt, only marks}
+%\addlegendimage{no markers,mycolor1, line width = 1.5pt}
+%\addlegendimage{red, dotted, line width = 1.5pt}
+\addplot [
+color=green!50!black,
+line width=1.5pt,
+]
+table[row sep=crcr]{
+2.49999999375e-009 0.49995000374975\\
+0.00260129796632711 0.452592371216478\\
+0.0103146179192153 0.411658271213094\\
+0.0229051642855484 0.376036421378292\\
+0.0400012814083687 0.344845860867038\\
+0.0611209865636576 0.317380954505278\\
+0.0857041036982651 0.29307112926526\\
+0.113146250867702 0.27145099949997\\
+0.142831235787546 0.25213792672147\\
+0.17415919820295 0.234814972268311\\
+0.206568857420166 0.219217810976292\\
+0.239553240773316 0.205124587900687\\
+0.272669111244454 0.192347985262874\\
+0.30554089347473 0.180728965867869\\
+0.337860207984646 0.170131799990047\\
+0.369382206472168 0.160440083411781\\
+0.399919823098493 0.151553527119869\\
+0.429336885529613 0.143385352372631\\
+0.457540821138434 0.135860164103868\\
+0.484475487337589 0.128912204851313\\
+0.51011447346079 0.122483913336492\\
+0.534455075091653 0.116524728427653\\
+0.557513031721567 0.11099009188054\\
+0.579318041554819 0.1058406129785\\
+0.599910017350865 0.101041365715846\\
+0.619336018097498 0.0965612950237007\\
+0.637647777261773 0.0923727131234577\\
+0.654899744555033 0.088450870705654\\
+0.671147560837025 0.0847735904940522\\
+0.686446892228173 0.0813209530340627\\
+0.700852557784762 0.0780750263692329\\
+0.714417893952852 0.0750196327372001\\
+0.727194307666317 0.0721401466025917\\
+0.739230977944316 0.0694233193071571\\
+0.750574672955485 0.066857126402316\\
+0.76126965567965 0.0644306343718123\\
+0.771357656532786 0.0621338839801725\\
+0.780877895697594 0.0599577879182423\\
+0.789867141514728 0.057894040777702\\
+0.798359794240523 0.0559350396860861\\
+0.806387986865607 0.0540738141836209\\
+0.813981696606995 0.0523039641321081\\
+0.82116886221589 0.0506196046213704\\
+0.827975503454872 0.0490153169862844\\
+0.834425840051662 0.0474861051719343\\
+0.840542408181973 0.0460273567898057\\
+0.846346173112792 0.0446348082973835\\
+0.851856637083436 0.0433045138096387\\
+0.857091941842572 0.0420328171158323\\
+0.862068965517241 0.0408163265306122\\
+};
+\addplot [
+color=green!50!black,
+only marks,
+mark=o,
+%nodes near coords = $0.5$,
+%every node near coord/.style={anchor=70},
+mark size = 1.5,
+line width = 2,
+mark options={rotate=20},
+mark options={solid},
+]
+table[row sep=crcr]{
+0.0611209865636576 0.317380954505278\\
+};
+\addplot [
+color=red,
+only marks,
+mark=x,
+%nodes near coords = $0.5$,
+%every node near coord/.style={anchor=70},
+mark size = 2.2,
+line width = 2,
+mark options={rotate=20},
+mark options={solid},
+]
+table[row sep=crcr]{
+0.272669111244454 0.192347985262874\\
+};
+\addplot [
+color=mycolor1,
+only marks,
+mark=diamond,
+%nodes near coords = $0.5$,
+%every node near coord/.style={anchor=70},
+mark size = 1.6,
+line width = 2,
+mark options={rotate=20},
+mark options={solid},
+]
+table[row sep=crcr]{
+0.00260129796632711 0.452592371216478\\
+};
+
+\end{axis}
+\end{tikzpicture}%

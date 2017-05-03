@@ -1,0 +1,116 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+
+% defining custom colors
+\definecolor{mycolor1}{rgb}{0,0.75,0.75}%
+
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=\figurewidth,
+height=0.9\figureheight,
+scale only axis,
+xmin=-6,
+xmax=11,
+xlabel={Input $\text{SNR}_{\text{I}}$ [dB]},
+xmajorgrids,
+ymin=0.2,
+ymax=13,
+xtick = {-5, -2.5, 0, 2.5, 5, 7.5, 10},
+ylabel={$\text{SD}_{\text{I}}$ [dB]},
+xlabel absolute, xlabel style={yshift=0.7em},
+ylabel absolute, ylabel style={yshift=-2.0em},
+ytick = {0,2,4,6,8,10,12},
+ymajorgrids,
+legend style={at=({0.99,0.99}),anchor=north east,row sep = -1.0pt,draw=black,fill=white,legend cell align=left,inner sep=0pt, outer sep=-0.2pt},
+legend image post style={xscale=0.8},
+legend columns = 4,
+legend entries={{{$\mu = 1$}},
+                {$\mu_{_{\rm N}} $},
+                {$\mu_{_{\rm N\text{-}SD}} $},
+		{$\mu_{_{\rm N\text{-}NP}} $}
+                },
+]
+\addplot [
+color=blue,
+mark=o,
+dashed,
+line width=1.0pt,
+mark size = 1.9pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 5.6233996394384\\
+-2.5 4.62758003763062\\
+0 3.63829902121594\\
+2.5 2.92049527915299\\
+5 2.29322008645505\\
+7.5 1.74474109272997\\
+10 1.31396297211173\\
+};
+
+\addplot [
+color=green!50!black,
+mark=square,
+dashed,
+line width=1.0pt,
+mark size = 1.9pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 6.92052950380016\\
+-2.5 5.50683080704614\\
+0 4.1009242966576\\
+2.5 3.10820954342084\\
+5 2.30379647526814\\
+7.5 1.66809108352065\\
+10 1.19377788724038\\
+};
+
+\addplot [
+color=mycolor1,
+mark=triangle,
+dashed,
+line width=1.0pt,
+mark size = 2.3pt,
+mark options={solid,rotate=90},
+]
+table[row sep=crcr]{
+-5 4.3308308868165\\
+-2.5 3.49573187640856\\
+0 2.6741439589839\\
+2.5 2.11294925431704\\
+5 1.6269931626511\\
+7.5 1.2231935140982\\
+10 0.910530657896276\\
+};
+
+\addplot [
+color=red,
+dashed,
+mark=diamond,
+dashed,
+line width=1.0pt,
+mark size = 2.3pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 12.2515683591659\\
+-2.5 10.5036287696947\\
+0 8.97762500084912\\
+2.5 7.38979625122562\\
+5 5.81391103936141\\
+7.5 4.2889635662656\\
+10 3.07741600041636\\
+};
+
+\end{axis}
+\end{tikzpicture}%

@@ -1,0 +1,63 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.35\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-5.5,
+xmax=5.5,
+ymin=8.7,
+ymax=8.85,
+xtick = {-5,-2.5,0,2.5,5},
+ytick = {8.7,8.75,8.8,8.85},
+xlabel absolute, xlabel style={yshift=0.5em},
+ylabel absolute, ylabel style={yshift=-0.7em},
+xlabel = {Input SIR [dB]},
+ylabel = {$\Delta$DRR [dB]},
+xmajorgrids,
+ymajorgrids,
+]
+\addplot [
+color=blue,
+dashed,
+mark=o,
+line width = 0.8pt,
+mark size = 1.7pt,
+mark options={solid},
+forget plot
+]
+table[row sep=crcr]{
+-5 8.80112686352667\\
+-2.5 8.80112686352667\\
+0 8.80112686352667\\
+2.5 8.80112686352667\\
+5 8.80112686352667\\
+};
+\addplot [
+color=green!50!black,
+dashed,
+mark=square,
+line width = 0.8pt,
+mark size = 1.7pt,
+mark options={solid},
+forget plot
+]
+table[row sep=crcr]{
+-5 8.74959626203335\\
+-2.5 8.74394033378855\\
+0 8.76109777630608\\
+2.5 8.77701536289213\\
+5 8.79480692234148\\
+};
+\end{axis}
+\end{tikzpicture}%

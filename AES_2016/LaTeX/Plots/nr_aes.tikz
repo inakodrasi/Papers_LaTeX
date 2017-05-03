@@ -1,0 +1,68 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}
+
+\begin{axis}[%
+name = nr,
+width=0.35\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-5.5,
+xmax=5.5,
+ymin=0.5,
+ymax = 6,
+xtick = {-5,-2.5,0,2.5,5},
+ytick = {1,2,3,4,5,6},
+xlabel absolute, xlabel style={yshift=0.5em},
+ylabel absolute, ylabel style={yshift=-1.2em},
+xlabel = {Input SIR [dB]},
+ylabel = {$\eta_{_{\rm NR}}$ [dB]},
+ymajorgrids,
+legend columns = 2,
+legend style={at=({-0.9,1.32}),anchor=north west,row sep = -1.0pt,legend cell align=left,inner sep=0.2pt, outer sep=-0.2pt},
+legend entries={{RP-MINT},
+                {RP-DNR},
+                },
+xmajorgrids,
+]
+\addplot [
+color=blue,
+dashed,
+mark=o,
+mark size = 1.7pt,
+line width = 0.8pt,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 1.64908912500642\\
+-2.5 1.6301508190929\\
+0 1.59839640061515\\
+2.5 1.54779807445314\\
+5 1.47317777054643\\
+};
+\addplot [
+color=green!50!black,
+dashed,
+mark size = 1.7pt,
+line width = 0.8pt,
+mark=square,
+mark options={solid},
+]
+table[row sep=crcr]{
+-5 5.3446708300213\\
+-2.5 5.30523440872317\\
+0 4.42192896578351\\
+2.5 3.51235048432049\\
+5 2.46197284439052\\
+};
+addlegendentry{RPMINT};
+\end{axis}
+\end{tikzpicture}%

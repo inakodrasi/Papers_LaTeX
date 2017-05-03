@@ -1,0 +1,357 @@
+% Template for HSCMA-2017 paper; to be used with:
+%          spconf.sty  - ICASSP/ICIP LaTeX style file, and
+%          IEEEbib.bst - IEEE bibliography style file.
+% --------------------------------------------------------------------------
+\documentclass{article}
+\usepackage{spconf,amsmath,graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usetikzlibrary{calc,chains,shapes,positioning,patterns}
+\usepackage{phaistos}
+\usepackage{pgfplots}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{microtype}
+% Example definitions.
+% --------------------
+\def\x{{\mathbf x}}
+\def\L{{\cal L}}
+\def\ninept{\def\baselinestretch{.9}\let\normalsize\small\normalsize}
+\setlength{\belowcaptionskip}{0pt}
+% Title.
+% ------
+\title{EVD-based multi-channel dereverberation of a moving speaker \\ using different RETF estimation methods}
+\name{Ina Kodrasi, Simon Doclo
+\thanks{
+This work was supported in part by the Cluster of Excellence 1077 ``Hearing4All'', funded by the German Research Foundation (DFG), the Marie Curie Initial Training Network DREAMS (Grant no. 316969), and the joint Lower Saxony-Israeli Project ATHENA, funded by the State of Lower Saxony.
+}}
+\address{
+University of Oldenburg, Department of Medical Physics and Acoustics,  \\ and Cluster of Excellence Hearing4All, Oldenburg, Germany \\
+{\tt \{ina.kodrasi,simon.doclo\}@uni-oldenburg.de}\\
+}
+\begin{document}
+\newlength\figureheight
+\newlength\figurewidth
+
+\setlength\figureheight{2.5cm}
+\setlength\figurewidth{0.9\textwidth}
+
+\ninept
+%
+\maketitle
+%
+\begin{abstract}
+  The multi-channel Wiener filter (MWF) for dereverberation relies on estimating the late reverberant power spectral density (PSD) and the relative early transfer functions (RETFs) of the target signal from a reference microphone to all microphones.
+  State-of-the-art  multi-channel late reverberant PSD estimators also require an estimate of the RETFs, which may be difficult to estimate accurately, particularly in highly reverberant and noisy scenarios.
+  Recently we proposed a more advantageous late reverberant PSD estimator based on an eigenvalue decomposition (EVD) which does not require knowledge of the RETFs, thereby avoiding the propagation of any RETF estimation errors into the PSD estimate.
+  However, the performance of the proposed EVD-based estimator was analyzed by using it in an MWF with simulated RETF estimation errors for a fixed speaker position in noiseless scenarios. 
+  In this paper the EVD-based estimator is combined with several practical RETF estimation methods, i.e., the covariance whitening, covariance subtraction, and least-squares methods.
+  The performance of the MWF using the EVD-based estimator and the considered RETF estimation methods is then investigated for a fixed and a moving speaker in different noiseless and noisy scenarios.
+  Experimental results show that while combining the EVD-based estimator with any of the considered RETF estimation methods yields a high performance, in noiseless scenarios the covariance whitening and subtraction methods result in the best performance, whereas in noisy scenarios the least-squares method results in the best performance.
+\end{abstract}
+%
+\begin{keywords}
+dereverberation, EVD, RETF estimation, MWF
+\end{keywords}
+%
+\section{Introduction}
+\label{sec: intro}
+
+In many speech communication applications such as teleconferencing applications, voice-controlled systems, and hearing aids, the microphone signals are corrupted by reverberation, typically leading to decreased speech quality and intelligibility~\cite{Beutelmann_2006,Warzybok_IWAENC_2014} and performance deterioration in speech recognition systems~\cite{Yoshioka_ISPM_2012}. 
+Since late reverberation is the major cause of speech quality and intelligibility degradation, effective enhancement techniques that reduce the late reverberation are required.
+A commonly used speech enhancement technique is multi-channel Wiener filtering~(MWF), which yields a minimum mean-square error estimate of the target signal~\cite{Doclo_SC_2007,Braun_EUSIPCO_2013,Kuklasinski_EUSIPCO_2014g}.
+Implementing the MWF for speech dereverberation requires estimates of i) the late reverberant power spectral density~(PSD), and ii) the relative early transfer functions~(RETFs) of the target signal from the reference microphone to all microphones.
+Many multi-channel late reverberant PSD estimators~\cite{Kuklasinski_EUSIPCO_2014g,Braun_EUSIPCO_2013,Braun_EURASIP_2015,Kuklasinski_ITASLP_2016,Schwartz_WASPAA_2015,Schwartz_ICASSP_2016} also require an estimate of the RETFs, which may be difficult to estimate accurately, particularly in highly reverberant and noisy scenarios.
+As experimentally validated in~\cite{ASchwarz_ITASLP_2015, kuklasinski_AES_2016}, RETF estimation errors degrade the PSD estimation accuracy, resulting in an additional degradation in the dereverberation performance of the speech enhancement system.
+Recently we have proposed a multi-channel late reverberant PSD estimator based on an eigenvalue decomposition~(EVD) which does not require knowledge of the RETFs~\cite{Kodrasi_ICASSP_2017}. 
+% The late reverberation is modeled as an isotropic sound field and the late reverberant PSD is estimated using the eigenvalues of the prewhitened speech component PSD matrix.
+By decoupling the PSD estimation from the RETF estimation it is avoided that any RETF estimation errors propagate into the PSD estimate.
+The advantage of decoupling the PSD estimation from the RETF estimation has been illustrated in~\cite{Kodrasi_ICASSP_2017}, where it is shown that using the RETF-independent EVD-based PSD estimator in a MWF outperforms using the RETF-dependent maximum-likelihood PSD estimator from~\cite{Kuklasinski_EUSIPCO_2014g}, both when the true RETFs are known as well as in the presence of RETF estimation errors. 
+
+However, in~\cite{Kodrasi_ICASSP_2017} the performance of the EVD-based PSD estimator was analyzed by using it in an MWF with simulated RETF estimation errors for a fixed speaker position.
+Moreover, the effect of additive noise was neglected.
+In this paper we investigate the dereverberation and noise reduction performance of the MWF for a fixed and a moving speaker using the EVD-based PSD estimator and RETFs estimated with several practical methods, i.e., the covariance whitening method~\cite{Golan_ITASLP_2009,Golan_ICASSP_2015}, the covariance subtraction method~\cite{Cohen_ITSAP_2004,Golan_ICASSP_2015}, and the least-squares method~\cite{OSchwartz_ITASLP_2015}.
+It is shown that combining the EVD-based PSD estimator with the covariance whitening and subtraction methods is straightforward and does not introduce any significant additional computations.
+Furthermore, it is shown that while any of the considered RETF estimation methods results in a high performance, the covariance whitening and subtraction methods yield the best performance in noiseless scenarios, whereas the least-squares method yields the best performance in noisy scenarios.
+
+
+
+
+%\section{Multi-channel Wiener Filter for \\ Speech Dereverberation}
+
+
+\section{Problem formulation}
+\label{sec: conf}
+
+Consider a reverberant and noisy system with a single source and $M \geq 2$ microphones.
+In the short-time Fourier transform domain, the $M$-dimensional vector of the microphone signals $\mathbf{y}(k,l) = [Y_1(k,l) \; \ldots \; Y_M(k,l)]^T$, with $k$ the frequency index and $l$ the frame index, is given by
+\begin{equation}
+  \mathbf{y}(k,l)  = \underbrace{\mathbf{x}_{\rm d}(k,l) + \mathbf{x}_{\rm r}(k,l)}_{\mathbf{x}(k,l)} + \mathbf{v}(k,l),
+\end{equation}
+with $\mathbf{x}(k,l)$ the speech component, $\mathbf{x}_{\rm d}(k,l)$ the direct and early reverberant speech component, $\mathbf{x}_{\rm r}(k,l)$ the late reverberant speech component, and $\mathbf{v}(k,l)$ the additive noise component.
+Assuming a moving speaker, the direct speech component $\mathbf{x}_{\rm d}(k,l)$ can be described by
+\begin{equation}
+  \label{eq: retfs}
+\mathbf{x}_{\rm d}(k,l) = \mathbf{d}(k,l)S(k,l),
+\end{equation}
+with $S(k,l)$ the target signal (direct and early reverberant speech component) received by a reference microphone and $\mathbf{d}(k,l)$ the vector of time-varying RETFs of the target signal from the reference microphone to all microphones.
+Without loss of generality, we assume that the first microphone is the reference microphone such that the RETF vector is given by $\mathbf{d}(k,l) = [1 \; D_2(k,l) \; \ldots \; D_M(k,l)]^T$. 
+Since the processing is done independently in each frequency, in the following the frequency index $k$ is omitted.
+
+Assuming that the speech and noise components are uncorrelated, the PSD matrix of the microphone signals is equal to
+\begin{equation}
+  \label{eq: Ry}
+\mathbf{R}_{\mathbf{y}}(l) = {\cal{E}} \{\mathbf{y}(l)\mathbf{y}^H(l) \} = \underbrace{{\cal{E}} \{\mathbf{x}(l)\mathbf{x}^H(l) \}}_{\mathbf{R}_{\mathbf{x}}(l)} + \underbrace{{\cal{E}} \{\mathbf{v}(l)\mathbf{v}^H(l) \}}_{\mathbf{R}_{\mathbf{v}}(l)},
+\end{equation}
+with ${\cal{E}}$ the expected value operator.
+Furthermore, assuming that the direct and early reverberant speech component is uncorrelated to the late reverberant speech component, the PSD matrix $\mathbf{R}_{\mathbf{x}}(l)$ can be written as
+\begin{align}
+  \mathbf{R}_{\mathbf{x}}(l) & = \underbrace{{\cal{E}} \{\mathbf{x}_{\rm d}(l)\mathbf{x}_{\rm d}^H(l) \}}_{\mathbf{R}_{\mathbf{x}_{\rm d}}(l)} + \underbrace{{\cal{E}} \{\mathbf{x}_{\rm r}(l)\mathbf{x}_{\rm r}^H(l) \}}_{\mathbf{R}_{\mathbf{x}_{\rm r}}(l)} \\
+\label{eq: Rx}
+& = \mathbf{d}(l)\mathbf{d}^H(l) \Phi_{\rm s}(l) + \mathbf{R}_{\mathbf{x}_{\rm r}}(l),
+\end{align}
+with $\Phi_s(l) = {\cal{E}}\{|S(l)|^2\}$ the target signal PSD.
+Modeling the late reverberation as a diffuse sound field, the PSD matrix of the late reverberant speech component $\mathbf{R}_{\mathbf{x}_{\rm r}}(l)$ may be written as~\cite{Braun_EUSIPCO_2013,Braun_EURASIP_2015,Schwartz_WASPAA_2015,Schwartz_ICASSP_2016}
+\begin{equation}
+\label{eq: reverb_model}
+\mathbf{R}_{\mathbf{x}_{\rm r}}(l) = \Phi_{\rm r}(l) \boldsymbol{\Gamma},
+\end{equation}
+with $\Phi_{\rm r}(l)$ the late reverberant PSD and $\boldsymbol{\Gamma}$ the diffuse spatial coherence matrix which can be analytically computed given the geometry of the microphone array. 
+% Using~(\ref{eq: Ry}),~(\ref{eq: Rx}), and~(\ref{eq: reverb_model}), the PSD matrix $\mathbf{R}_{\mathbf{y}}(l)$ can be written as
+% \begin{equation}
+% \label{eq: ypsd_fin}
+% \mathbf{R}_{\mathbf{y}}(l) = \mathbf{d}(l)\mathbf{d}^H(l) \Phi_{s}(l) + \Phi_{\rm r}(l) \boldsymbol{\Gamma}  + \mathbf{R}_{\mathbf{v}}(l).
+% \end{equation}
+
+The MWF $\mathbf{w}(l) = [W_1(l) \; \ldots \; W_M(l)]^T$ is designed such that the mean-square error between the output signal $Z(l) = \mathbf{w}^H(l)\mathbf{y}(l)$ and the target signal $S(l)$ is minimized.
+It is well known that the MWF can be decomposed into a Minimum Variance Distortionless Response (MVDR) Beamformer $\mathbf{w}_{_{\rm MVDR}}(l)$ and a single-channel Wiener postfilter $G(l)$ applied to the MVDR output~\cite{Simmer_book_2001}, i.e.,
+\begin{equation}
+\label{eq: decomp}
+\mathbf{w}(l) = \underbrace{\frac{ \mathbf{R}^{-1}_{\mathbf{u}}(l) \mathbf{d}(l)}{ \mathbf{d}^H(l)  \mathbf{R}^{-1}_{\mathbf{u}}(l) \mathbf{d}(l)}}_{\mathbf{w}_{_{\rm MVDR}}(l)} \underbrace{\frac{\Phi_{\rm s}(l)}{\Phi_{\rm s}(l) + (\mathbf{d}^H(l) \mathbf{R}^{-1}_{\mathbf{u}}(l) \mathbf{d}(l))^{-1}}}_{G(l)},
+\end{equation}
+with $\mathbf{R}_{\mathbf{u}}(l)$ the PSD matrix of the undesired signal components (i.e., late reverberation and noise) given by
+\begin{equation}
+\label{eq: Ru}
+\mathbf{R}_{\mathbf{u}}(l) = \Phi_{\rm r}(l) \boldsymbol{\Gamma}  + \mathbf{R}_{\mathbf{v}}(l).
+\end{equation}
+As illustrated in~(\ref{eq: decomp}) and~(\ref{eq: Ru}), the implementation of the MWF requires knowledge of the late reverberant PSD $\Phi_{\rm r}(l)$, coherence matrix $\boldsymbol{\Gamma}$, noise PSD matrix $\mathbf{R}_{\mathbf{v}}(l)$, RETF vector $\mathbf{d}(l)$, and target signal PSD $\Phi_{\rm s}(l)$.
+In previous work it has been assumed that $\boldsymbol{\Gamma}$, $\mathbf{R}_{\mathbf{v}}(l)$, and $\mathbf{d}(l)$ are known such that only the PSDs $\Phi_{\rm s}(l)$ and $\Phi_{\rm r}(l)$ need to be estimated~\cite{Kuklasinski_EUSIPCO_2014g,Braun_EUSIPCO_2013,Braun_EURASIP_2015,Kuklasinski_ITASLP_2016,Schwartz_WASPAA_2015,Schwartz_ICASSP_2016}.
+In this work we only assume that $\boldsymbol{\Gamma}$ and $\mathbf{R}_{\mathbf{v}}(l)$ are known, such that the PSDs $\Phi_{\rm s}(l)$ and $\Phi_{\rm r}(l)$ and the RETF vector $\mathbf{d}(l)$ need to be estimated.
+While $\boldsymbol{\Gamma}$ can be analytically computed based on the array geometry~\cite{Braun_EUSIPCO_2013,Braun_EURASIP_2015,Schwartz_WASPAA_2015,Schwartz_ICASSP_2016}, the PSD matrix $\mathbf{R}_{\mathbf{v}}(l)$ can be periodically updated in time-frequency regions where the speech level is low in comparison to the noise level, e.g., using the multi-channel speech presence probability estimator in~\cite{Souden_ITASLP_2010}.
+% In order to estimate $\Phi_{\rm s}(l)$ and $\Phi_{\rm r}(l)$ the EVD-based PSD estimator described in Section~\ref{sec: evd_psd} is used.
+% In order to estimate $\mathbf{d}(l)$ several RETF estimation methods described in Section~\ref{sec: retf_est} are investigated.
+Note that since the noise PSD matrix $\mathbf{R}_{\mathbf{v}}(l)$ is assumed to be available, also the speech PSD matrix $\mathbf{R}_{\mathbf{x}}(l)$ can be estimated, e.g., as $\mathbf{R}_{\mathbf{x}}(l) = \mathbf{R}_{\mathbf{y}}(l) - \mathbf{R}_{\mathbf{v}}(l)$, with $\mathbf{R}_{\mathbf{y}}(l)$ estimated from the microphone signals.
+
+\section{EVD-based \\ late reverberant PSD estimation}
+\label{sec: evd_psd}
+In the following we briefly review the recently proposed EVD-based estimator from~\cite{Kodrasi_ICASSP_2017} which estimates the late reverberant PSD using the eigenvalues of the whitened PSD matrix $\mathbf{R}_{\mathbf{x}}(l)$.
+In order to whiten $\mathbf{R}_{\mathbf{x}}(l)$, the coherence matrix $\boldsymbol{\Gamma}$ and its inverse $\boldsymbol{\Gamma}^{-1}$ are decomposed using the Cholesky decomposition as
+\begin{equation}
+\label{eq: chd}
+\boldsymbol{\Gamma} = \mathbf{L}\mathbf{L}^H, \; \; \; \; \; \; \; \; \boldsymbol{\Gamma}^{-1} = \mathbf{L}^{-H} \mathbf{L}^{-1},
+\end{equation}
+with $\mathbf{L}$ an $M \times M$-dimensional lower triangular matrix.
+Using~(\ref{eq: chd}), the whitened PSD matrix $\mathbf{R}^{\rm w}_{\mathbf{x}}(l)$ is computed as
+\begin{equation}
+  \label{eq: Rxw}
+  \mathbf{R}^{\rm w}_{\mathbf{x}}(l) =   \mathbf{L}^{-1} \mathbf{R}_{\mathbf{x}}(l) \mathbf{L}^{-H}.
+\end{equation}
+Using~(\ref{eq: Rx}),~(\ref{eq: reverb_model}), and~(\ref{eq: chd}), the matrix $\mathbf{R}^{\rm w}_{\mathbf{x}}(l)$ can be written as
+\begin{align}
+     \mathbf{R}^{\rm w}_{\mathbf{x}}(l) & = \Phi_{\rm s}(l) \mathbf{L}^{-1}\mathbf{d}(l) \mathbf{d}^H(l)\mathbf{L}^{-H} + \Phi_{\rm r}(l) \mathbf{L}^{-1} \boldsymbol{\Gamma} \mathbf{L}^{-H} \\
+  \label{eq: prewhiten}
+& = \Phi_{\rm s}(l) \mathbf{b}(l) \mathbf{b}^H(l) + \Phi_{\rm r}(l) \mathbf{I},
+\end{align}
+with $\mathbf{I}$ the $M \times M$-dimensional identity matrix and $\mathbf{b}(l)$ the whitened RETF vector, i.e.,
+\begin{equation}
+  \label{eq: preretf}
+  \mathbf{b}(l) = \mathbf{L}^{-1}\mathbf{d}(l).
+\end{equation}
+Computing the EVD of $\mathbf{R}^{\rm w}_{\mathbf{x}}(l)$ yields
+\begin{equation}
+  \label{eq: evd}
+\mathbf{R}^{\rm w}_{\mathbf{x}}(l) = \mathbf{U}(l) \mathbf{S}(l)\mathbf{U}^H(l),
+\end{equation}
+with $\mathbf{U}(l)$ an $M \times M$-dimensional matrix of eigenvectors and $\mathbf{S}(l)$ the $M \times M$-dimensional diagonal matrix of eigenvalues.
+Since $\mathbf{R}^{\rm w}_{\mathbf{x}}(l)$ is the sum of a rank-$1$ matrix and a scaled identity matrix, cf.~(\ref{eq: prewhiten}), $\mathbf{S}(l)$ is given by
+\begin{equation}
+  \label{eq: eigs}
+  \mathbf{S}(l) = {\rm diag} \{[\sigma(l) + \Phi_{\rm r}(l) \; \Phi_{\rm r}(l) \; \ldots \; \Phi_{\rm r}(l)]^T \},
+\end{equation}
+with $\sigma(l)$ the only non-zero eigenvalue of the rank-$1$ matrix $\Phi_{\rm s}(l) \mathbf{b}(l) \mathbf{b}^H(l)$.
+Based on~(\ref{eq: eigs}) and using the fact that the trace of a matrix is equal to the sum of its eigenvalues, in~\cite{Kodrasi_ICASSP_2017} we have proposed to estimate the late reverberant PSD as
+\begin{equation}
+  \label{eq: phir}
+  \hat{\Phi}_{\rm r}(l) = \frac{1}{M-1} \left( {\rm tr} \{\mathbf{R}^{\rm w}_{x}(l) \} - \lambda_{1}\{\mathbf{R}^{\rm w}_{x}(l) \} \right),
+\end{equation}
+where ${\rm tr} \{ \cdot \}$ denotes the matrix trace operator and $\lambda_{1} \{ \cdot \}$ denotes the first (maximum) eigenvalue.
+Using $\hat{\Phi}_{\rm r}(l)$, an estimate of the clean speech PSD $\hat{\Phi}_{\rm s}(l)$ is obtained based on the decision directed approach~\cite{Ephraim_ITASSP_1985}.
+
+Unlike other state-of-the-art multi-channel late reverberant PSD estimators~\cite{Braun_EUSIPCO_2013,Kuklasinski_EUSIPCO_2014g,Braun_EURASIP_2015,Schwartz_WASPAA_2015,Schwartz_ICASSP_2016,Kuklasinski_ITASLP_2016}, the EVD-based estimator in~(\ref{eq: phir}) does not require knowledge of the RETF vector $\mathbf{d}(l)$.
+An RETF-independent PSD estimator is advantageous in order to avoid the propagation of any RETF estimation errors into the PSD estimate.
+As is experimentally validated in~\cite{Kodrasi_ICASSP_2017}, using the EVD-based PSD estimator in the MWF in~(\ref{eq: decomp}) yields a better dereverberation performance than the maximum likelihood estimator in~\cite{Kuklasinski_EUSIPCO_2014g}, both for perfectly estimated RETFs as well as in the presence of RETF estimation errors.
+However, the RETF estimation errors considered in~\cite{Kodrasi_ICASSP_2017} were simulated using knowledge of the true RETFs.
+
+\section{RETF estimation}
+\label{sec: retf_est}
+In the following several practical RETF estimation methods which can be used together with the EVD-based PSD estimator are described, i.e., the covariance whitening method~\cite{Golan_ITASLP_2009,Golan_ICASSP_2015}, the covariance subtraction method~\cite{Cohen_ITSAP_2004,Golan_ICASSP_2015}, and the least-squares method~\cite{OSchwartz_ITASLP_2015}.
+Note that the covariance whitening and subtraction methods typically have been used to estimate the complete relative transfer functions instead of the RETFs~\cite{Golan_ICASSP_2015}, hence, in the following these methods are formulated for RETF estimation.
+
+\subsection{Covariance whitening method} 
+In order to estimate the RETFs using the covariance whitening method, the EVD in~(\ref{eq: evd}) can readily be used.
+Let us denote by $\mathbf{u}(l)$ the eigenvector corresponding to $\lambda_{1}\{\mathbf{R}^{\rm w}_{\mathbf{x}}(l) \}$ (i.e., the first column of $\mathbf{U}(l)$).
+Since $\mathbf{R}^{\rm w}_{\mathbf{x}}(l)$ is given by~(\ref{eq: prewhiten}) with $\mathbf{b}(l)$ in~(\ref{eq: preretf}), the RETF vector $\mathbf{d}(l)$ is a scaled and rotated version of $\mathbf{u}(l)$.
+The estimated RETF vector using the covariance whitening method is obtained by transforming $\mathbf{u}(l)$ back from the whitened domain and normalizing by its first entry (since the first microphone is the reference microphone), i.e.,
+\begin{equation}
+ \hat{\mathbf{d}}_{_{\rm {CW}}}(l) = \frac{\mathbf{L}\mathbf{u}(l)}{\mathbf{e}^T\mathbf{L}\mathbf{u}(l)},
+\end{equation}
+with $\mathbf{e} = [1 \; 0 \; \ldots \; 0]^T$.
+
+\subsection{Covariance subtraction method} 
+In order to estimate the RETFs using the covariance subtraction method, first an estimate of the late reverberant PSD matrix $\hat{\mathbf{R}}_{\mathbf{x}_{\rm r}}(l)$ is constructed using $\hat{\Phi}_{\rm r}(l)$ in~(\ref{eq: phir}) and the coherence matrix $\boldsymbol{\Gamma}$, i.e., $\hat{\mathbf{R}}_{\mathbf{x}_{\rm r}}(l) = \hat{\Phi}_{\rm r}(l) \boldsymbol{\Gamma}$. 
+By subtracting $\hat{\mathbf{R}}_{\mathbf{x}_{\rm r}}(l)$ from $\mathbf{R}_{\mathbf{x}}(l)$ in~(\ref{eq: Rx}), an estimate of the direct and early reverberant speech component PSD matrix $\hat{\mathbf{R}}_{\mathbf{x}_{\rm d}}(l)$ is obtained, i.e., $\hat{\mathbf{R}}_{\mathbf{x}_{\rm d}}(l) = \mathbf{R}_{\mathbf{x}}(l) -   \hat{\mathbf{R}}_{\mathbf{x}_{\rm r}}(l)$.
+The estimated RETF vector using the covariance subtraction method is then computed by normalizing the first column of $\hat{\mathbf{R}}_{\mathbf{x}_{\rm d}}(l)$ by its first entry, i.e.,
+\begin{equation}
+  \label{eq: sub}
+  \hat{\mathbf{d}}_{_{\rm CS}}(l) = \frac{  \hat{\mathbf{R}}_{\mathbf{x}_{\rm d}}(l) \mathbf{e}}{\mathbf{e}^T  \hat{\mathbf{R}}_{\mathbf{x}_{\rm d}}(l) \mathbf{e}}.
+\end{equation}
+Note that for perfect knowledge of the speech component PSD matrix, late reverberant PSD, and late reverberation coherence matrix, both the covariance whitening and subtraction method yield the true RETF vector according to the signal model in~(\ref{eq: Rx}).
+However, due to unavoidable errors in the estimation of $\mathbf{R}_{\mathbf{x}}(l)$ and since the late reverberation is not truly isotropic (i.e., the assumed coherence matrix is erroneous) the covariance whitening and subtraction methods can yield different RETFs.
+
+\subsection{Least-squares method}
+\label{sec: ls}
+In order to estimate the RETFs using the least-squares method, consider that the direct and early reverberant speech components $X_{{\rm d},m}(l)$ are related by the RETFs $D_m(l)$ according to (cf.~(\ref{eq: retfs}))
+\begin{equation}
+  \label{eq: lsb}
+  X_{{\rm d},m}(l) = D_m(l)X_{{\rm d},1}(l), \; \; \; \; m =2, \; \ldots, \; M.
+\end{equation}
+Multiplying both sides of~(\ref{eq: lsb}) by $X^*_{{\rm d},1}(l)$ and taking the expectation yields
+\begin{equation}
+  \label{eq: lsp}
+  \Phi_{{\rm d}_{m,1}}(l) = D_m(l)\Phi_{{\rm d}_1}(l),
+\end{equation}
+with $\Phi_{{\rm d}_{m,1}}(l)$ the cross-PSD of $X_{{\rm d},m}(l)$ and $X_{{\rm d},1}(l)$, i.e., $\Phi_{{\rm d}_{m,1}}(l) = {\cal{E}} \{X_{{\rm d},m}(l) X^*_{{\rm d},1}(l) \}$, and $\Phi_{{\rm d}_1}(l)$ the PSD of $X_{{\rm d}, 1}(l)$, i.e., $\Phi_{{\rm d}_1}(l) = {\cal{E}} \{|X_{\rm d,1}(l)|^2 \}$.
+Using~(\ref{eq: lsp}), a least-squares criterion can be formulated to estimate the RETFs $D_m(l)$.
+Assuming that the RETFs are time-invariant during the latest $T$ frames, a least-squares estimate of $D_m(l)$ is given by
+\begin{equation}
+  \label{eq: dls}
+  \hat{D}_{m, {\rm LS}}(l) = \frac{ \sum_{l' = l-T+1}^l \Phi_{{\rm d}_{m,1}}(l')\Phi_{{\rm d}_1}(l') } { \sum_{l' = l-T+1}^l \Phi^2_{{\rm d}_1}(l') }.
+\end{equation}
+In order to estimate $X_{{\rm d},m}(l)$, single-channel dereverberation and denoising filters are applied to each microphone signal.
+For details on the derivation of these filters, the reader is referred to~\cite{OSchwartz_ITASLP_2015}.
+The PSDs required in~(\ref{eq: dls}) are then computed from the estimated $X_{{\rm d},m}(l)$ by recursive averaging.
+\section{Experimental Results}
+In this section the performance of the MWF in~(\ref{eq: decomp}) using the EVD-based PSD estimator described in Section~\ref{sec: evd_psd} and the different RETF estimation methods described in Section~\ref{sec: retf_est} is evaluated by means of objective performance measures.
+In Section~\ref{sec: nonoise} the performance in noiseless scenarios is investigated, whereas in Section~\ref{sec: noise} the performance in noisy scenarios is investigated.
+\subsection{Setup}
+We consider two multi-channel acoustic systems consisting of a linear microphone array with $M \in \{ 2, \; 3, \; 4 \}$ microphones.
+Table~\ref{tbl: ac_sys} presents the reverberation time $T_{60}$ and the inter-microphone distance $d_{\rm im}$ for each acoustic system.
+\begin{table}[t!]
+\begin{center}
+  \caption{Characteristics of the considered acoustic systems.}
+  \label{tbl: ac_sys}
+  \begin{tabularx}{\linewidth}{Xrr}
+    \toprule
+    System & $T_{60}$ [ms] & $d_{\rm im}$ [cm] \\
+    \midrule
+    AS$_1$ & $610$ & $8$ \\
+    AS$_2$ & $800$ & $5$ \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+\vspace{-0.6cm}
+\end{table}
+For system AS$_1$ the speaker was located at fixed positions of $0^{\circ}$, $15^{\circ}$, $30^{\circ}$, $45^{\circ}$, and $60^{\circ}$, with the speech components generated by convolving an $18$ s long anechoic signal with measured room impulse responses (RIRs)~\cite{hadad_IWAENC_2014}.
+For system AS$_2$ the speaker was moving from $0^{\circ}$ to $60^{\circ}$, with the speech components simulated with the signal generator from~\cite{sg} using a $3$ s long anechoic signal.
+For both acoustic systems, the anechoic signals were taken from the TIMIT database~\cite{timit}.
+It should be noted that although the performance of the considered techniques has been analyzed for a wide range of acoustic systems (different anechoic signals and RIRs), due to space constraint only two exemplary acoustic systems are presented in this paper. 
+The noise components consist of a stationary directional interference at $-30^{\circ}$ and spatially uncorrelated noise.
+The considered signal-to-interference ratios~(SIRs) are $10$, $20$, and $30~{\rm dB}$, and the signal-to-noise ratio is $20$~dB.
+To be able to estimate the noise PSD matrix $\mathbf{R}_{\mathbf{v}}$ during speech absence, a $500$ ms long noise-only signal precedes the speech signal.
+
+The signals are processed using a weighted overlap-add framework with a frame size of $1024$ samples and an overlap of $75$\% at a sampling frequency of $16$ kHz.
+The PSD matrices are computed using recursive averaging with a time constant of $50$ ms.
+For the noiseless scenarios in Section~\ref{sec: nonoise}, the PSD matrix $\mathbf{R}_{\mathbf{x}}(l)$ is directly estimated from the microphone signals.
+For the noisy scenarios in Section~\ref{sec: noise}, the PSD matrix $\mathbf{R}_{\mathbf{x}}(l)$ is estimated as $\mathbf{R}_{\mathbf{y}}(l) - \mathbf{R}_{\mathbf{v}}$, with $\mathbf{R}_{\mathbf{y}}(l)$ estimated from the microphone signals during the speech-plus-noise period and $\mathbf{R}_{\mathbf{v}}$ estimated during the noise-only period.
+Due to PSD matrix estimation errors, computing $\mathbf{R}_{\mathbf{x}}(l)$ as $\mathbf{R}_{\mathbf{y}}(l) - \mathbf{R}_{\mathbf{v}}$ may not yield a positive definite matrix, particularly at low input SIRs.
+The estimated $\mathbf{R}_{\mathbf{x}}(l)$ is forced to be positive semi-definite by computing its eigenvalue decomposition and setting the negative eigenvalues to $0$.
+The number of frames used for the least-squares average in~(\ref{eq: dls}) is $T = 3$.
+A minimum gain of $-20$ dB is used for the single-channel Wiener postfilter.
+
+The performance is evaluated in terms of the improvement in frequency-weighted segmental signal-to-noise-ratio ($\Delta$fwSSNR) \cite{Hu_ITASLP_2008} and cepstral distance~($\Delta$CD)~\cite{Quackenbush_book} between the output signal and the first microphone signal.
+The fwSSNR and CD measures are intrusive measures, comparing the output signal to a reference signal. 
+The reference signal used in this paper is the anechoic signal.
+Note that a positive $\Delta$fwSSNR and a negative $\Delta$CD indicate a performance improvement.
+
+\subsection{Performance in noiseless scenarios}
+\label{sec: nonoise}
+In this section the dereverberation performance of the MWF using the EVD-based PSD estimator and the considered RETF estimation methods is investigated for both acoustic systems and all considered array configurations.
+Since for system AS$_1$ the measured RIRs are available, the true RETFs can be constructed using the frequency response of the truncated direct path and early reflections of the measured RIRs (up to $10$ ms).
+Hence, for system AS$_1$ also the performance when using the true RETFs is investigated, representing the optimal achievable performance.
+\begin{figure}[t]
+  \input{Plots/perf_derev_sys1.tikz}
+  \vspace{-0.3cm}
+  \caption{Dereverberation performance for system AS$_1$ using the true and the estimated RETFs: (a) $\Delta$fwSSNR and (b) $\Delta$CD.}
+  \label{fig: derev1}
+\end{figure}
+\begin{figure}[t]
+  \input{Plots/perf_derev_sys2.tikz}
+    \vspace{-0.3cm}
+  \caption{Dereverberation performance for system AS$_2$ using the estimated RETFs: (a) $\Delta$fwSSNR and (b) $\Delta$CD.}
+  \label{fig: derev2}
+\end{figure}
+\begin{figure}[t]
+  \input{Plots/perf_derev_nr.tikz}
+    \vspace{-0.3cm}
+    \caption{Dereverberation and noise reduction performance using the true and the estimated RETFs for (a) system AS$_1$ and (b) system AS$_2$ ($\Delta$fwSSNR, $M = 4$).}
+    \vspace{-0.3cm}
+  \label{fig: nr1}
+\end{figure}
+
+Fig.~\ref{fig: derev1} depicts the dereverberation performance for system AS$_1$ when using the true RETFs and the RETFs estimated with the considered methods.
+It can be observed that using the RETFs estimated with the covariance whitening and subtraction methods yields a very similar performance.
+In addition, it can be observed that using these methods results in a slightly better performance than using the least-squares method, both in terms of $\Delta$fwSSNR and $\Delta$CD.
+Finally, it can be observed that using the true RETFs yields only a slightly better performance than using the RETFs estimated with the covariance whitening and subtraction methods, with an insignificant performance difference in the order of $0.20$ dB for $\Delta$fwSSNR and $0.15$ dB for $\Delta$CD.
+Fig.~\ref{fig: derev2} depicts the dereverberation performance for system AS$_2$ when using the RETFs estimated with the considered methods.
+Similarly as for system AS$_1$, it is illustrated that the covariance whitening and subtraction methods yield a very similar performance, slightly outperforming the least-squares method.
+Comparing the results presented in Figs.~\ref{fig: derev1} and~\ref{fig: derev2} it can be observed that although system AS$_2$ represents a more challenging system where the speaker position changes fast, the performance improvement obtained for both systems and all considered array configurations is similar.
+
+In summary these results demonstrate the suitability of combining any of the considered RETF estimation methods with the EVD-based PSD estimator in a MWF to successfully dereverberate a fixed as well as a moving speaker.
+Since the covariance whitening and subtraction methods yield the best performance and since they do not introduce any additional significant computations, it can be said that they are the preferred methods to be used in reverberant scenarios.
+
+\vspace{-0.1cm}
+\subsection{Performance in noisy scenarios}
+\label{sec: noise}
+In this section the dereverberation and noise reduction performance of the MWF using the EVD-based PSD estimator and the considered RETF estimation methods is investigated for both acoustic systems and $M = 4$ microphones.
+As in Section~\ref{sec: nonoise}, for system AS$_1$ also the performance when using the true RETFs is depicted.
+Since similar conclusions are derived by analyzing the $\Delta$fwSSNR and the $\Delta$CD values, Fig.~\ref{fig: nr1} depicts only the $\Delta$fwSSNR values for both acoustic systems.
+Fig.~\ref{fig: nr1}a shows that for system AS$_1$ using the RETFs estimated with the covariance whitening and subtraction methods yields a very similar performance.
+In addition, it is illustrated that in the presence of additive noise these methods result in a worse performance than the least-squares method, particularly for lower input SIRs.
+This can be explained by the fact that the covariance whitening and subtraction methods rely on the speech PSD matrix $\mathbf{R}_{\mathbf{x}}(l)$ to estimate the RETFs, which is unavoidably erroneous when computed as $\mathbf{R}_{\mathbf{y}}(l) - \mathbf{R}_{\mathbf{v}}$ (particularly for lower input SIRs).
+Finally, it can be observed that using the true RETFs yields only a slightly better performance than using the RETFs estimated with the least-squares method.
+Similar conclusions can be derived by analyzing the performance for system AS$_2$ depicted in Fig.~\ref{fig: nr1}b, i.e., the covariance whitening and subtraction methods yield a very similar performance.
+Furthermore, the least-squares method outperforms the covariance whitening and subtraction methods.
+However, the difference in performance between the different RETF estimation methods is smaller than for system AS$_1$, since system AS$_2$ represents a rather challenging system for any of the considered RETF estimation methods.
+
+In summary these results demonstrate the suitability of combining any of the considered RETF estimation methods with the EVD-based PSD estimator to successfully dereverberate and denoise a fixed as well as a moving speaker.
+Since the least-squares method yields the best performance, it is the preferred method to be used in reverberant and noisy scenarios.
+
+% \begin{figure}
+%   \includegraphics[scale=0.6]{Plots/perf_derevnoise_sys1}
+% \end{figure}
+\vspace{-0.3cm}
+
+\section{Conclusion}
+In this paper the performance of the MWF using the EVD-based late reverberant PSD estimator and several RETF estimation methods has been investigated for noiseless and noisy scenarios as well as for a fixed and a moving a speaker.
+It has been shown that using the EVD-based PSD estimator and any of the considered RETF estimation methods, i.e., the covariance whitening, covariance subtraction, and least-squares methods, yields a high dereverberation and noise reduction performance.
+While the covariance whitening and subtraction methods yield the best performance in reverberant scenarios, the least-squares method yields the best performance in reverberant and noisy scenarios.
+% References should be produced using the bibtex program from suitable
+% BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography
+% style file from IEEE produces unsorted bibliography list.
+% -------------------------------------------------------------------------
+\bibliographystyle{IEEEbib}
+\bibliography{strings,refs}
+
+\end{document}

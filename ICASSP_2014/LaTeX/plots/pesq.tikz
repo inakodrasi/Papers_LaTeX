@@ -1,0 +1,119 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+
+% defining custom colors
+\definecolor{mycolor1}{rgb}{0,0.75,0.75}%
+
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=0.45\figurewidth,
+height=0.55\figureheight,
+scale only axis,
+xmin=-34,
+xmax=-8,
+xlabel={$N_{\rm M}$ [dB]},
+xlabel absolute, xlabel style={yshift=0.5em},
+xmajorgrids,
+ymin=0,
+ymax=0.93,
+ylabel={$\Delta$ PESQ},
+ylabel absolute, ylabel style={yshift=-1.6em, xshift=0.4em},
+ytick = {0, 0.1, 0.3, 0.5, 0.7, 0.9},
+ymajorgrids,
+legend style={at=({-0.48,0}),anchor=south west,draw=black,fill=white,legend cell align=left,row sep = -2pt}
+]
+\addplot [
+color=blue,
+dashed,
+line width=1.2pt,
+mark size=1.7pt,
+mark=o,
+mark options={solid}
+]
+table[row sep=crcr]{
+-33 0.787494433408762\\
+-30 0.729817481755447\\
+-27 0.760350312117049\\
+-24 0.753938013612263\\
+-21 0.742204268442245\\
+-18 0.571015525892078\\
+-15 0.641969989397881\\
+-12 0.214862018757196\\
+-9 0.107563733409486\\
+};
+\addlegendentry{Regularized SCLS};
+
+%\addplot [
+%color=green!50!black,
+%dashed,
+%line width=1.0pt,
+%mark size=2.2pt,
+%mark=star,
+%mark options={solid}
+%]
+%table[row sep=crcr]{
+%-33 0.778685843810708\\
+%-30 0.778952827307612\\
+%-27 0.710061979452564\\
+%-24 0.502397195101204\\
+%-21 0.640166886768423\\
+%-18 0.0094655629837801\\
+%-15 0.385061962210443\\
+%-12 0.0456976815362813\\
+%-9 0.031725584934355\\
+%};
+%\addlegendentry{$G(k)$};
+
+%\addplot [
+%color=red,
+%dashed,
+%line width=1.2pt,
+%mark size=1.8pt,
+%mark=square,
+%mark options={solid}
+%]
+%table[row sep=crcr]{
+%-33 0.699169963777934\\
+%-30 0.675229830027618\\
+%-27 0.688247866611805\\
+%-24 0.618999241873652\\
+%-21 0.620255300206637\\
+%-18 0.477851022832803\\
+%-15 0.562020649353189\\
+%-12 0.267892208848723\\
+%-9 0.152526668977201\\
+%};
+%\addlegendntry{$G_{\delta}(k)$};
+
+\addplot [
+color=black,
+dashed,
+line width=1.0pt,
+mark size=2.5pt,
+mark=triangle,
+mark options={solid}
+]
+table[row sep=crcr]{
+-33 0.900543715497689\\
+-30 0.886691062798044\\
+-27 0.88030315824927\\
+-24 0.79722147868595\\
+-21 0.826029694942047\\
+-18 0.669465711455573\\
+-15 0.743701795206534\\
+-12 0.36044942278444\\
+-9 0.210461137082714\\
+};
+\addlegendentry{Proposed Technique};
+
+\end{axis}
+\end{tikzpicture}%

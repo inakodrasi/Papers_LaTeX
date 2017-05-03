@@ -1,0 +1,10 @@
+dvips -o %.ps %.dvi
+
+ps2pdf %.ps
+
+-Ppdf -t letter -j0 -G0
+
+
+-dBATCH -dNOPAUSE -sDEVICE=pdfwrite -dCompatibilityLevel=1.4
+-dEmbedAllFonts=true -dPDFSETTINGS=/prepress
+

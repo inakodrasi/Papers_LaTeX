@@ -1,0 +1,51 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-5,
+xmax=5,
+ymin=1,
+ymax=5.5
+]
+\addplot [
+color=blue,
+dashed,
+mark=o,
+mark options={solid},
+forget plot
+]
+table[row sep=crcr]{
+-5 1.64908912500642\\
+-2.5 1.6301508190929\\
+0 1.59839640061515\\
+2.5 1.54779807445314\\
+5 1.47317777054643\\
+};
+\addplot [
+color=green!50!black,
+dashed,
+mark=square,
+mark options={solid},
+forget plot
+]
+table[row sep=crcr]{
+-5 5.3446708300213\\
+-2.5 5.30523440872317\\
+0 4.42192896578351\\
+2.5 3.51235048432049\\
+5 2.46197284439052\\
+};
+\end{axis}
+\end{tikzpicture}%
