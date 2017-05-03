@@ -1,0 +1,72 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+area legend,
+scale only axis,
+xmin=5,
+xmax=55,
+xtick={10, 20, 30, 40, 50},
+xlabel={Desired Window Length [ms]},
+xlabel absolute, xlabel style={yshift=0.5em},
+xmajorgrids,
+ymin=1.75,
+ymax=4.3,
+ylabel={PESQ Score},
+ylabel absolute,ylabel style={yshift=-1.2em},
+ymajorgrids,
+legend style={at={(0.01,0.99)},anchor=north west,draw=black,fill=white,legend cell align=left, row sep = -4pt}
+]
+\addplot[ybar,bar width=0.0246153846153846\figurewidth,bar shift=-0.0615384615384615\figurewidth,fill=gray,draw=black] plot coordinates{(10,2.62043749972687)
+(20,2.9830324859157)
+(30,3.41749424211957)
+(40,3.51101490700687)
+(50,3.63864205458568)};
+
+\addlegendentry{P-MINT};
+
+\addplot[ybar,bar width=0.0246153846153846\figurewidth,bar shift=-0.0307692307692308\figurewidth,fill=darkgray,draw=black] plot coordinates{(10,2.60284781987389)
+(20,3.02119083552229)
+(30,3.26009653710586)
+(40,3.15856826852753)
+(50,3.35128706077935)};
+
+\addlegendentry{RMCLS-CIT};
+
+\addplot[ybar,bar width=0.0246153846153846\figurewidth,fill=white,draw=black] plot coordinates{(10,2.67680962824107)
+(20,3.0793724962589)
+(30,3.4041321802532)
+(40,3.50721507792913)
+(50,3.54305462669481)};
+
+\addlegendentry{SuB ($\mathbf{W} = \mathbf{I}$)};
+
+\addplot[ybar,bar width=0.0246153846153846\figurewidth,bar shift=0.0307692307692308\figurewidth,fill=black,draw=black] plot coordinates{(10,2.50408413627198)
+(20,2.99170307779148)
+(30,3.16889329099393)
+(40,3.37941579756444)
+(50,3.33447149028214)};
+
+\addlegendentry{SuB ($\mathbf{W} = \mathbf{W}_r$)};
+
+\addplot[ybar,bar width=0.0246153846153846\figurewidth,bar shift=0.0615384615384615\figurewidth,fill=lightgray,draw=black] plot coordinates{(10,1.81029577173623)
+(20,1.85979553321084)
+(30,1.9292522979889)
+(40,1.86302163529086)
+(50,2.07443417834838)};
+
+\addlegendentry{$x_1(n)$};
+
+\end{axis}
+\end{tikzpicture}%
