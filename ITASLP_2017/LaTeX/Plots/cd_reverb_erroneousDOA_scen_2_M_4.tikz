@@ -1,0 +1,161 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.75000,0.75000}%
+%
+\makeatletter
+\let\oldcreate=\pgfplots@createlegend
+\def\pgfplots@createlegend{%
+\begin{pgfinterruptboundingbox}%
+\oldcreate%
+\end{pgfinterruptboundingbox}%
+}
+\makeatother
+\begin{tikzpicture}[font = \small]
+%
+\begin{axis}[%
+width=0.7\figurewidth,
+height=\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=-100,
+xmax=100,
+xlabel={$\hat{\theta}$},
+xtick = {-90,-45,0, 45,90},
+minor xtick={-90,-75,-60,-45,-30,-15,0,15,30,45,60,75,90},
+grid=minor,
+xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-1.5,
+ymax=2,
+ylabel={$\Delta$CD [dB]},
+ylabel absolute, ylabel style={yshift=-0.7em},
+ymajorgrids,
+axis background/.style={fill=white},
+legend columns = 4,
+legend style={at={([xshift=-68pt,yshift=10pt] 1,1)},anchor=south},
+legend image post style={xscale=0.8},
+legend entries = {MVDR, $\hat{\Phi}^{\rm ml}_{\rm r}$,$\hat{\Phi}^{\rm evd}_{\rm r,tr}$,$\hat{\Phi}^{\rm evd}_{\rm r,2}$}
+]
+\addplot 
+[
+color=blue,
+line width=0.9pt,
+mark size=2.5pt,
+mark=triangle,
+mark options={solid,rotate=90}
+]
+  table[row sep=crcr]{%
+-90	0.397665027239968\\
+-75	0.507888579576377\\
+-60	0.554690656523474\\
+-45	0.59077139709207\\
+-30	0.542030233285497\\
+-15	0.635467573602734\\
+0	0.543318002365323\\
+15	0.271789875527693\\
+30	-0.272984567518019\\
+45	-0.607939053427152\\
+60	-0.38539019940033\\
+75	-0.101530406923953\\
+90	-0.000894679649354302\\
+};
+
+\addplot 
+[
+color=green!50!black,
+line width=1.0pt,
+mark size=2.0pt,
+mark=diamond*,
+mark options={solid}
+]
+  table[row sep=crcr]{%
+-90	1.08348843853048\\
+-75	1.39839695274143\\
+-60	1.57495799479547\\
+-45	1.70996304247335\\
+-30	1.47904723028227\\
+-15	1.59046546004\\
+0	1.45205262891342\\
+15	0.707231157027429\\
+30	-0.450316230544969\\
+45	-0.879441363849433\\
+60	-0.622811988641513\\
+75	0.0197556664481748\\
+90	0.31186831222764\\
+};
+
+\addplot 
+[
+color=mycolor1,
+mark = square,
+mark size = 2.0pt,
+line width=1.0pt,
+smooth]
+  table[row sep=crcr]{%
+-90	-0.0672825657776177\\
+-75	0.0356304742346989\\
+-60	0.0940892136618787\\
+-45	0.109960371338892\\
+-30	0.00513888004407281\\
+-15	0.0973495222319665\\
+0	-0.0455025237196365\\
+15	-0.347360697733659\\
+30	-0.858807508619719\\
+45	-1.15502180623874\\
+60	-0.987470117258785\\
+75	-0.702402240046339\\
+90	-0.609302457793849\\
+};
+
+\addplot 
+[
+color=red,
+dash pattern=on 3pt off 3pt on 3pt off 3pt,
+line width=1.2pt,
+mark = o,
+mark size = 2pt,
+mark options={solid}]
+  table[row sep=crcr]{%
+-90	-0.202178660776455\\
+-75	-0.0896948652480769\\
+-60	-0.0168696651804883\\
+-45	0.000766334324479701\\
+-30	-0.0495063989194779\\
+-15	0.0729975161486278\\
+0	-0.0764124396088874\\
+15	-0.307065039223264\\
+30	-0.826160289036984\\
+45	-1.06778240249543\\
+60	-0.940962281278438\\
+75	-0.712436263195753\\
+90	-0.629485544307567\\
+};
+\addplot [
+color=black,
+line width=0.8pt,
+]
+table[row sep=crcr]{
+45 -5\\
+45 -4\\
+45 -3\\
+45 -2\\
+45 -1\\
+45 0\\
+45 1\\
+45 2\\
+45 3\\
+45 4\\
+45 5\\
+45 6\\
+};
+
+\end{axis}
+\end{tikzpicture}%

@@ -1,0 +1,83 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.00000,0.56250}%
+\definecolor{mycolor2}{rgb}{0.00000,0.87500,1.00000}%
+\definecolor{mycolor3}{rgb}{1.00000,0.81250,0.00000}%
+%
+\makeatletter
+\let\oldcreate=\pgfplots@createlegend
+\def\pgfplots@createlegend{%
+\begin{pgfinterruptboundingbox}%
+\oldcreate%
+\end{pgfinterruptboundingbox}%
+}
+\makeatother
+\begin{tikzpicture}[font = \small]
+%
+\begin{axis}[%
+width=0.7\figurewidth,
+height=\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=1,
+xmax=9,
+xtick={2, 4, 6, 8},
+xlabel={Number of microphones $M$},
+ylabel absolute, ylabel style={yshift=-0.7em},
+xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-1.5,
+ymax=0,
+ylabel={$\Delta$CD [dB]},
+ymajorgrids,
+axis background/.style={fill=white},
+%title={$T_{60} \approx 610$ ms},
+legend columns = 4,
+area legend,
+legend style={at={([xshift=-68pt,yshift=10pt] 1,1)},anchor=south},
+legend image post style={xscale=0.8},
+legend entries = {MVDR, $\hat{\Phi}^{\rm ml}_{\rm r}$,$\hat{\Phi}^{\rm evd}_{\rm r,tr}$,$\hat{\Phi}^{\rm evd}_{\rm r,2}$}
+]
+\addplot[ybar,bar width=0.0207792207792208\figurewidth,bar shift=-0.038961038961039\figurewidth,fill=mycolor1,draw=black, pattern = horizontal lines,area legend] plot table[row sep=crcr] {%
+2	-0.292939918127279\\
+4	-0.602702707867381\\
+6	-0.823967181203029\\
+8	-0.959860464900212\\
+};
+
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1	0\\
+9	0\\
+};
+\addplot[ybar,bar width=0.0207792207792208\figurewidth,bar shift=-0.012987012987013\figurewidth,fill=mycolor2,draw=black, pattern = north west lines, area legend] plot table[row sep=crcr] {%
+2	-0.635210831990382\\
+4	-0.881450922827912\\
+6	-1.03560879987568\\
+8	-1.12905866988712\\
+};
+
+\addplot[ybar,bar width=0.0207792207792208\figurewidth,bar shift=0.012987012987013\figurewidth,fill=mycolor3,draw=black, pattern = crosshatch, area legend] plot table[row sep=crcr] {%
+2	-0.826493479776389\\
+4	-1.15395140182568\\
+6	-1.33122599686854\\
+8	-1.42398995583833\\
+};
+
+\addplot[ybar,bar width=0.0207792207792208\figurewidth,bar shift=0.038961038961039\figurewidth,fill=red!50!black,draw=black, pattern = dots, area legend] plot table[row sep=crcr] {%
+2	-0.826493479776389\\
+4	-1.06113120754634\\
+6	-1.02281318695547\\
+8	-0.960273900121003\\
+};
+
+\end{axis}
+\end{tikzpicture}%

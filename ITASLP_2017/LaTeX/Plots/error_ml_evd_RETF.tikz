@@ -1,0 +1,137 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.75000,0.75000}%
+%
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=0.951\figurewidth,
+height=\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=-100,
+xmax=100,
+xtick = {-90,-45,0, 45,90},
+minor xtick={-90,-75,-60,-45,-30,-15,0,15,30,45,60,75,90},
+xlabel={$\hat{\theta}$},
+grid = minor,
+ylabel absolute, ylabel style={yshift=-1em},
+xlabel absolute, xlabel style={yshift=0.5em},
+ylabel={Error [dB]},
+ymajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=0,
+ymax=6,
+ylabel={Error [dB]},
+axis background/.style={fill=white},
+legend columns = 2,
+legend style={at={([xshift=-86pt,yshift=5pt] 1,1)},anchor=south},
+legend entries = {Overestimation $\hat{\Phi}^{\rm ml}_{\rm r}$, Underestimation $\hat{\Phi}^{\rm ml}_{\rm r}$, Overestimation $\hat{\Phi}^{\rm evd}_{\rm r}$, Underestimation $\hat{\Phi}^{\rm evd}_{\rm r}$}
+]
+\addplot 
+[
+color=green!50!black,
+line width=1.0pt,
+mark size=2.0pt,
+mark=diamond*,
+mark options={solid}
+]
+  table[row sep=crcr]{%
+-90	5.33699360539479\\
+-75	5.59001276725748\\
+-60	5.44838926772694\\
+-45	5.01939432628303\\
+-30	5.18579748595742\\
+-15	4.91667050375284\\
+0	4.97643756650265\\
+15	4.46514261836752\\
+30	3.54682273910146\\
+45	3.10178633297028e-011\\
+60	2.98467228039224\\
+75	3.79199863687305\\
+90	4.24733714636943\\
+};
+
+\addplot 
+[
+color=mycolor1,
+mark = square,
+mark size = 2.0pt,
+line width=1.0pt,
+smooth
+]
+  table[row sep=crcr]{%
+-90	0\\
+-75	0\\
+-60	0\\
+-45	0\\
+-30	0\\
+-15	0\\
+0	0\\
+15	0\\
+30	0\\
+45	0.00217487576487457\\
+60	0\\
+75	0\\
+90	0\\
+};
+
+\addplot 
+[
+color=red,
+dash pattern=on 3pt off 3pt on 3pt off 3pt,
+line width=1.2pt,
+mark = o,
+mark size = 2pt,
+mark options={solid}
+]
+  table[row sep=crcr]{%
+-90	1.07737773935162e-007\\
+-75	1.07737773935162e-007\\
+-60	1.07737773935162e-007\\
+-45	1.07737773935162e-007\\
+-30	1.07737773935162e-007\\
+-15	1.07737773935162e-007\\
+0	1.07737773935162e-007\\
+15	1.07737773935162e-007\\
+30	1.07737773935162e-007\\
+45	1.07737773935162e-007\\
+60	1.07737773935162e-007\\
+75	1.07737773935162e-007\\
+90	1.07737773935162e-007\\
+};
+
+\addplot 
+[
+color=blue,
+line width=0.9pt,
+mark size=2.5pt,
+mark=triangle,
+mark options={solid,rotate=90}
+]
+  table[row sep=crcr]{%
+-90	1.04355190398892e-008\\
+-75	1.04355190398892e-008\\
+-60	1.04355190398892e-008\\
+-45	1.04355190398892e-008\\
+-30	1.04355190398892e-008\\
+-15	1.04355190398892e-008\\
+0	1.04355190398892e-008\\
+15	1.04355190398892e-008\\
+30	1.04355190398892e-008\\
+45	1.04355190398892e-008\\
+60	1.04355190398892e-008\\
+75	1.04355190398892e-008\\
+90	1.04355190398892e-008\\
+};
+
+\end{axis}
+\end{tikzpicture}%

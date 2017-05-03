@@ -1,0 +1,856 @@
+\documentclass[draftcls,onecolumn,11pt]{IEEEtran}
+
+\usepackage{tikz}
+\usepackage{dblfloatfix}
+\usepackage{amsmath}
+\usepackage{subfig}
+\usetikzlibrary{shapes,snakes}
+\usetikzlibrary{calc,chains,positioning}
+\usepackage{phaistos}
+\usepackage{graphics,color,psfrag}
+\usepackage{cite}
+\newtheorem{simulation}{Simulation}
+\usepackage{url}
+\DeclareMathOperator{\diag}{diag}
+
+
+\begin{document}
+\urlstyle{sf}
+%
+% paper title
+% can use linebreaks \\ within to get better formatting as desired
+\title{Regularization for Partial Multichannel Equalization for Speech Dereverberation}
+\author{Ina~Kodrasi*,~\IEEEmembership{Student~Member,~IEEE,} \\
+University of Oldenburg \\[-0.2cm]
+Institute of Physics - Signal Processing Group \\[-0.2cm]
+26111, Oldenburg, Germany\\[-0.2cm]
+Tel: +49-441-798 3989, Fax: +49-441-798 3902 \\[-0.2cm]
+Email: ina.kodrasi@uni-oldenburg.de\\[+0.5cm]
+Stefan~Goetze,~\IEEEmembership{Member,~IEEE,}\\
+Fraunhofer Institute Digital Media Technology~(IDMT) \\[-0.2cm]
+Project group Hearing, Speech and Audio Technology \\[-0.2cm]
+Marie-Curie-Strasse 2, 26129, Oldenburg, Germany \\[-0.2cm]
+Tel: +49-441-2172-432, Fax: +49-441-2172-450\\[-0.2cm]
+Email: s.goetze@idmt.fraunhofer.de \\[+0.5cm]
+Simon~Doclo,~\IEEEmembership{Member,~IEEE} \\
+University of Oldenburg \\[-0.2cm]
+Institute of Physics - Signal Processing Group \\[-0.2cm]
+26111, Oldenburg, Germany\\[-0.2cm]
+Tel: +49-441-798 3344, Fax: +49-441-798 3902 \\[-0.2cm]
+Email: simon.doclo@uni-oldenburg.de\\[+0.5cm]
+{\bf EDICS}: AUD-LMAP, AUD-ECHO}
+
+
+% make the title area
+\maketitle
+\newpage
+
+\begin{abstract}
+\boldmath
+Acoustic multichannel equalization techniques such as the multiple-input/output inverse theorem~(MINT), which aim to equalize the room impulse responses~(RIRs) between the source and the microphone array, are known to be highly sensitive to RIR estimation errors.
+To increase robustness, it has been proposed to incorporate regularization in order to decrease the energy of the equalization filters.
+In addition, more robust partial multichannel equalization techniques such as relaxed multichannel least-squares~(RMCLS) and channel shortening~(CS) have recently been proposed.
+
+In this paper, we propose a partial multichannel equalization technique based on MINT~(P-MINT) which aims to shorten the RIR.
+Furthermore, we investigate the effectiveness of incorporating regularization to further increase the robustness of P-MINT and the aforementioned partial multichannel equalization techniques, i.e. RMCLS and CS.
+In addition, we introduce an automatic non-intrusive procedure for determining the regularization parameter based on the L-curve.
+
+Simulation results using measured RIRs show that incorporating regularization in P-MINT yields a significant performance improvement for several RIR estimation errors, whereas a smaller performance improvement is observed when incorporating regularization in RMCLS and CS.
+Furthermore, it is shown that the intrusively regularized P-MINT technique outperforms all other intrusively regularized multichannel equalization techniques, both in terms of reverberant tail suppression as well as perceptual speech quality~(PESQ).
+Finally, it is shown that the automatic non-intrusive regularization parameter in regularized P-MINT leads to a very similar performance as the intrusively determined optimal regularization parameter, making regularized P-MINT a robust, perceptually advantageous, and practically applicable multichannel equalization technique for speech dereverberation.
+
+
+
+\end{abstract}
+
+\begin{IEEEkeywords}
+Acoustic multichannel equalization, speech dereverberation, automatic regularization
+\end{IEEEkeywords}
+
+
+\section{Introduction}
+\IEEEPARstart{S}{PEECH} signals recorded in an enclosed space by microphones placed at a distance from the source are often corrupted by reverberation, which arises from the superposition of delayed and attenuated copies of the anechoic speech signal.
+Reverberation causes signal degradation, typically leading to decreased speech intelligibility~\cite{Houtgast_1985,Beutelmann_2006} and performance deterioration in speech recognition systems~\cite{Omologo_1998, Sehr_phd, Maas_ICASSP_2012}.
+Hence, many speech communication applications such as teleconferencing applications, voice-controlled systems, or hearing aids, require effective dereverberation algorithms~\cite{Sehr_phd,Jeub_ITASP_2010,Maas_ICASSP_2012}.
+
+In the last decades, several dereverberation approaches have been developed, which can be broadly classified into speech enhancement and acoustic channel equalization approaches~\cite{Naylor_Derev_book}.
+While both single and multichannel dereverberation techniques have been investigated, multichannel techniques are generally preferred since they enable the use of both spectro-temporal and spatial processing of the received microphone signals.
+Well-known multichannel speech enhancement techniques for dereverberation are either based on spectral subtraction~\cite{Habets_ITASLP_2008,Habets_ICASSP_2007} typically exploiting a statistical model of the room impulse responses~(RIRs), or on linear prediction~\cite{Gaubitch_JASA_2006,Delcroix_2007,Nakatani_ITASLP_2010}.
+On the other hand, acoustic multichannel equalization techniques~\cite{Miyoshi_ITASS_1988,Kallinger_ICASSP_2006, Hikichi_EURASIP_2007, Mertins_ITASLP_2010, Zhang_IWAENC_2010, Haque_ITASLP_2011, Kodrasi_ICASSP_2012} aim to reshape the estimated RIRs between the source and the microphone array.
+Such techniques comprise an attractive approach to speech dereverberation since in theory perfect channel equalization can be achieved~\cite{Miyoshi_ITASS_1988, Hacihabibouglu_ITASLP_2012}.
+%The work presented here focuses on the design of inverse filters, assuming that estimates of the RIRs are available (e.g. obtained using blind system identification~(BSI) methods~\cite{Huang_ITSP_2003}).
+
+A widely known multichannel equalization technique that aims at complete equalization is the multiple-input/output inverse theorem (MINT)~\cite{Miyoshi_ITASS_1988}, which however suffers from several drawbacks in practice.
+Since the estimated RIRs typically differ from the true RIRs due to fluctuations~(e.g., temperature or position variations~\cite{Radlovic_ITSA_2000}) or estimation errors~(e.g., due to the sensitivity of blind system identification methods to near-common zeros~\cite{Lin_ITASLP_2012} or interfering noise~\cite{Hasan_EUSIPCO_2006}), MINT fails to equalize the true RIRs, possibly leading to severe distortions in the output signal.
+In an attempt to increase the robustness of MINT to RIR fluctuations and estimation errors, it has been proposed to incorporate regularization in order to decrease the energy of the equalization filters~\cite{Hikichi_EURASIP_2007} .
+
+In addition, more robust partial multichannel equalization techniques such as relaxed multichannel least-squares~(RMCLS)~\cite{Zhang_IWAENC_2010} and channel shortening~(CS)~\cite{Kallinger_ICASSP_2006} have recently been proposed.
+Since early reflections~(i.e. reflections that arrive shortly after the direct sound) tend to improve speech intelligibility~\cite{Arweiler_JASA_2011,Warzybok_Acusticum_2011} and late reverberation~(typically defined as the part of the RIR after $50$--$80$~ms) is the major cause of speech intelligibility degradation, the objective of such techniques is to shorten the RIR by suppressing only the reverberant tail.
+It has been experimentally validated that partial equalization techniques lead to a significant increase in robustness in the presence of RIR estimation errors as compared to complete equalization~\cite{Zhang_IWAENC_2010}.
+However, by not imposing any constraints on the remaining early reflections of the shortened RIR, RMCLS and CS may lead to undesired perceptual effects.
+
+In this paper, we first introduce a partial multichannel equalization technique based on MINT~(P-MINT), which aims to shorten the RIR and to directly control the perceptual speech quality~\cite{Kodrasi_ICASSP_2012}.
+Furthermore, since incorporating regularization is also expected to further increase the robustness of partial multichannel equalization techniques, the effectiveness of incorporating regularization in all aforementioned partial equalization techniques is investigated.
+To this end, a regularization term proportional to the energy of the reshaping filters is added to the cost functions for P-MINT, RMCLS, and CS.
+Whereas a closed-form solution exists for minimizing the regularized cost functions for P-MINT and RMCLS, an iterative approach is required for minimizing the regularized cost function for CS.
+
+In general, the optimal regularization parameter yielding the highest perceptual speech quality needs to be determined intrusively~(i.e. using a dereverberated reference signal and knowledge of the true RIRs), limiting the practical applicability of the regularized techniques.
+In this paper, we also propose and extensively investigate an automatic non-intrusive selection procedure for the regularization parameter based on the L-curve~\cite{Hansen_1993}.
+
+Using simulations with a realistic acoustic system for several estimation errors, it is shown that a significant performance increase is obtained for P-MINT when regularization is incorporated, whereas a smaller improvement is observed when incorporating regularization in RMCLS and CS.
+In addition, it is demonstrated that the intrusively regularized P-MINT technique outperforms the intrusively regularized RMCLS and CS techniques, typically leading to the highest robustness and perceptual speech quality.
+Furthermore, it is shown that the non-intrusively determined regularization parameter yields a nearly optimal perceptual speech quality in regularized P-MINT, making it a robust, perceptually advantageous, and practically applicable multichannel equalization technique for speech dereverberation.
+
+The paper is organized as follows.
+In Section~\ref{sec: intro} the acoustic multichannel equalization problem is introduced as well as several state-of-the-art multichannel equalization  techniques for designing reshaping filters.
+A mathematical relation between the P-MINT solution and the multiple possible CS solutions is provided, showing that the P-MINT solution can be expressed as a linear combination of the CS solutions.
+Furthermore, the incorporation of a regularization term in all multichannel equalization techniques is discussed in Section~\ref{sec: reg}, whereas in  Section~\ref{sec: sel_reg} an automatic non-intrusive procedure for computing the regularization parameter is proposed.
+Using simulations, the reverberant tail suppression and the perceptual speech quality of all considered equalization techniques is extensively compared in Section~\ref{sec: exp}.
+
+\section{Acoustic Multichannel Equalization}
+\label{sec: intro}
+In this section, complete and partial acoustic multichannel equalization techniques are discussed.
+First, the general problem is stated and some notational conventions are given.
+Then the cost functions of several multichannel equalization techniques are discussed.
+
+\subsection{Problem Formulation and Notation}
+\label{subsec: prob}
+Consider an acoustic system with a single speech source and $M$ microphones as depicted in Fig.~\ref{fig: acsys}.
+The $m$-th microphone signal at time index $n$ is given by
+\begin{equation}
+  x_m(n) =  s(n)  \ast h_m(n), \; \; \; \; m = 1, \ldots, \; M
+\end{equation}
+where $\ast$ denotes convolution, $s(n)$ is the clean speech signal, and $h_m(n)$ denotes the RIR between the source and the $m$-th microphone.
+The RIR can be described in vector notation as
+\begin{equation}
+  \mathbf{h}_m = \left[h_m(0) \; h_m(1) \; \ldots \; h_m(L_h-1) \right]^T,
+\end{equation}
+with $L_h$ being the RIR length and $\left[\cdot \right]^T$ denoting the transpose operation.
+Given reshaping filters $\mathbf{g}_m$, $m = 1, \ldots, \; M$, of length $L_g$, i.e.
+\begin{equation}
+\mathbf{g}_m = \left[g_m(0) \; g_m(1) \; \ldots \; g_m(L_g-1) \right]^T,
+\end{equation}
+the output signal $\hat{s}(n)$ of the multichannel equalization system is given by the sum of the filtered microphone signals, i.e.
+\begin{align}
+  \hat{s}(n) &= \sum_{m=1}^{M} x_m(n) \ast g_m(n) \\
+  & =  s(n) \ast \underbrace{\sum_{m=1}^{M} h_m(n) \ast g_m(n)}_{c(n)},
+\end{align}
+where $c(n)$ is the equalized impulse response~(EIR) between the source and the output of the system, which can be described in vector notation as
+\begin{equation}
+\mathbf{c} = \left[c(0) \; c(1) \; \ldots \; c(L_c-1) \right]^{T},
+\end{equation}
+with $L_c = L_h+L_g-1$ being the EIR length.
+Using the $ML_g$--dimensional stacked filter vector $\mathbf{g}$, i.e.
+\begin{equation}
+  \mathbf{g}  =  \left[\mathbf{g}_1^T \; \mathbf{g}_2^T \; \ldots \; \mathbf{g}_M^T \right]^T,
+\end{equation}
+ and the $L_c \times ML_g$--dimensional multichannel convolution matrix $\mathbf{H}$, i.e.
+\begin{equation}
+\mathbf{H}  = \left[\mathbf{H}_1 \; \mathbf{H}_2 \; \ldots \; \mathbf{H}_M \right],
+\end{equation}
+with
+\begin{equation}
+\hspace{-0.2cm}
+\mathbf{H}_m =  \begin{bmatrix}
+    h_m(0) & 0 &  \ldots & 0 \\
+    h_m(1) & h_m(0) & \ddots & \vdots \\
+    \vdots & h_m(1) & \ddots & 0 \\
+    h_m(L_h-1) & \vdots & \ddots & h_m(0) \\
+    0 & h_m(L_h-1) & \ddots & h_m(1) \\
+    \vdots & \ddots & \ddots & \vdots \\
+    0 & \ldots & 0 & h_m(L_h-1)
+   \end{bmatrix},\hspace{-0.4cm}
+ \end{equation}
+the output signal can be expressed as
+\begin{align}
+\hat{s}(n) &=  \sum_{m=1}^{M} \mathbf{g}_m^T
+ \mathbf{H}_m^T
+\underbrace{\left[
+\begin{array}{c}
+s(n) \\
+s(n-1) \\
+\vdots \\
+s(n-L_c+1) \\
+\end{array}
+\right]}_{\mathbf{s}(n)}  \\
+& =  \mathbf{g}^T \mathbf{H}^T \mathbf{s}(n) \\
+& =  \mathbf{c}^T \mathbf{s}(n).
+\end{align}
+The reshaping filter $\mathbf{g}$ can then be constructed based on different design objectives for the EIR
+\begin{equation}
+\boxed{\mathbf{c} = \mathbf{H}\mathbf{g}}
+\end{equation}
+Since the true RIRs are typically not available in practice, acoustic multichannel equalization techniques design the reshaping filter $\mathbf{g}$ using the estimated multichannel convolution matrix $\hat{\mathbf{H}}$ constructed from the estimated RIRs
+\begin{equation}
+\label{eq: hath}
+\hat{h}_m(n) = h_m(n) + e_m(n),
+\end{equation}
+with $e_m(n)$ representing the estimation error.
+The sensitivity of several multichannel equalization techniques to these estimation errors will be investigated in Section~\ref{sec: exp}.
+
+
+\subsection{Complete Multichannel Equalization}
+\label{subsec: mint}
+The objective of complete multichannel equalization techniques, such as the multiple-input/output inverse theorem, is to invert the (estimated) acoustic system up to a delay, such that the output of the multichannel equalization system is a shifted version of the clean speech signal.
+\subsubsection*{Multiple-input/output inverse theorem~\cite{Miyoshi_ITASS_1988}}
+MINT aims to recover the delayed anechoic speech signal by designing a filter $\mathbf{g}$ such that
+\begin{equation}
+  \label{eq: minttar}
+  \hat{\mathbf{H}}\mathbf{g} = \mathbf{d},
+\end{equation}
+where $\mathbf{d}$ is the desired equalized impulse response, defined as a delayed impulse, i.e.
+\begin{equation}
+  \mathbf{d} = [\underbrace{0 \; \ldots \; 0}_{\tau} \; 1 \; 0 \; \ldots \; 0 ],
+\end{equation}
+with $\tau$ being the delay in number of samples.
+The inverse filter is then computed by minimizing the least-squares cost function
+\begin{equation}
+\label{eq: ls}
+\boxed{J_{_{\rm MINT}}(\mathbf{g}) = \|\hat{\mathbf{H}}\mathbf{g} - \mathbf{d}\|_2^2}
+\end{equation}
+As shown in~\cite{Miyoshi_ITASS_1988}, assuming that
+\begin{itemize}
+  \item the estimated RIRs do not share any common zeros in the $z$-plane, and
+  \item $L_g \geq \lceil{\frac{L_h-1}{M-1}\rceil}$,
+\end{itemize}
+where $\lceil{ \cdot \rceil}$ denotes the ceiling function, the filter that inverts the multichannel acoustic system can be computed as
+\begin{equation}
+  \label{eq: mint}
+  \boxed{\mathbf{g}_{{}_{\rm MINT}} = \hat{\mathbf{H}}^+\mathbf{d}}
+\end{equation}
+with $\{\cdot\}^+$ denoting the Moore-Penrose pseudo-inverse.
+Since the estimated convolution matrix $\hat{\mathbf{H}}$ is assumed to be a full row-rank matrix~\cite{Harikumar_ITSP_1998}, its pseudo-inverse can be computed as $\hat{\mathbf{H}}^+ = \hat{\mathbf{H}}^T(\hat{\mathbf{H}}\hat{\mathbf{H}}^T)^{-1}$.
+
+When the room impulse responses are perfectly estimated, MINT achieves perfect equalization.
+However, when the estimated RIRs differ from the true RIRs, the resulting EIR $\mathbf{c} = \mathbf{H} \hat{\mathbf{H}}^+ \mathbf{d}$ not only differs from the desired response $\mathbf{d}$, but usually causes large distortions in the output signal~\cite{Radlovic_ITSA_2000, Hikichi_EURASIP_2007}.
+
+
+\subsection{Partial Multichannel Equalization}
+\label{sec: partial}
+Whereas MINT is very sensitive to estimation errors, partial multichannel equalization techniques which aim at reshaping the EIR instead of complete equalization, are significantly more robust.
+The recently proposed partial multichannel equalization techniques such as relaxed multichannel least-squares and channel shortening aim at suppressing the late reverberation only, while imposing no constraints on the early reflections, which may lead to undesired perceptual effects.
+Therefore we also introduce a partial multichannel equalization technique based on MINT, which aims at simultaneously suppressing the reverberant tail as well as directly controlling the perceptual speech quality of the output signal.
+
+\subsubsection*{Relaxed multichannel least-squares~\cite{Zhang_IWAENC_2010}}
+RMCLS achieves partial channel equalization by introducing a weighting vector $\mathbf{w}$ in the least-squares cost function in~(\ref{eq: ls}), i.e. the RMCLS cost function is defined as
+\begin{equation}
+\label{eq: rmcls_cost}
+\boxed{J_{_{\rm RMCLS}}(\mathbf{g}) = \|\mathbf{W}(\hat{\mathbf{H}}\mathbf{g} - \mathbf{d})\|_2^2}
+\end{equation}
+with $\mathbf{W} = {\diag}\{\mathbf{w}\}$, and the weighting vector $\mathbf{w}$ equal to
+\begin{equation}
+\mathbf{w} = [\underbrace{1 \; \ldots \; 1}_{\tau} \; \underbrace{1 \; 0 \; \ldots \; 0}_{L_s} \; 1 \; \ldots 1]^{T},
+\end{equation}
+where $L_s$ denotes the length of the direct path and early reflections in number of samples, which is typically considered to correspond to $50$-$80$~ms. The minimization of~(\ref{eq: rmcls_cost}) aims at setting the reverberant tail of the EIR to $\mathbf{0}$, while the first taps corresponding to the early reflections are not constrained.
+Similarly to the MINT solution in~(\ref{eq: mint}), the reshaping filter minimizing the RMCLS cost function in~(\ref{eq: rmcls_cost}) can be computed as
+\begin{equation}
+\boxed{\mathbf{g}_{{}_{\rm RMCLS}} = (\mathbf{W}\hat{\mathbf{H}})^{+}\mathbf{W}\mathbf{d}}
+\end{equation}
+
+\subsubsection*{Channel shortening~\cite{Kallinger_ICASSP_2006}}
+CS has been extensively investigated in the context of digital communication applications~\cite{Martin_ITSP_2005} and has recently been applied to acoustic system equalization in~\cite{Kallinger_ICASSP_2006, Zhang_IWAENC_2010}.
+Channel shortening is achieved by maximizing the energy in the first $L_s$ taps of the EIR (i.e. direct path and early reflections), while minimizing the energy in the remaining taps (i.e. the reverberant tail).
+This optimization problem is expressed as the maximization of a generalized Rayleigh quotient, i.e.
+\begin{equation}
+\label{eq: rayleigh}
+\boxed{J_{_{\rm CS}} (\mathbf{g}) =  \frac{\|{\diag}\{\mathbf{w}_d\}\hat{\mathbf{H}}\mathbf{g}\|_2^2}{\|{\diag}\{\mathbf{w}_u\}\hat{\mathbf{H}}\mathbf{g}\|_2^2} = \frac{\mathbf{g}^T \hat{\mathbf{B}} \mathbf{g}}{\mathbf{g}^T \hat{\mathbf{A}} \mathbf{g}}}
+\end{equation}
+where
+\begin{align}
+\hat{\mathbf{B}} & = \hat{\mathbf{H}}^{T} {\diag}\{\mathbf{w}_d \}^T{\diag}\{\mathbf{w}_d \}\hat{\mathbf{H}}  \\
+\hat{\mathbf{A}} & = \hat{\mathbf{H}}^{T} {\diag}\{\mathbf{w}_u \}^T{\diag}\{\mathbf{w}_u \}\hat{\mathbf{H}},
+\end{align}
+and $\mathbf{w}_d$ and $\mathbf{w}_u$ represent the desired and undesired window respectively, i.e.
+\begin{align}
+\label{eq: wincs}
+\mathbf{w}_d & = [\underbrace{0 \; \ldots \; 0}_{\tau} \; \underbrace{1 \; \ldots \; 1}_{L_s}\; 0\; \ldots\; 0]^{T}  \\
+\mathbf{w}_u & = [\underbrace{1 \; \ldots \; 1}_{\tau} \; \underbrace{0 \; \ldots \; 0}_{L_s}\; 1\; \ldots\; 1]^{T} = \mathbf{1} - \mathbf{w}_d.
+\end{align}
+Maximizing the generalized Rayleigh quotient in~(\ref{eq: rayleigh}) is equivalent to solving the generalized eigenvalue problem $\hat{\mathbf{B}} \mathbf{g} = \lambda \hat{\mathbf{A}} \mathbf{g}$, where the optimal reshaping filter $\mathbf{g}_{_{\rm CS}}$ is the generalized eigenvector corresponding to the largest generalized eigenvalue $\lambda_{\max}$, i.e.
+\begin{equation}
+\label{eq: cssol}
+\boxed{\hat{\mathbf{B}} \mathbf{g}_{_{\rm CS}} = \lambda_{\max} \hat{\mathbf{A}}\mathbf{g}_{_{\rm CS}}}
+\end{equation}
+Designing the reshaping filter using such an energy-based optimization technique however imposes no other, e.g. perceptually relevant, constraints on the remaining filter taps in the EIR, which may lead to undesired perceptual effects~(as will be shown in Section~\ref{sec: regacsys}).
+Furthermore, multiple solutions to~(\ref{eq: cssol}) exist~(cf. Section~\ref{sec: pmint_and_cs}), and each of these solutions will lead to a perceptually different EIR.
+In~\cite{Zhang_IWAENC_2010} it has been proposed to select the generalized eigenvector leading to the minimum $l_2$-norm EIR.
+In this paper, the intrusively selected generalized eigenvector leading to the highest perceptual speech quality has been used~(cf. Section~\ref{sec: acsys}).
+\subsubsection*{Partial multichannel equalization based on MINT~\cite{Kodrasi_ICASSP_2012}}
+In order to directly control the perceptual quality of the output signal, we recently proposed the P-MINT technique, where the direct path and early reflections of the EIR are controlled by using the first part~(i.e. direct path and early reflections) of one of the estimated RIRs as the desired EIR in~(\ref{eq: minttar}), i.e.
+\begin{equation}
+\label{eq: PMINT}
+\hat{\mathbf{H}} \mathbf{g} = \hat{\mathbf{h}}_{p}^{\rm d},
+\end{equation}
+where
+\begin{equation}
+\label{eq: tarpmint}
+\hat{\mathbf{h}}_{p}^{\rm d} = [\underbrace{0\phantom{\rlap{$(L_s-1)$}} \ldots 0 }_{\tau} \underbrace{\hat{h}_p(0) \ldots \hat{h}_p(L_s-1)}_{L_s} 0 \ldots 0 ]^{T},
+\end{equation}
+with $p \in \{1, \; 2, \; \ldots, \; M \}$.
+Without loss of generality, also other desired EIRs could be used instead of~(\ref{eq: tarpmint}), as long as they are perceptually close to the true RIRs.
+The least-squares cost function to be minimized in P-MINT is hence defined as
+\begin{equation}
+\label{eq: pmintcost}
+\boxed{J_{_{\rm P-MINT}}(\mathbf{g}) = \|\hat{\mathbf{H}}\mathbf{g} - \hat{\mathbf{h}}_p^{\rm d}\|_2^2}
+\end{equation}
+Assuming that the same conditions as for MINT are satisfied, the reshaping filter minimizing~(\ref{eq: pmintcost}) can be computed as
+\begin{equation}
+\label{eq: Pmintsol}
+\boxed{\mathbf{g}_{{}_{\rm P-MINT}} = \hat{\mathbf{H}}^{+}\hat{\mathbf{h}}_p^{\rm d}}
+\end{equation}
+
+\subsection{Relation Between P-MINT and CS}
+\label{sec: pmint_and_cs}
+Following similar arguments as in~\cite{Zhang_IWAENC_2010}, a mathematical relation between the P-MINT solution and the multiple possible CS solutions can be derived.
+
+The maximization of the CS cost function in~(\ref{eq: rayleigh}) can be reformulated as computing a filter $\mathbf{g}$ belonging to the null space of $\hat{\mathbf{A}}$ but not belonging to the null space of $\hat{\mathbf{B}} + \hat{\mathbf{A}}$, i.e. satisfying the system of equations
+\begin{equation}
+\label{eq: sys}
+\begin{cases}
+\mathbf{g}^T (\hat{\mathbf{B}} + \hat{\mathbf{A}})\mathbf{g} \neq 0 \\
+\mathbf{g}^T\hat{\mathbf{A}} \mathbf{g} = 0,
+\end{cases}
+\end{equation}
+ with $\hat{\mathbf{B}} + \hat{\mathbf{A}} = \hat{\mathbf{H}}^T\hat{\mathbf{H}}$.
+Since the convolution matrix $\hat{\mathbf{H}}$ is assumed to be a full row-rank matrix with ${\rm rank}(\hat{\mathbf{H}}) = L_c$, also ${\rm rank}(\hat{\mathbf{B}} + \hat{\mathbf{A}}) = L_c$.
+Exploiting the relationship between the rank and the dimension of the null space of a matrix~\cite{Golub_Matrix_book}, the dimension of the null space of $\hat{\mathbf{B}} + \hat{\mathbf{A}}$ is equal to
+\begin{eqnarray}
+{\rm dim}[{\rm Nullspace} (\hat{\mathbf{B}} + \hat{\mathbf{A}})] = ML_g - L_c,
+\end{eqnarray}
+where $\rm{dim}[ \cdot]$ denotes the dimension of the considered vector space.
+In addition, since ${\rm rank}(\hat{\mathbf{A}}) = {\rm rank}(\hat{\mathbf{H}}^T \hat{\mathbf{H}}) - L_s = L_c - L_s$, the dimension of the null space of $\hat{\mathbf{A}}$ is equal to
+\begin{eqnarray}
+{\rm dim}[{\rm Nullspace} (\hat{\mathbf{A}})] = ML_g - (L_c - L_s).
+\end{eqnarray}
+Hence, the number of linearly independent vectors satisfying~(\ref{eq: sys}) and therefore maximizing the generalized Rayleigh quotient in~(\ref{eq: rayleigh}) is $[ML_g-(L_c-L_s)] - [ML_g-L_c] = L_s$.
+
+In order to derive a mathematical relation between the P-MINT solution and the multiple possible CS solutions, consider that the desired EIR in P-MINT can be expressed as
+\begin{equation}
+\hat{\mathbf{h}}_p^{\rm d} = {\diag}\{\mathbf{w}_d \}\hat{\mathbf{h}}_p,
+\end{equation}
+with $\mathbf{w}_d$ defined in~(\ref{eq: wincs}).
+For the filter $\mathbf{g}_{{}_{\rm P-MINT}}$ in~(\ref{eq: Pmintsol}), the denominator of the Rayleigh quotient in~(\ref{eq: rayleigh}), representing the energy of the reverberant tail of the EIR is equal to
+\begin{align}
+\mathbf{g}_{{}_{\rm P-MINT}}^T \hat{\mathbf{A}} \mathbf{g}_{{}_{\rm P-MINT}} &= \|{\diag}\{\mathbf{w}_{u}\}\hat{\mathbf{H}} \hat{\mathbf{H}}^+\hat{\mathbf{h}}_p^d \|_2^2 \\
+& =  \|{\diag}\{\mathbf{w}_{u}\} {\diag} \{\mathbf{w}_d \} \hat{\mathbf{h}}_p\|_2^2 = 0,
+\end{align}
+whereas the nominator in~(\ref{eq: rayleigh}), representing the energy of the direct path and early reflections of the EIR is equal to
+\begin{align}
+\mathbf{g}_{{}_{\rm P-MINT}}^T \hat{\mathbf{B}} \mathbf{g}_{{}_{\rm P-MINT}} & = \|{\diag}\{\mathbf{w}_{d}\}\hat{\mathbf{H}} \hat{\mathbf{H}}^+\hat{\mathbf{h}}_p^{\rm d} \|_2^2 \\
+& =  \|{\diag}\{\mathbf{w}_{d}\} \hat{\mathbf{h}}_p^{\rm d} \|_2^2 \neq 0.
+\end{align}
+Therefore, since the P-MINT filter satisfies~(\ref{eq: sys}), it is also in the solution space of the CS optimization problem.
+As a result, the P-MINT reshaping filter can be expressed as a linear combination of the $L_s$ generalized eigenvectors maximizing the generalized Rayleigh quotient in~(\ref{eq: rayleigh}).
+
+\section{Regularization in Acoustic Multichannel Equalization}
+\label{sec: reg}
+As previously mentioned, the estimated RIRs $\hat{h}_m(n)$ generally differ from the true RIRs, cf.~(\ref{eq: hath}).
+Since the reshaping filters $\mathbf{g}_m$ of all discussed equalization techniques in Section~\ref{sec: intro} are designed using the estimated RIRs, the output signal of the multichannel equalization system is given by
+\begin{align}
+\hat{s}(n)  &= s(n) \ast \sum_{m=1}^M h_m(n) \ast g_m(n) \\
+& = s(n) \ast \sum_{m=1}^M  \left[\hat{h}_m(n) - e_m(n)\right] \ast g_m(n) \\
+\label{eq: 2}
+& = s(n) \ast \sum_{m=1}^M \hat{h}_m(n) \ast g_m(n) - s(n) \ast \sum_{m=1}^M e_m(n) \ast g_m(n),
+\end{align}
+where the first term represents the clean speech signal convolved with the desired EIR and the second term may~(and typically does) give rise to large signal distortions due to the estimation errors.
+However, if the energy of the filters $g_m(n)$ is small, then the value of this distortion term is also small.
+To increase the robustness of MINT, it has therefore been proposed to add a regularization term
+\begin{equation}
+\label{eq: regterm}
+J_{\rm reg} = \delta \|\mathbf{g}\|_2^2
+\end{equation}
+to the cost function in~(\ref{eq: ls}), with the aim of decreasing the energy of the filter $\mathbf{g}$.
+The regularization parameter $\delta$ controls the weight given to the minimization of the energy of the inverse filter.
+In this paper, we will investigate the effectiveness of incorporating the regularization term $J_{\rm reg}$ in~(\ref{eq: regterm}) in all partial multichannel equalization techniques discussed in Section~\ref{sec: intro}.
+Moreover, in Section~\ref{sec: sel_reg} the computation of the regularization parameter $\delta$ is discussed, where both an optimal intrusive computation procedure as well as an automatic non-intrusive procedure is proposed.
+\subsubsection*{Regularized MINT~\cite{Hikichi_EURASIP_2007}}
+In the regularized MINT technique, the least-squares cost function in~(\ref{eq: ls}) is extended to
+\begin{equation}
+\label{eq: cost_rmint}
+\boxed{J_{{}_{\rm MINT}}^{^{_{\rm R}}}(\mathbf{g}) = \|\hat{\mathbf{H}}\mathbf{g} - \mathbf{d}\|_2^2 + \delta \|\mathbf{g} \|_2^2}
+\end{equation}
+such that the regularized MINT filter minimizing this cost function is equal to
+\begin{equation}
+\label{eq: rmint_sgol}
+\boxed{\mathbf{g}_{{}_{\rm MINT}}^{{_{\rm R}}}  = (\hat{\mathbf{H}}^T\hat{\mathbf{H}}+\delta \mathbf{I})^{-1}\hat{\mathbf{H}}^{T}\mathbf{d}}
+\end{equation}
+with $\mathbf{I}$ the $ML_g\times ML_g$-dimensional identity matrix.
+In~\cite{Hikichi_EURASIP_2007} it has been shown that incorporating regularization in MINT is useful in reducing the distortions in the output signal due to fluctuations of the RIRs.
+
+
+\subsubsection*{Regularized RMCLS}
+Since RMCLS is a least-squares technique, incorporating the regularization term $J_{\rm reg}$ can be done similarly as for MINT.
+The regularized RMCLS cost function to be minimized is defined as
+\begin{equation}
+\label{eq: cost_rrmcls}
+\boxed{J_{{}_{\rm RMCLS}}^{^{_{\rm R}}}(\mathbf{g}) =  \|\mathbf{W}({\hat{\mathbf{H}}}\mathbf{g} - \mathbf{d})\|_2^2 + \delta \|\mathbf{g} \|_2^2}
+\end{equation}
+and the regularized RMCLS filter minimizing this cost function can be calculated as
+\begin{equation}
+\boxed{\mathbf{g}_{{}_{\rm RMCLS}}^{{_{\rm R}}}  = [(\mathbf{W}\hat{\mathbf{H}})^T(\mathbf{W}\hat{\mathbf{H}}) + \delta \mathbf{I}]^{-1} (\mathbf{W}\hat{\mathbf{H}})^T \mathbf{W}\mathbf{d}}
+\end{equation}
+
+\subsubsection*{Regularized P-MINT}
+Similarly to the regularized least-squares technique for MINT and RMCLS, the regularized P-MINT cost function is defined as
+\begin{equation}
+\label{eq: cost_rpmint}
+\boxed{J_{{}_{\rm P-MINT}} ^{^{_{\rm R}}}(\mathbf{g}) = \|\hat{\mathbf{H}}\mathbf{g} - \hat{\mathbf{h}}_p^{\rm d}\|_2^2 + \delta \|\mathbf{g} \|_2^2}
+\end{equation}
+Minimizing~(\ref{eq: cost_rpmint}) yields the regularized P-MINT filter
+\begin{equation}
+\label{eq: rpmintsol}
+\boxed{\mathbf{g}_{{}_{\rm P-MINT}}^{{_{\rm R}}}  = (\hat{\mathbf{H}}^T\hat{\mathbf{H}}+\delta \mathbf{I})^{-1}\hat{\mathbf{H}}^{T}\hat{\mathbf{h}}_p^{\rm d}}
+\end{equation}
+
+\subsubsection*{Regularized CS}
+In order to incorporate the regularization term $J_{\rm reg}$ in channel shortening, the maximization problem in~(\ref{eq: rayleigh}) is first reformulated in terms of a generalized Rayleigh quotient \emph{minimization} problem, such that the regularized CS cost function to be minimized can be defined as
+\begin{equation}
+\label{eq: cost_rcs}
+\boxed{J_{{}_{\rm CS}}^{^{_{\rm R}}}(\mathbf{g})= \frac{\mathbf{g}^T {\hat{\mathbf{A}}} \mathbf{g}}{\mathbf{g}^T {\hat{\mathbf{B}}} \mathbf{g}} + \delta \|\mathbf{g} \|_2^2}
+\end{equation}
+However, since no analytical solution to minimize~(\ref{eq: cost_rcs}) exists, an iterative optimization technique for minimizing this non-linear cost function will be used in the following.
+In order to improve the numerical robustness and the convergence speed of the optimization technique, the gradient
+\begin{equation}
+\frac{\partial J_{{}_{\rm CS}}^{^{_{\rm R}}}(\mathbf{g})}{\partial \mathbf{g}} = 2 \frac{(\mathbf{g}^T \hat{\mathbf{B}} \mathbf{g})\hat{\mathbf{A}}\mathbf{g} - (\mathbf{g}^T \hat{\mathbf{A}} \mathbf{g})\hat{\mathbf{B}}\mathbf{g} }{(\mathbf{g}^T \hat{\mathbf{B}} \mathbf{g})^2} + 2 \delta \mathbf{g},
+\end{equation}
+and the Hessian
+\begin{equation}
+\begin{split}
+& \frac{\partial ^2 J_{{}_{\rm CS}}^{^{_{\rm R}}}(\mathbf{g})}{\partial^2 \mathbf{g}}  = \\
+& 2 \left[ \frac{(\mathbf{g}^T \hat{\mathbf{B}} \mathbf{g}) \hat{\mathbf{A}} - (\mathbf{g}^T \hat{\mathbf{A}} \mathbf{g}) \hat{\mathbf{B}} + 2 ( \hat{\mathbf{A}} \mathbf{g} \mathbf{g}^T \hat{\mathbf{B}} - \hat{\mathbf{B}} \mathbf{g} \mathbf{g}^T \hat{\mathbf{A}})}{(\mathbf{g}^T \hat{\mathbf{B}}\mathbf{g})^2} \right] \\
+& -  4 \frac{[(\mathbf{g}^T\hat{\mathbf{B}}\mathbf{g})\hat{\mathbf{A}}\mathbf{g} - (\mathbf{g}^T\hat{\mathbf{A}}\mathbf{g})\hat{\mathbf{B}}\mathbf{g}] \mathbf{g}^T \hat{\mathbf{B}}}{(\mathbf{g}^T\hat{\mathbf{B}}\mathbf{g})^3} + 2 \delta \mathbf{I},
+\end{split}
+\end{equation}
+can be provided.
+
+Since the non-linear cost function in~(\ref{eq: cost_rcs}) typically contains local minima, it should be noted that this technique is sensitive to the initial vector provided to the numerical optimization algorithm.
+In an attempt to find the global minimum, we have considered different initial vectors, i.e. one of the generalized eigenvector $\mathbf{g}_{_{\rm CS}}$ solving~(\ref{eq: cssol}), the P-MINT solution $\mathbf{g}_{{}_{\rm P-MINT}}$ in~(\ref{eq: Pmintsol}), and the vector $[1 \; 0 \; \ldots \; 0]^T$.
+The optimal solution is then selected as the one leading to the highest perceptual speech quality~(cf. Section~\ref{sec: acsys}).
+
+
+\section{Non-intrusive Selection of the Regularization Parameter}
+\label{sec: sel_reg}
+Increasing the regularization parameter $\delta$ in all regularized equalization techniques presented in Section~\ref{sec: reg} decreases the norm of the reshaping filter $\mathbf{g}$, increasing the robustness to RIR estimation errors.
+However, increasing this parameter also reduces the equalization performance with respect to the true RIRs, resulting in a trade-off between equalization performance for perfectly estimated RIRs and robustness in the presence of RIR estimation errors.
+
+Obviously, different values of the regularization parameter $\delta$ lead to different performance.
+The optimal value $\delta_{\rm opt}$ that yields the highest perceptual speech quality depends on the acoustic system to be equalized, the RIR estimation errors, as well as the equalization technique being used.
+While in simulations $\delta_{\rm opt}$ can be intrusively determined exploiting the known true RIRs~(cf. Section~\ref{sec: regacsys}), an automatic non-intrusive procedure is required in practice.
+
+For conciseness, the automatic non-intrusive procedure for selecting the regularization parameter in acoustic multichannel equalization techniques is discussed only for the regularized P-MINT technique.
+However, the procedure proposed here can be extended to any regularized least-squares technique, such as regularized MINT and regularized RMCLS.\footnote{The presented approach cannot be used for the regularized CS technique. Automatic selection of the regularization parameter in CS remains a topic for future investigation.}
+
+Incorporating regularization in P-MINT introduces a trade-off between minimizing the residual energy $\|\hat{\mathbf{H}}\mathbf{g} - \hat{\mathbf{h}}_p^{\rm d} \|_2^2$ and minimizing the filter energy $\|\mathbf{g}\|_2^2$, cf.~(\ref{eq: cost_rpmint}).
+A good regularization parameter should hence incorporate knowledge about both the residual energy and the filter energy, such that both energies are kept small.
+In order to automatically compute a regularization parameter for regularized least-squares problems, it has been proposed in~\cite{Hansen_1993} to use a parametric plot of the filter norm versus the residual norm for several values of $\delta$.
+This plot always has an L-shape with the corner~(i.e. the point of maximum curvature) located exactly where the regularized least-squares solution changes in nature from being dominated by over-regularization to being dominated by under-regularization.
+
+We therefore propose selecting the regularization parameter $\delta_{\rm auto}$ in the regularized P-MINT technique as the one corresponding to the corner of the parametric plot of the filter norm $\|\mathbf{g}_{{}_{\rm P-MINT}}^{_{\rm R}}\|_2$ versus the residual norm $\|\hat{\mathbf{H}}\mathbf{g}_{{}_{\rm P-MINT}}^{_{\rm R}} - \hat{\mathbf{h}}_p^{\rm d}\|_2$.
+As is experimentally validated in Section~\ref{sec: exp}, such a regularization parameter also leads to a nearly optimal perceptual speech quality.
+
+The L-curve can be generated by computing the reshaping filter $\mathbf{g}_{{}_{\rm P-MINT}}^{_{\rm R}}$ in~(\ref{eq: rpmintsol}) for several values of the regularization parameter $\delta$ and then calculating the required norms.
+However, in order to reduce the computational complexity, it is beneficial to generate the L-curve using the singular value decomposition~(SVD) of the estimated convolution matrix $\hat{\mathbf{H}}$.
+Consider the SVD of $\hat{\mathbf{H}}$, i.e.
+\begin{equation}
+\label{eq: svd}
+  \hat{\mathbf{H}} = \hat{\mathbf{U}}\hat{\mathbf{S}}\hat{\mathbf{V}}^T,
+\end{equation}
+where $\hat{\mathbf{U}}$ and $\hat{\mathbf{V}}$ are orthogonal matrices and $\hat{\mathbf{S}}$ is a diagonal matrix containing the singular values $\hat{\sigma}_n$ of $\hat{\mathbf{H}}$ in descending order, i.e. $\hat{\mathbf{S}} = {\diag}\{\left[\hat{\sigma}_1 \; \hat{\sigma}_2 \; \ldots \; \hat{\sigma}_{L_c}\right]\}$.
+Using~(\ref{eq: rpmintsol}) and~(\ref{eq: svd}), the regularized P-MINT filter can be expressed as
+\begin{equation}
+\mathbf{g}_{{}_{\rm P-MINT}}^{_{\rm R}}  =  \sum_{k=1}^{L_c} \frac{\hat{\sigma}_k \hat{\mathbf{u}}_k^T \hat{\mathbf{h}}_p^{\rm d} }{\hat{\sigma}_k^2+\delta}  \hat{\mathbf{v}}_k,
+\end{equation}
+where $\hat{\mathbf{u}}_k$ and $\hat{\mathbf{v}}_k$ denote the $k$-th column of $\hat{\mathbf{U}}$ and $\hat{\mathbf{V}}$ respectively.
+Hence, for a given $\delta$, the filter norm and the residual norm can be expressed in terms of the singular values/vectors as
+\begin{equation}
+\label{eq: eta}
+\boxed{\|\mathbf{g}_{{}_{\rm P-MINT}}^{_{\rm R}}\|_2 = \sqrt{\sum_{k = 1}^{L_c} \frac{\hat{\sigma}_k^2 (\hat{\mathbf{u}}_k^T \hat{\mathbf{h}}_p^{\rm d})^2}{(\hat{\sigma}_k^2 + \delta)^2}}}
+\end{equation}
+\begin{equation}
+\label{eq: rho}
+\boxed{ \|\hat{\mathbf{H}}\mathbf{g}_{{}_{\rm P-MINT}}^{_{\rm R}} - \hat{\mathbf{h}}_p^{\rm d}\|_2 = \sqrt{\sum_{k = 1}^{L_c} \frac{\delta^2 (\hat{\mathbf{u}}_k^T \hat{\mathbf{h}}_p^{\rm d})^2}{(\hat{\sigma}_k^2 + \delta)^2}}}
+\end{equation}
+Therefore, once the SVD is computed, the complete L-curve can be readily generated using~(\ref{eq: eta}) and~(\ref{eq: rho}).
+
+Fig.~\ref{fig: lcurveex} depicts a typical L-curve obtained using regularized P-MINT for equalizing an estimated acoustic system~(cf. Section~\ref{sec: acsys}).
+As illustrated in this figure, increasing the value of $\delta$ decreases the filter norm but at the same time increases the residual norm.
+Although from such a curve it seems easy to determine the regularization parameter that corresponds to the maximum curvature, numerical problems due to small singular values may occur and hence, a numerically stable algorithm is required.
+In this work, the triangle method~\cite{Castellanos_2002} is used for locating the point of maximum curvature of the L-curve.
+
+\section{Simulations}
+\label{sec: exp}
+
+In this section, simulation results for a scenario with a single speech source and $2$ microphones are presented.
+In Section~\ref{sec: acsys}, the acoustic systems and the used performance measures are introduced.
+In Section~\ref{sec: regacsys}, the reverberant tail suppression and the perceptual speech quality is compared for all equalization techniques and their regularized counterparts with the intrusively determined regularization parameter $\delta_{\rm opt}$.
+It will be shown that the regularized P-MINT technique yields the highest performance among all considered multichannel equalization techniques for different RIR estimation errors and values of the desired window length $L_s$.
+In Section~\ref{sec: auto}, the performance of regularized P-MINT when using the automatic non-intrusive procedure for determining the regularization parameter $\delta_{\rm auto}$ instead of using $\delta_{\rm opt}$ is extensively investigated.
+It will be shown that using the regularization parameter $\delta_{\rm auto}$ yields a nearly optimal performance in the regularized P-MINT technique.
+Sound samples from each simulation can be found at {\small \url{www.sigproc.uni-oldenburg.de/60178.html}}.
+
+\subsection{Acoustic System and Performance Measures}
+\label{sec: acsys}
+
+We have considered an acoustic scenario with a single speech source and $M=2$ omni-directional microphones placed at a distance of $2$~m from the source in a room with reverberation time $T_{\rm 60} \approx 600$~ms~(in Section~\ref{sec: auto}, also rooms with reverberation times $T_{60} \approx 300$~ms and $T_{60} \approx 700$~ms have been considered).
+The RIRs between the source and the microphones have been measured using the swept-sine technique~\cite{Farina_2000} and the RIR length has been set to $L_h = 2000$ at a sampling frequency $f_s = 16$~kHz.
+
+In order to simulate estimation errors, the measured RIRs have been perturbed by adding scaled white noise as proposed in~\cite{Cho_ITSA_1999}, i.e.
+\begin{equation}
+  \hat{h}_m(n) = h_m(n) + \underbrace{e(n)h_m(n)}_{e_m(n)}
+\end{equation}
+with $e(n)$ being an uncorrelated Gaussian noise sequence with zero mean and an appropriate variance, such that a desired \emph{normalized channel mismatch} $E_m$, defined as
+\begin{equation}
+E_m = 10 \log_{10} \frac{\|\mathbf{h}_m - \hat{\mathbf{h}}_m \|_2^2}{\|\mathbf{h}_m\|_2^2},
+\end{equation}
+is generated.
+% The considered normalized channel mismatch values are
+% \begin{equation*}
+%   E_m \in \{ -33~{\rm dB}, \; -15~{\rm dB} \},
+% \end{equation*}
+% in Section~\ref{sec: regacsys} and
+% \begin{equation*}
+%   E_m \in \{ -33~{\rm dB}, \; -32~{\rm dB}, \; \ldots, \; -15~{\rm dB} \},
+% \end{equation*}
+% in Section~\ref{sec: auto}.
+
+The simulation parameters for all considered multichannel equalization techniques are set to  $L_g = 1999$ and $\tau = 0$.
+Furthermore, $5$ different desired window lengths for the partial multichannel equalization techniques are investigated, i.e.
+\begin{equation}
+L_d \in \{ 10~{\rm ms}, 20~{\rm ms}, 30~{\rm ms}, 40~{\rm ms}, 50~{\rm ms} \},
+\end{equation}
+with $L_d = \frac{L_s \times 10^3}{f_s}$ being the desired window length in ms.
+The desired EIR in P-MINT and regularized P-MINT is chosen as the direct path and early reflections of the estimated first RIR, i.e. $\hat{\mathbf{h}}_1^{\rm d}$.
+
+The performance of all considered equalization techniques is evaluated both in terms of reverberant tail suppression and perceptual speech quality.
+The reverberant tail suppression is evaluated using the \emph{energy decay curve}~(EDC)~\cite{Naylor_Derev_book} of the EIR defined as
+\begin{equation}
+{\rm EDC}(n) = 10 \log_{10} \frac{1}{\|\mathbf{c}\|_2^2} \sum_{i = n}^{L_c-1} c^2(i), \; n =0, \; \ldots, \; L_c-1,
+\end{equation}
+where $\mathbf{c} = \mathbf{H}\mathbf{g}$ and the reshaping filter $\mathbf{g}$ is designed using the estimated RIRs $\hat{\mathbf{h}}_m$.
+The perceptual speech quality of the output signal $\hat{s}(n)$ is evaluated using the objective speech quality measure PESQ~\cite{PESQ}, where the reference signal employed in PESQ is $s(n) \ast h_1^{\rm d}(n)$, i.e. the clean speech signal convolved with the first part of the true first RIR for each value of the desired window length $L_d$.
+It has been shown in~\cite{Goetze_AES_2010} that measures relying on auditory models such as PESQ exhibit the highest correlation with subjective listening tests when evaluating the quality of dereverberated speech.
+
+As already mentioned in Section~\ref{sec: partial}, for the CS technique multiple possible solutions exist.
+Out of these solutions, we have intrusively selected the eigenvector leading to the highest PESQ score instead of the one leading to the minimum $l_2$-norm EIR.
+
+Furthermore, in order to evaluate the effectiveness of incorporating regularization in all multichannel equalization techniques, a set of regularization parameters have been considered, i.e.
+\begin{equation}
+\delta \in \{0, \; 10^{-9}, \; 10^{-8}, \; \ldots, \; 10^{-1} \},
+\end{equation}
+and the optimal parameter $\delta_{\rm opt}$ is selected as the one leading to the highest perceptual speech quality, i.e. PESQ score.
+It should be noted that the computation of the PESQ score for selecting the optimal regularization parameter is an intrusive procedure that is not applicable in practice, since knowledge of the true RIRs is required in order to compute the reference signal $s(n) \ast h_1^{\rm d}(n)$ and the equalized impulse response $c(n) = h(n) \ast g(n)$.
+However, with the aim of illustrating the full potential of incorporating regularization in acoustic multichannel equalization techniques, the results presented in Section~\ref{sec: regacsys} are generated using such an optimal regularization parameter, whereas in Section~\ref{sec: auto} the performance when using the automatic non-intrusive procedure for the selection of the regularization parameter will be investigated.
+
+\subsection{Regularization in Acoustic Multichannel Equalization}
+\label{sec: regacsys}
+For the sake of clarity and in order to avoid overcrowded plots, the simulations are structured into two parts, with a different normalized channel mismatch in each part.
+In the first simulation, a moderate mismatch $E_m = -33$~dB is considered, whereas in the second simulation a larger mismatch $E_m = -15$~dB is considered.
+For both simulations, EDCs as well as PESQ scores have been used for performance evaluation.
+
+\begin{simulation}[Channel mismatch $E_m=-33$~dB]
+\label{sim1} 
+Fig.~\ref{fig: edcnoreg33a} depicts the EDCs of the EIRs obtained using MINT, RMCLS, CS, and P-MINT for a desired window length $L_d = 40$~ms.
+It can be seen that MINT completely fails to equalize the acoustic system, leading to an EDC that is even higher than the EDC of the true RIR $\mathbf{h}_1$.
+Furthermore, it can be noticed that P-MINT inherits the sensitivity of MINT in this scenario, also failing to equalize the acoustic system.
+On the other hand, RMCLS and CS are more robust, with their reverberant tails being below $-30$~dB.
+
+In order to evaluate the effectiveness of incorporating regularization in all equalization techniques, Fig.~\ref{fig: edcnoreg33b} depicts the EDCs obtained using regularized MINT, regularized RMCLS, regularized CS, and regularized P-MINT with the optimal intrusively determined regularization parameter $\delta_{\rm opt}$.
+As illustrated in this figure, the regularized MINT technique still fails to equalize the acoustic system, leading to an EDC that is only slightly lower than the EDC of the true RIR.
+On the contrary, all regularized partial multichannel equalization techniques are significantly more robust, providing a similar performance in terms of the reverberant tail suppression.
+While the regularized RMCLS technique yields the highest reverberant tail suppression, also the decay rates of the EDCs obtained using regularized CS and regularized P-MINT are satisfactory.
+Comparing Fig.~\ref{fig: edcnoreg33a} and Fig.~\ref{fig: edcnoreg33b}, it can be noticed that a significant improvement is obtained when incorporating regularization in P-MINT, while even a slight performance deterioration can be observed for RMCLS and CS.
+This deterioration can be explained by the fact that $\delta_{\rm opt}$ is selected such that the PESQ score is maximized, imposing no other constraints on the reverberant tail suppression.
+
+Since different EIRs leading to different perceptual speech quality may have very similar EDCs~(which is the case for all partial multichannel equalization techniques in this simulation), we have also evaluated the perceptual speech quality using PESQ for different desired window lengths $L_d$ ranging from $10$~ms to $50$~ms.
+The PESQ score of the first microphone signal $x_1(n)$ is also computed in order to determine the effectiveness of applying such dereverberation techniques to the system.
+Fig.~\ref{fig: pesq33a} depicts the PESQ scores obtained for all considered equalization techniques without regularization, whereas Fig.~\ref{fig: pesq33b} depicts the PESQ scores when regularization is incorporated.
+From Fig.~\ref{fig: pesq33b} it can be seen that the regularized P-MINT technique generally outperforms all other regularized techniques leading to the highest PESQ score for most considered desired window lengths, i.e. for $L_d \in \{20~{\rm ms}, 30~{\rm ms}, 40~{\rm ms}, 50~{\rm ms} \}$, whereas similar performance as regularized CS and regularized RMCLS is obtained for the desired window length $L_d = 10$~ms.
+Comparing the results in Fig.~\ref{fig: pesq33a} and~\ref{fig: pesq33b}, it is clear that incorporating regularization yields almost no performance improvement for RMCLS, whereas the performance of P-MINT, CS, and MINT is increased.
+For a precise numerical comparison, the exact change in the PESQ score for all considered techniques and desired window lengths when incorporating regularization is presented in Table~\ref{tbl: pesq1}, with the maximum improvement for each desired window length indicated in bold.
+Additionally, the average improvement over all considered $L_d$ values is also presented in the last column.
+As previously observed, regularization is particularly useful for P-MINT, leading to an average PESQ score improvement of $1.37$.
+Furthermore, also the regularized CS and the regularized MINT techniques lead to a higher performance as compared to CS and MINT respectively, whereas an insignificant improvement is observed in RMCLS.
+\end{simulation}
+
+\begin{simulation}[Channel mismatch $E_m=-15$~dB]
+\label{sim2}
+In this simulation, similar analysis as in Simulation~\ref{sim1} will be conducted for the normalized channel mismatch $E_m = -15$~dB.
+The EDCs obtained for a desired window length $L_d = 40$~ms using MINT, RMCLS, CS, and P-MINT without regularization are depicted in Fig.~\ref{fig: edcnoreg15a} whereas the EDCs obtained when regularization is incorporated are depicted in Fig.~\ref{fig: edcnoreg15b}.
+From Fig.~\ref{fig: edcnoreg15a} it can be seen that similarly as in Simulation~\ref{sim1}, MINT and P-MINT yield higher EDCs than the EDC of the true RIR $\mathbf{h}_1$, whereas RMCLS and CS are more robust but still fail to entirely suppress the reverberant tail.
+Furthermore, Fig.~\ref{fig: edcnoreg15b} shows that regularized MINT still fails to equalize the acoustic system as in Simulation~\ref{sim1}.
+However, also the robustness of the regularized partial multichannel equalization techniques decreases with increasing RIR estimation errors, with all techniques leading to only approximately $10$~dB suppression of the reverberant tail as shown in Fig.~\ref{fig: edcnoreg15b}.
+While the performance of all regularized partial equalization techniques is very similar in terms of the reverberant tail suppression, the perceptual speech quality they yield is not.
+
+Fig.~\ref{fig: pesq15a} and~\ref{fig: pesq15b} depict the PESQ scores obtained using the different techniques without and with regularization.
+As shown in Fig.~\ref{fig: pesq15b}, the regularized P-MINT technique again leads to the highest perceptual speech quality as compared to all other techniques for all considered desired window lengths $L_d$. Therefore even when the reverberant tail suppression is not satisfactory and might lead to audible levels of reverberation, the regularized P-MINT technique still yields the highest perceptual speech quality. The sound samples in {\small \url{www.sigproc.uni-oldenburg.de/60178.html}} are provided to the interested reader to validate the PESQ scores by own listening tests.
+
+Furthermore, comparing Fig.~\ref{fig: pesq15a} and~\ref{fig: pesq15b} shows that the incorporation of regularization yields a significant performance increase for P-MINT and MINT.
+However, it can also be noticed that differently from Simulation~\ref{sim1}, the performance of RMCLS improves when incorporating regularization, whereas the performance of CS does not.
+Such an observation is also confirmed by the relative change in the PESQ scores when regularization is incorporated as presented in Table~\ref{tbl: pesq2}.
+It can be noticed that regularization is again particularly useful for P-MINT, leading to an average improvement of the PESQ score of $0.87$.
+
+It should be noted that the regularized CS technique does not significantly outperform the CS technique only if the CS solution is intrusively selected as the eigenvector leading to the highest PESQ score~(which is inapplicable in practice). When the eigenvector leading to the minimum $l_2$-norm EIR is used~(as suggested in~\cite{Zhang_IWAENC_2010}), which is also an intrusive procedure, regularized CS yields a significantly higher performance than CS. However, due to space constraints, these results are not presented here.
+\end{simulation}
+
+Summarizing the simulation results, we conclude that regularized P-MINT is a robust and perceptually advantageous equalization technique, outperforming all other considered equalization techniques when using the intrusively determined optimal regularization parameter.
+
+\subsection{Automatic Selection of the Regularization Parameter}
+\label{sec: auto}
+In this section we will investigate the performance degradation for the regularized P-MINT technique when using the non-intrusive and practically applicable procedure for determining the regularization parameter $\delta_{\rm auto}$~(discussed in Section~\ref{sec: sel_reg}) instead of the intrusively determined optimal regularization parameter $\delta_{\rm opt}$.
+In the following, the filter norm $\|\mathbf{g}_{{}_{\rm P-MINT}}^{{_{\rm R}}}\|_2$ and the residual norm $\|\hat{\mathbf{H}}\mathbf{g}_{{}_{\rm P-MINT}}^{{_{\rm R}}} - \hat{\mathbf{h}}_p^{\rm d} \|_2$ are computed using~(\ref{eq: eta}) and~(\ref{eq: rho}) for the regularization parameters
+\begin{equation}
+\delta \in \{10^{-9}, \; 10^{-8}, \; \ldots, \; 10^{-1} \}.
+\end{equation}
+The parametric L-curve is then constructed and the regularization parameter $\delta_{\rm auto}$ corresponding to the point of maximum curvature is determined using the triangle method~\cite{Castellanos_2002}.
+
+The PESQ scores obtained using the regularized P-MINT technique with the optimal and automatic regularization parameters for several desired window lengths and the normalized channel mismatch $E_m = -33$~dB are depicted in Fig.~\ref{fig: autopesq1}.
+As illustrated in this figure, the performance when using the automatic regularization parameter is generally similar to the performance obtained when using the optimal regularization parameter, except for the desired window length $L_d = 40$~ms where the PESQ score is reduced by $0.55$.
+However, the average performance degradation over all desired window lengths is only $0.20$, implying that the automatic selection procedure for the regularization parameter provides a nearly optimal performance for the considered desired window lengths.
+
+Since the optimal regularization parameter heavily depends on the channel mismatch and the considered acoustic system, we have also evaluated the performance when using the automatic regularization parameter for different normalized channel mismatch values, i.e.
+\begin{equation}
+  E_m \in \{ -33~{\rm dB}, \; -32~{\rm dB}, \; \ldots, \; -15~{\rm dB} \},
+\end{equation}
+and for different acoustic systems~($T_{\rm 60} \approx 300$~ms, $T_{\rm 60} \approx 600$~ms, $T_{\rm 60} \approx 700$~ms).
+The desired window length in this simulation is set to $L_d = 40$~ms.
+Fig.~\ref{fig: autopesq2} depicts the PESQ scores obtained using the optimal and the automatic selection procedure for the different normalized channel mismatch values and acoustic systems.
+It can be seen that for all considered acoustic systems and most channel mismatch values, very similar performance is achieved by both the optimal and the automatic regularization parameters, whereas for a few cases a small performance degradation can be noticed when using $\delta_{\rm auto}$.
+The average performance degradation over all channel mismatch values when using the automatic regularization parameter is $0.06$~($T_{\rm 60} \approx 300$~ms), $0.14$~($T_{\rm 60} \approx 500$~ms), and $0.07$~($T_{\rm 60} \approx 700$~ms).
+
+Therefore, the presented results show that the automatic regularization parameter in P-MINT leads to a nearly optimal performance, making regularized P-MINT not only a robust and perceptually advantageous equalization technique, but practically applicable as well.
+
+
+\section{Conclusion}
+In this paper we introduced the partial multichannel equalization technique P-MINT, which aims to suppress the reverberant tail of the room impulse response as well as directly control the perceptual speech quality.
+Furthermore, we presented a robust extension to P-MINT and other recently proposed acoustic multichannel equalization techniques, i.e. RMCLS and CS, by incorporating a regularization term in the reshaping filter design.
+In addition, we proposed an automatic non-intrusive selection procedure for the regularization parameter which leads to a nearly optimal perceptual speech quality.
+
+We have extensively investigated the effectiveness of regularization both in terms of reverberant tail suppression and perceptual speech quality for all considered equalization techniques.
+Simulation results show that the regularized P-MINT technique with the intrusively determined regularization parameter outperforms all other techniques, leading to the highest perceptual speech quality in the presence of RIR estimation errors.
+Furthermore, simulation results demonstrate that regularization is particularly important for P-MINT, whereas for RMCLS and CS a smaller performance improvement is achieved.
+Finally, it is shown that the automatic non-intrusive procedure for the selection of the regularization parameter yields a nearly optimal perceptual speech quality in regularized P-MINT.
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{Plots/ina1}}]
+{Ina Kodrasi} received the Master of Science degree in Communications, Systems and Electronics in 2010 from Jacobs University Bremen, Bremen, Germany.
+Currently she is a PhD student at the Signal Processing Group of the University of Oldenburg, Oldenburg, Germany.
+Her research interests are in the area of signal processing for speech and audio applications.
+
+From 2010 to 2011 she was with the Fraunhofer Institute for Digital Media Technology (IDMT), Project group
+Hearing, Speech and Audio Technology in Oldenburg where she worked on microphone-array beamforming.
+
+\end{IEEEbiography}
+
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{Plots/Authors_Stefan_Goetze}}]{Stefan Goetze}
+is head of Audio System Technology for Assistive Systems at the Fraunhofer Institute for Digital Media Technology (IDMT), Project group Hearing, Speech and Audio (HSA) in Oldenburg, Germany.
+He received his Dipl.-Ing. in 2004 at the University of Bremen, Germany, where he worked as a research engineer from 2004 to 2008.
+His research interests are assistive technologies, sound pick/up and enhancement, such as noise reduction, acoustic echo cancellation and dereverberation, as well as detection and classification of acoustic events and automatic speech recognition.
+He is lecturer at the University of Bremen and project leader of national and international projects in the field of ambient assisted living (AAL).
+He is member of IEEE and AES.
+\end{IEEEbiography}
+
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{Plots/sd}}]{Simon Doclo}
+(S'95, M'03) received the M.Sc. degree in electrical engineering and the Ph.D. degree in applied sciences from the Katholieke Universiteit Leuven, Belgium, in 1997 and 2003. From 2003 to 2007 he was a Postdoctoral Fellow with the Research Foundation – Flanders at the Electrical Engineering Department (Katholieke Universiteit Leuven) and the Adaptive Systems Laboratory (McMaster University, Canada). From 2007 to 2009 he was a Principal Scientist with NXP Semiconductors at the Sound and Acoustics Group in Leuven, Belgium. Since 2009 he is a full professor at the University of Oldenburg, Germany, and scientific advisor for the project group Hearing, Speech and Audio Technology of the Fraunhofer Institute for Digital Media Technology. His research activities center around signal processing for acoustical applications, more specifically microphone array processing, active noise control, acoustic sensor networks and hearing aid processing.
+Prof. Doclo received the Master Thesis Award of the Royal Flemish Society of Engineers in 1997 (with Erik De Clippel), the Best Student Paper Award at the International Workshop on Acoustic Echo and Noise Control in 2001, the EURASIP Signal Processing Best Paper Award in 2003 (with Marc Moonen) and the IEEE Signal Processing Society 2008 Best Paper Award (with Jingdong Chen, Jacob Benesty, Arden Huang). He is a member of the IEEE Signal Processing Society Technical Committee on Audio and Acoustic Signal Processing (2008-2013). He has been secretary of the IEEE Benelux Signal Processing Chapter (1998-2002), and has served as a guest editor for the EURASIP Journal on Applied Signal Processing.
+\end{IEEEbiography}
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    % Adjustments
+    \def\micd{.1cm}                % mic diameter
+    \def\micl{.6cm}                % mic length
+    \def\micw{.15cm}                % mic width
+    \def\micbend{10}               % mic bottom bend
+    \def\micdistance{.2cm}         % distance between microphones
+    \def\filterdistance{2.5cm}     % distance between microphone and filter
+    \def\filteroutline{.9cm}       % length of line which gets out of filter
+    \def\sumdistance{1.5cm}        % distance of sum node to the filter
+    \def\sumoutline{1cm}           % length of line which gets out of sum
+    \def\headdistance{2cm}         % distance between microphone and head
+%
+    % Styles
+    \tikzset{%
+      mic head/.style={fill=black,draw=black,circle,minimum size=\micd},
+      filter/.style={draw,minimum width=1.1cm,inner sep=2pt},
+      sum/.style={draw,circle},
+      xlabel/.style={inner sep=1pt,above,midway},
+      sumlabel/.style={xlabel},
+      hlabel/.style={xlabel,sloped,pos=.7},
+      head/.style={font=\Large}
+    }   %
+    % Draw Microphones
+    \begin{scope}[start chain=going below,every node/.style={on chain},node distance=\micdistance]
+      \node[mic head] (mic1) {};
+      \node[mic head] (mic2) {};
+      \node[mic head,yshift=-1.8*\micdistance] (mic3) {};
+    \end{scope}
+    \node[yshift=3pt] at ($(mic2)!.5!(mic3)$) {$\vdots$};
+    %
+    \foreach \m in {1,2,3} {%
+      \coordinate (m1) at ($(mic\m)+(\micl,\micw/2)$);
+      \coordinate (m2) at ($(mic\m)+(\micl,-\micw/2)$);
+      \draw (tangent cs:node=mic\m,point={(m1)},solution=1) -- (m1) to[bend left=\micbend] (m2) -- (tangent cs:node=mic\m,point={(m2)},solution=2);
+    }%
+    % Draw Filter
+    \foreach \m/\i in {1/1,2/2,3/M} {%
+      \node[filter,right=\filterdistance of mic\m] (filter\m) {\footnotesize $g_{\i}(n)$};
+      \draw ($(mic\m)+(\micl,0)$) to node[xlabel] (x\m) {\footnotesize $x_{\i}(n)$} (filter\m);
+    }
+    \node[yshift=3pt] at ($(filter2)!.5!(filter3)$) {$\vdots$};
+    \node[yshift=3pt] at ($(x2)!.5!(x3)$) {$\vdots$};
+    % Sum Node
+    \node[sum] (sum) at ($(filter1)!.5!(filter3)+(\sumdistance,0)$) {$\Sigma$};
+    \draw[->] (sum) -- node[above] {\footnotesize $\hat{s}(n)$} ++(1.5,0);
+    % Connect filter with sum
+    \foreach \m in {1,2,3} {%
+      \draw (filter\m) -- ++(\filteroutline,0) -- (sum);
+    }%
+    % Head
+    \node[head] (head) at ($(mic1)!.5!(mic3)-(\headdistance,0)$) {\PHtattooedHead};
+    \node[fill=white,minimum width=4.8pt,minimum height=5.7pt,inner sep=0pt] at ($(head.center)+(2.3pt,-2.5pt)$) {};
+    \node at ($(head.center)+(0.0pt,-20.5pt)$) {\footnotesize $s(n)$};
+    % Connect head with mics
+    \foreach \m/\i in {1/1,2/2,3/M} {%
+      \draw[->] (head) -- node[hlabel] {\footnotesize $h_{\i}(n)$} (mic\m);
+    }
+  \end{tikzpicture}
+  \caption{Multichannel equalization system}
+  \label{fig: acsys}
+\end{figure}
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale = 0.65]{Plots/lcurve_ex}
+\caption{Typical L-curve obtained using regularized P-MINT for an erroneously estimated acoustic system}
+\label{fig: lcurveex}
+\end{figure}
+
+\begin{figure*}[h]
+\centering
+\hbox{\subfloat[\label{fig: edcnoreg33a}]{%
+\includegraphics[scale = 0.65]{Plots/EDC_noreg_sys_5_Cm_-33_Ld_640}
+}\hspace{-1.1cm}
+\subfloat[\label{fig: edcnoreg33b}]{%
+\includegraphics[scale = 0.65]{Plots/EDC_sys_5_Cm_-33_Ld_640}
+}}
+\caption{EDC of the true RIR $\mathbf{h}_1$ and EDC of the equalized impulse response using MINT, RMCLS, CS, and P-MINT (a) without regularization and (b) with optimal regularization~($E_m = -33$~dB, $L_d = 40$~ms)}
+\end{figure*}
+\begin{figure*}[h]
+\centering
+\hbox{\subfloat[\label{fig: pesq33a}]{%
+\includegraphics[scale = 0.65]{Plots/PESQ_noreg_sys_5_error_-33}
+}\hspace{-1.1cm}
+\subfloat[\label{fig: pesq33b}]{%
+\includegraphics[scale = 0.65]{Plots/PESQ_reg_sys_5_error_-33}
+}}
+\caption{PESQ score of the first microphone signal $x_1(n)$ and PESQ score of the system's output $\hat{s}(n)$ obtained for several desired window lengths $L_d$ using MINT, RMCLS, CS, and P-MINT (a) without regularization and (b) with optimal regularization~($E_m = -33$~dB)}
+\end{figure*}
+
+
+\begin{table}[h]
+\centering
+\caption{PESQ score improvement when incorporating regularization in MINT, RMCLS, CS, and P-MINT for several desired window lengths $L_d$~($E_m = -33$~dB)}
+\label{tbl: pesq1}
+\begin{tabular}{|l|r|r|r|r|r|r|r|r|}
+\hline
+$L_d$ [ms] & $10$ & $20$ & $30$ & $40$ & $50$ & Average  \\
+\hline
+MINT & $0.38$ & $0.31$ & $0.33$ & $0.37$ & $0.31$ & $0.34$ \\
+\hline
+RMCLS & $0.00$ & $0.02$ & $0.04$ & $0.00$ & $0.00$ & $0.01$ \\
+\hline
+CS & $0.18$ & $0.25$ & $0.24$ & $0.24$ & $0.00$ & $0.18$ \\
+\hline
+P-MINT & $\bf{0.71}$ & $\bf{1.61}$ & $\bf{1.87}$ & $\bf{2.10}$ & $\bf{0.55}$ & $\bf{1.37}$ \\
+\hline
+\end{tabular}
+
+\end{table}
+
+\begin{figure*}[h]
+\centering
+\hbox{\subfloat[\label{fig: edcnoreg15a}]{%
+\includegraphics[scale = 0.65]{Plots/EDC_noreg_sys_5_Cm_-15_Ld_640}
+}\hspace{-1.1cm}
+\subfloat[\label{fig: edcnoreg15b}]{%
+\includegraphics[scale = 0.65]{Plots/EDC_sys_5_Cm_-15_Ld_640}
+}}
+\caption{EDC of the true RIR $\mathbf{h}_1$ and EDC of the equalized impulse response using MINT, RMCLS, CS, and P-MINT (a) without regularization and (b) with optimal regularization~($E_m = -15$~dB, $L_d = 40$~ms)}
+\end{figure*}
+
+
+\begin{figure*}[h]
+\centering
+\hbox{\subfloat[\label{fig: pesq15a}]{%
+\includegraphics[scale = 0.65]{Plots/PESQ_noreg_sys_5_error_-15}
+}\hspace{-1.1cm}
+\subfloat[\label{fig: pesq15b}]{%
+\includegraphics[scale = 0.65]{Plots/PESQ_reg_sys_5_error_-15}
+}}
+\caption{PESQ score of the first microphone signal $x_1(n)$ and PESQ score of the system's output $\hat{s}(n)$ obtained for several desired window lengths $L_d$ using MINT, RMCLS, CS, and P-MINT (a) without regularization and (b) with optimal regularization~($E_m = -15$~dB)}
+\end{figure*}
+
+\begin{table}[h]
+\centering
+\caption{PESQ score improvement when incorporating regularization in MINT, RMCLS, CS, and P-MINT for several desired window lengths $L_d$~($E_m = -15$~dB)}
+\label{tbl: pesq2}
+\begin{tabular}{|l|r|r|r|r|r|r|r|r|}
+\hline
+$L_d$ [ms] & $10$ & $20$ & $30$ & $40$ & $50$ & Average  \\
+\hline
+MINT & $0.32$ & $0.18$ & $0.22$ & $0.31$ & $0.28$ & $0.26$ \\
+\hline
+RMCLS & $0.36$ & $0.10$ & $0.11$ & $0.07$ & $0.08$ & $0.14$ \\
+\hline
+CS & $0.09$ & $0.03$ & $0.03$ & $0.09$ & $0.19$ & $0.08$ \\
+\hline
+P-MINT & $\bf{0.94}$ & $\bf{0.87}$ & $\bf{0.96}$ & $\bf{0.72}$ & $\bf{0.85}$ & $\bf{0.87}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale = 0.65]{Plots/PESQ_optandautofixederror_sys_5_error_-33}
+\caption{PESQ score of the first microphone signal $x_1(n)$ and PESQ score of the system's output $\hat{s}(n)$ obtained for several desired window lengths $L_d$ using regularized P-MINT with the optimal regularization parameter $\delta_{\rm opt}$ and with the automatic non-intrusive regularization parameter $\delta_{\rm auto}$~($E_m = -33$~dB)}
+\label{fig: autopesq1}
+\end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[scale = 0.65]{Plots/PESQ_optandautofixed_Ld_640}
+\caption{PESQ score of the system's output $\hat{s}(n)$ obtained for different acoustic systems~($T_{60} \approx 300$~ms, $T_{60} \approx 600$~ms, $T_{60} \approx 700$~ms) and several normalized channel mismatches $E_m$ using regularized P-MINT with the optimal regularization parameter $\delta_{\rm opt}$ and with the automatic non-intrusive regularization parameter $\delta_{\rm auto}$~($L_d = 40$~ms)}
+\label{fig: autopesq2}
+\end{figure}
+
+% You can push biographies down or up by placing
+% a \vfill before or after them. The appropriate
+% use of \vfill depends on what kind of text is
+% on the last page and whether or not the columns
+% are being equalized.
+
+%\vfill
+
+% Can be used to pull up biographies so that the bottom of the last one
+% is flush with the other column.
+%\enlargethispage{-5in}
+
+
+% that's all folks
+
+\end{document}
+
+
+
+
+
+
+
+

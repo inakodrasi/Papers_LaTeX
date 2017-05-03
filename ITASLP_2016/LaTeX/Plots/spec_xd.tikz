@@ -1,0 +1,35 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\begin{tikzpicture}[font=\small]%
+\begin{axis}[%
+width=0.6\figurewidth,
+height=1\figureheight,
+axis on top,
+scale only axis,
+xmin=0,
+xmax=3,
+ymin=-7.8125,
+xlabel style = {text width=1.55cm,align=center},
+xlabel = {Time $t$ [s] \\ (a)},
+xlabel style={yshift=0.5em},
+ymax=4007.8125,
+ylabel={Frequency $f$ [kHz]},
+ylabel absolute, ylabel style={yshift=-1.4em},
+ytick = {0,1000,2000,3000,4000},
+yticklabels = {0,1,2,3,4},
+colormap/jet,
+%colorbar,
+point meta min=-120,
+point meta max=-40
+]%
+\addplot graphics [xmin=0.016,xmax=3.056,ymin=-7.8125,ymax=4007.8125] {Plots/spec_xd-1.png};%
+\end{axis}%
+\end{tikzpicture}%

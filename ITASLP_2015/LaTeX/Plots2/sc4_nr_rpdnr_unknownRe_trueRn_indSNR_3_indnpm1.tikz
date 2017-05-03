@@ -1,0 +1,53 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+\pgfplotsset{every tick label/.append style={font=\tiny}}
+\begin{tikzpicture}[font = \footnotesize]
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+axis on top,
+scale only axis,
+xmin=0.5,
+xmax=12.5,
+xtick={1,2,3,4,5,6,7,8,9,10,11,12},
+xticklabels={$10^{\textendash 7}$, $10^{\textendash 6}$, $10^{\textendash 5}$, $10^{\textendash 4}$, $10^{\textendash 3}$, $10^{\textendash 2}$, $10^{\textendash 1}$, $1$, $3$, $5$, $7$, $10$},
+xlabel absolute, xlabel style={yshift=0.5em},
+xlabel={$\delta$},
+y dir=reverse,
+ymin=0.5,
+ymax=12.5,
+ytick={1,2,3,4,5,6,7,8,9,10,11,12},
+yticklabels={$10$, $7$, $5$, $3$, $1$, $10^{\textendash 1}$, $10^{\textendash 2}$, $10^{\textendash 3}$, $10^{\textendash 4}$, $10^{\textendash 5}$, $10^{\textendash 6}$, $10^{\textendash 7}$},
+ylabel={$\mu$},
+ylabel absolute, ylabel style={yshift=-0.7em},
+colormap/hot2,
+title = {Noise reduction factor [dB]},
+title style = {yshift = -0.5em},
+colorbar,
+colorbar style={at={(1.01,1)},
+	 ytick = {0, 10, 20, 30, 40, 50, 60, 70, 80},
+	 yticklabels = {0, 10, 20, 30, 40, 50},
+      	   yticklabel style={
+	 text width=0.5em,
+	 align=left,
+        }   
+    },	
+point meta min=-7.84397092372614,
+point meta max=56.6825999587625
+]
+\addplot graphics [xmin=0.5,xmax=12.5,ymin=0.5,ymax=12.5] {Plots2/sc4_nr_rpdnr_unknownRe_trueRn_indSNR_3_indnpm1-1.png};
+\addplot[only marks,mark=*,color=green, very thick, mark size = 2pt] plot coordinates{
+(5,4)
+};
+
+\end{axis}
+\end{tikzpicture}%

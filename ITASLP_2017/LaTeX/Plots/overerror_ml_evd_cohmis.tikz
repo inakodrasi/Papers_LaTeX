@@ -1,0 +1,89 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=0.951\figurewidth,
+height=\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=-80,
+xmax=0,
+xlabel={Mismatch [dB]},
+xmajorgrids,
+ylabel absolute, ylabel style={yshift=-1em},
+xlabel absolute, xlabel style={yshift=0.5em},
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=0,
+ymax=1.4,
+ylabel={OvErr [dB]},
+ymajorgrids,
+axis background/.style={fill=white},
+legend columns = 2,
+legend style={at={([xshift=-86pt,yshift=5pt] 1,1)},anchor=south},
+legend entries = {$\hat{\Phi}^{\rm ml}_{\rm r}$, $\hat{\Phi}^{\rm evd}_{\rm r,tr}$}
+]
+\addplot [
+color=green!50!black,
+line width=1.0pt,
+mark size=2.0pt,
+mark=diamond*,
+mark options={solid}]
+  table[row sep=crcr]{%
+-80	0.0206598162860164\\
+-75	0.066404892851334\\
+-70	0.0235012038038056\\
+-65	0.0785444545384417\\
+-60	0.091657961645642\\
+-55	0.123400806538935\\
+-50	0.180817444900813\\
+-45	0.175676102450615\\
+-40	0.215563319179121\\
+-35	0.157099681588618\\
+-30	0.145489176568502\\
+-25	0.174609484728553\\
+-20	0.21929857424805\\
+-15	0.360808872802948\\
+-10	0.513019458034442\\
+-5	1.18340657640291\\
+0	1.16288323848531\\
+};
+
+\addplot [
+color=red,
+dash pattern=on 3pt off 3pt on 3pt off 3pt,
+line width=1.2pt,
+mark = o,
+mark size = 2pt,
+mark options={solid}
+]
+  table[row sep=crcr]{%
+-80	0.00486510223651488\\
+-75	0.0113962891717304\\
+-70	0.0115134756536442\\
+-65	0.0577509778196766\\
+-60	0.0235137858391421\\
+-55	0.0124770977005904\\
+-50	0.0217675030343886\\
+-45	0.0244191330585945\\
+-40	0.035745791059367\\
+-35	0.0353770208933439\\
+-30	0.0444677001907402\\
+-25	0.0557013401387943\\
+-20	0.0835441125316938\\
+-15	0.131633778272243\\
+-10	0.215737701244189\\
+-5	0.509735349691043\\
+0	0.112182796121866\\
+};
+
+\end{axis}
+\end{tikzpicture}%

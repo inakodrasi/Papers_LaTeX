@@ -1,0 +1,141 @@
+% Sample file for AES paper
+\documentclass[fleqn]{aes2e}
+% \let\equation\undefined
+%\let\endequation\undefined
+\usepackage[T1]{fontenc}
+\usepackage{etex}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{bm}
+\setlength{\mathindent}{10pt}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{subfig}
+\usepackage{pifont}
+\usetikzlibrary{backgrounds,shapes,snakes}
+\usetikzlibrary{calc,chains,positioning,patterns}
+\usepackage{phaistos}
+\usepackage{booktabs}
+\usepackage{cases}
+\usepackage{pgfplots}
+\usepackage{url}
+\usepackage[bottom]{footmisc}
+%\usepackage{empheq}
+\usepackage{cite}
+%\parindent=0pt
+
+% Metadata Information
+% \jyear{2010}
+% \jmonth{October}
+% \jvol{1}
+% \jnum{1}
+
+
+\begin{document}
+
+
+
+\begin{table*}[t!]
+  \footnotesize
+  \caption{Wilcoxon signed-rank test for scenario S$_1$-NPM$_1$. The ticks represent a statistically significant difference and the crosses represent no statistically significant difference.}
+  \label{tbl: sig1}
+  \begin{tabularx}{\linewidth}{X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X}
+    \toprule
+      & $x_1(n)$ & L-RMCLS & R-RMCLS & S-RMCLS & L-PMINT & R-PMINT & S-PMINT \\
+      \midrule
+      $x_1(n)$ & \cellcolor{black} & \ding{55} & \ding{51} & \ding{51} & \ding{55} & \ding{51} & \ding{51}\\
+      \hline
+      L-RMCLS & \ding{55} & \cellcolor{black} & \ding{51} & \ding{51} & \ding{55} & \ding{51} & \ding{51} \\
+      \hline
+      R-RMCLS & \ding{51} & \ding{51} & \cellcolor{black} & \ding{55} & \ding{55} & \ding{51} & \ding{51}\\
+      \hline
+      S-RMCLS & \ding{51} & \ding{51} & \ding{55} & \cellcolor{black} & \ding{51} & \ding{55} & \ding{51}\\
+      \hline
+      L-PMINT & \ding{55} & \ding{55} & \ding{55} & \ding{51} & \cellcolor{black} & \ding{51} & \ding{51} \\
+      \hline
+      R-PMINT & \ding{51} & \ding{51} & \ding{51} & \ding{55} & \ding{51} & \cellcolor{black} & \ding{51}\\
+      \hline
+      S-PMINT & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \cellcolor{black}\\
+    \bottomrule
+  \end{tabularx}
+\end{table*}
+\begin{table*}[t!]
+  \footnotesize
+  \caption{Wilcoxon signed-rank test for scenario S$_2$-NPM$_1$. The ticks represent a statistically significant difference and the crosses represent no statistically significant difference.}
+  \label{tbl: sig2}
+  \begin{tabularx}{\linewidth}{X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X}
+    \toprule
+       & $x_1(n)$ & L-RMCLS & R-RMCLS & S-RMCLS & L-PMINT & R-PMINT & S-PMINT \\
+      \midrule
+      $x_1(n)$ & \cellcolor{black} & \ding{55} & \ding{51} & \ding{55} & \ding{55} & \ding{51} & \ding{51}\\
+      \hline
+      L-RMCLS & \ding{55} & \cellcolor{black} & \ding{51} & \ding{55} & \ding{55} & \ding{51} & \ding{55} \\
+      \hline
+      R-RMCLS & \ding{51} & \ding{51} & \cellcolor{black} & \ding{51} & \ding{51} & \ding{55} & \ding{51}\\
+      \hline
+      S-RMCLS & \ding{55} & \ding{55} & \ding{51} & \cellcolor{black} & \ding{55} & \ding{51} & \ding{55}\\
+      \hline
+      L-PMINT & \ding{55} & \ding{55} & \ding{51} & \ding{55} & \cellcolor{black} & \ding{51} & \ding{55} \\
+      \hline
+      R-PMINT & \ding{51} & \ding{51} & \ding{55} & \ding{51} & \ding{51} & \cellcolor{black} & \ding{51}\\
+      \hline
+      S-PMINT & \ding{55} & \ding{55} & \ding{51} & \ding{55} & \ding{55} & \ding{51} & \cellcolor{black}\\
+    \bottomrule
+  \end{tabularx}
+\end{table*}
+\begin{table*}[t!]
+  \footnotesize
+  \caption{Wilcoxon signed-rank test for scenario S$_1$-NPM$_2$. The ticks represent a statistically significant difference and the crosses represent no statistically significant difference.}
+  \label{tbl: sig3}
+  \begin{tabularx}{\linewidth}{X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X}
+    \toprule
+    & $x_1(n)$ & L-RMCLS & R-RMCLS & S-RMCLS & L-PMINT & R-PMINT & S-PMINT \\
+      \midrule
+      $x_1(n)$ & \cellcolor{black} & \ding{51} & \ding{51} & \ding{51} & \ding{55} & \ding{51} & \ding{55}\\
+      \hline
+      L-RMCLS & \ding{51} & \cellcolor{black} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\
+      \hline
+      R-RMCLS & \ding{51} & \ding{51} & \cellcolor{black} & \ding{55} & \ding{51} & \ding{51} & \ding{51}\\
+      \hline
+      S-RMCLS & \ding{51} & \ding{51} & \ding{55} & \cellcolor{black} & \ding{51} & \ding{51} & \ding{51}\\
+      \hline
+      L-PMINT & \ding{55} & \ding{51} & \ding{51} & \ding{51} & \cellcolor{black} & \ding{51} & \ding{51} \\
+      \hline
+      R-PMINT & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \cellcolor{black} & \ding{55}\\
+      \hline
+      S-PMINT & \ding{55} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{55} & \cellcolor{black}\\
+    \bottomrule
+  \end{tabularx}
+\end{table*}
+\begin{table*}[t!]
+  \footnotesize
+  \caption{Wilcoxon signed-rank test for scenario S$_2$-NPM$_2$. The ticks represent a statistically significant difference and the crosses represent no statistically significant difference.}
+  \label{tbl: sig4}
+  \begin{tabularx}{\linewidth}{X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X|>{\hfil}X}
+    \toprule
+       & $x_1(n)$ & L-RMCLS & R-RMCLS & S-RMCLS & L-PMINT & R-PMINT & S-PMINT \\
+      \midrule
+      $x_1(n)$ & \cellcolor{black} & \ding{51} & \ding{55} & \ding{55} & \ding{55} & \ding{51} & \ding{55}\\
+      \hline
+      L-RMCLS & \ding{51} & \cellcolor{black} & \ding{51} & \ding{51} & \ding{51} & \ding{51} & \ding{51} \\
+      \hline
+      R-RMCLS & \ding{55} & \ding{51} & \cellcolor{black} & \ding{55} & \ding{55} & \ding{55} & \ding{55}\\
+      \hline
+      S-RMCLS & \ding{55} & \ding{51} & \ding{55} & \cellcolor{black} & \ding{55} & \ding{51} & \ding{55}\\
+      \hline
+      L-PMINT & \ding{55} & \ding{51} & \ding{55} & \ding{55} & \cellcolor{black} & \ding{55} & \ding{55} \\
+      \hline
+      R-PMINT & \ding{51} & \ding{51} & \ding{55} & \ding{51} & \ding{55} & \cellcolor{black} & \ding{51}\\
+      \hline
+      S-PMINT & \ding{55} & \ding{51} & \ding{55} & \ding{55} & \ding{55} & \ding{51} & \cellcolor{black}\\
+    \bottomrule
+  \end{tabularx}
+\end{table*}
+
+
+\end{document}

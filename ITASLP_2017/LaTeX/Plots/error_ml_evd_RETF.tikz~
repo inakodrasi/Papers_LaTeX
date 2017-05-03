@@ -1,0 +1,105 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.75000,0.75000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figurewidth,
+height=\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=-100,
+xmax=100,
+xlabel={$\theta$},
+xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=0,
+ymax=6,
+ylabel={Error [dB]},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={legend cell align=left,align=left,draw=black}
+]
+\addplot [color=blue,dashed,line width=2.0pt,mark=o,mark options={solid}]
+  table[row sep=crcr]{%
+-90	5.52333426079379\\
+-75	5.70233026141878\\
+-60	5.27340489452581\\
+-45	5.0668029057344\\
+-30	5.06125957115716\\
+-15	5.32788708322811\\
+0	5.09722943669062\\
+15	4.74932794587424\\
+30	3.93219451966707\\
+45	7.49395109298264e-013\\
+60	2.8028377745127\\
+75	3.92635961065184\\
+90	4.25354145385972\\
+};
+\addlegendentry{Overestimation};
+
+\addplot [color=black!50!green,dashed,line width=2.0pt,mark=square,mark options={solid}]
+  table[row sep=crcr]{%
+-90	0\\
+-75	0\\
+-60	0\\
+-45	0\\
+-30	0\\
+-15	0\\
+0	0\\
+15	0\\
+30	0\\
+45	0.000844271919795105\\
+60	0\\
+75	0\\
+90	0\\
+};
+\addlegendentry{Underestimation};
+
+\addplot [color=red,dashed,line width=2.0pt,mark=triangle,mark options={solid,rotate=90}]
+  table[row sep=crcr]{%
+-90	2.51403832671675e-007\\
+-75	2.51403832671675e-007\\
+-60	2.51403832671675e-007\\
+-45	2.51403832671675e-007\\
+-30	2.51403832671675e-007\\
+-15	2.51403832671675e-007\\
+0	2.51403832671675e-007\\
+15	2.51403832671675e-007\\
+30	2.51403832671675e-007\\
+45	2.51403832671675e-007\\
+60	2.51403832671675e-007\\
+75	2.51403832671675e-007\\
+90	2.51403832671675e-007\\
+};
+\addlegendentry{Overestimation};
+
+\addplot [color=mycolor1,dashed,line width=2.0pt,mark=triangle,mark options={solid}]
+  table[row sep=crcr]{%
+-90	2.39371913758615e-008\\
+-75	2.39371913758615e-008\\
+-60	2.39371913758615e-008\\
+-45	2.39371913758615e-008\\
+-30	2.39371913758615e-008\\
+-15	2.39371913758615e-008\\
+0	2.39371913758615e-008\\
+15	2.39371913758615e-008\\
+30	2.39371913758615e-008\\
+45	2.39371913758615e-008\\
+60	2.39371913758615e-008\\
+75	2.39371913758615e-008\\
+90	2.39371913758615e-008\\
+};
+\addlegendentry{Underestimation};
+
+\end{axis}
+\end{tikzpicture}%

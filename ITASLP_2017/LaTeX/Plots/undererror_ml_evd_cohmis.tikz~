@@ -1,0 +1,75 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figurewidth,
+height=\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=-80,
+xmax=0,
+xlabel={Mismatch [dB]},
+xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=0,
+ymax=18,
+ylabel={Underestimation Error [dB]},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={legend cell align=left,align=left,draw=black}
+]
+\addplot [color=blue,dashed,line width=2.0pt,mark=o,mark options={solid}]
+  table[row sep=crcr]{%
+-80	0.112483355347784\\
+-75	0.195477134362456\\
+-70	0.302059114952658\\
+-65	0.275959626816133\\
+-60	0.447431933619223\\
+-55	0.545786373963327\\
+-50	0.687722023413194\\
+-45	1.46689726616375\\
+-40	1.88927468631578\\
+-35	2.4592700457066\\
+-30	2.70362085598793\\
+-25	2.681323062855\\
+-20	2.99771129782174\\
+-15	3.49690680417473\\
+-10	5.14465167477707\\
+-5	5.56901906478443\\
+0	11.6070722790469\\
+};
+\addlegendentry{ML};
+
+\addplot [color=black!50!green,dashed,line width=2.0pt,mark=square,mark options={solid}]
+  table[row sep=crcr]{%
+-80	2.78138615160289\\
+-75	3.42895686016982\\
+-70	3.3119523787736\\
+-65	3.86937278827893\\
+-60	4.17229693144893\\
+-55	4.34869438177603\\
+-50	4.60654790187093\\
+-45	4.13731436656192\\
+-40	3.89914125339556\\
+-35	3.55042181624753\\
+-30	3.92983740516898\\
+-25	4.19387594779481\\
+-20	4.66807925989416\\
+-15	5.79719747178435\\
+-10	6.69030026785982\\
+-5	8.79576744072435\\
+0	17.5322117131035\\
+};
+\addlegendentry{EVD};
+
+\end{axis}
+\end{tikzpicture}%

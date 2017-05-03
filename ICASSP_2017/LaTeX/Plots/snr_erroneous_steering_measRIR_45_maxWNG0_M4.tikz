@@ -1,0 +1,157 @@
+% This file was created by matlab2tikz v0.4.0.
+% Copyright (c) 2008--2013, Nico Schlömer <nico.schloemer@gmail.com>
+% All rights reserved.
+% 
+% The latest updates can be retrieved from
+%   http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+% where you can also make suggestions and rate matlab2tikz.
+% 
+% 
+% 
+
+% defining custom colors
+\definecolor{mycolor1}{rgb}{0,0.75,0.75}%
+
+\begin{tikzpicture}[font=\small]
+
+\begin{axis}[%
+width=\figurewidth,
+height=\figureheight,
+scale only axis,
+xmin=-100,
+xmax=100,
+xlabel={$\hat{\theta}$ \\ (a)},
+xtick = {-90, -45, 0, 45, 90},
+xlabel absolute,
+xlabel style={yshift=0.5em, align = center},
+%xmajorgrids,
+ymin=-5,
+ymax=6,
+ytick = {-5,-2.5,0,2.5,5},
+grid = both,
+minor tick num=1,
+ylabel={$\Delta$fwSSNR [dB]},
+ylabel absolute, ylabel style={yshift=-0.9em},
+legend columns = 4,
+legend style={at=({0.01,1.3}),anchor=north west,row sep = -1.0pt,draw=black,fill=white,legend cell align=left,inner sep=0.2pt, outer sep=-0.2pt},
+%legend image post style={xscale=0.85},
+]
+\addplot [
+color=blue,
+dotted,
+line width=0.9pt,
+mark size=2.5pt,
+mark=triangle,
+mark options={solid,rotate=90}
+]
+table[row sep=crcr]{
+-90 -3.17716406897197\\
+-75 -3.04949702697884\\
+-60 -2.32792196360292\\
+-45 -1.74497963888881\\
+-30 -1.4213283069348\\
+-15 0.021328087928314\\
+0 0.688765820432506\\
+15 1.20462280213385\\
+30 2.49901462278275\\
+45 2.9701780467146\\
+60 1.99514339904234\\
+75 1.23469625845319\\
+90 1.10761528937416\\
+};
+\addlegendentry{MVDR};
+
+\addplot [
+color=green!50!black,
+line width=1.0pt,
+mark size=2.0pt,
+mark=diamond*,
+mark options={solid}
+]
+table[row sep=crcr]{
+-90 -4.376213058025\\
+-75 -4.04637878627519\\
+-60 -3.32534612857733\\
+-45 -2.33643650708774\\
+-30 -1.28779689933512\\
+-15 -0.30174513240094\\
+0 0.304897074697386\\
+15 1.09840025994554\\
+30 2.68824911138077\\
+45 4.75645414985392\\
+60 2.784426291315\\
+75 1.61220307893351\\
+90 1.2145506977014\\
+};
+\addlegendentry{$\hat{\Phi}^{\rm ml}_{\rm r}(l)$};
+
+
+\addplot [
+color=mycolor1,
+mark = square,
+mark size = 2.0pt,
+line width=1.0pt,
+smooth
+]
+table[row sep=crcr]{
+-90 0.588381677194813\\
+-75 0.771902415514691\\
+-60 1.3735109204483\\
+-45 1.82547789262483\\
+-30 1.58601029055073\\
+-15 1.68344758705887\\
+0 2.01453351266509\\
+15 2.47055932612296\\
+30 3.78747168651666\\
+45 5.42045173925157\\
+60 3.84558046649891\\
+75 2.84842028528944\\
+90 2.36621629135764\\
+};
+\addlegendentry{$\hat{\Phi}^{\rm evd}_{\rm r,2}(l)$};
+
+\addplot [
+color=red,
+dash pattern=on 3pt off 3pt on 3pt off 3pt,
+line width=1.2pt,
+mark = o,
+mark size = 2pt,
+mark options={solid}
+]
+table[row sep=crcr]{
+-90 -0.595291770869039\\
+-75 -0.398750948803424\\
+-60 0.306716798068902\\
+-45 0.926385731817365\\
+-30 1.05013584609138\\
+-15 1.72675921380441\\
+0 2.046159925731\\
+15 2.71870458320993\\
+30 4.16748066072164\\
+45 5.51200776712413\\
+60 3.99906700708407\\
+75 2.960834745047\\
+90 2.54457909617102\\
+};
+\addlegendentry{$\hat{\Phi}^{\rm evd}_{\rm r,tr}(l)$};
+
+\addplot [
+color=black,
+line width=0.8pt,
+]
+table[row sep=crcr]{
+45 -5\\
+45 -4\\
+45 -3\\
+45 -2\\
+45 -1\\
+45 0\\
+45 1\\
+45 2\\
+45 3\\
+45 4\\
+45 5\\
+45 6\\
+};
+\end{axis}
+\end{tikzpicture}%

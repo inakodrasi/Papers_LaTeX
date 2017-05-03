@@ -1,0 +1,105 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.75000,0.75000}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=0.951\figurewidth,
+height=\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=-100,
+xmax=100,
+xlabel={$\theta$},
+xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=-0.5,
+ymax=0.5,
+ylabel={$\Delta\text{ PESQ}$},
+ymajorgrids,
+axis background/.style={fill=white},
+legend style={legend cell align=left,align=left,draw=black}
+]
+\addplot [color=blue,dashed,line width=2.0pt,mark=o,mark options={solid}]
+  table[row sep=crcr]{%
+-90	-0.195\\
+-75	-0.208\\
+-60	-0.177\\
+-45	-0.179\\
+-30	-0.211\\
+-15	-0.199\\
+0	-0.0699999999999998\\
+15	0.0630000000000002\\
+30	0.132\\
+45	0.168\\
+60	0.163\\
+75	0.172\\
+90	0.154\\
+};
+\addlegendentry{MVDR};
+
+\addplot [color=black!50!green,dashed,line width=2.0pt,mark=square,mark options={solid}]
+  table[row sep=crcr]{%
+-90	-0.439\\
+-75	-0.37\\
+-60	-0.369\\
+-45	-0.38\\
+-30	-0.348\\
+-15	-0.241\\
+0	-0.0489999999999997\\
+15	0.142\\
+30	0.24\\
+45	0.277\\
+60	0.29\\
+75	0.316\\
+90	0.302\\
+};
+\addlegendentry{ML};
+
+\addplot [color=red,dashed,line width=2.0pt,mark=triangle,mark options={solid}]
+  table[row sep=crcr]{%
+-90	-0.0499999999999998\\
+-75	0.00100000000000033\\
+-60	-0.00599999999999978\\
+-45	-0.0359999999999998\\
+-30	-0.0609999999999997\\
+-15	-0.0189999999999997\\
+0	0.113\\
+15	0.211\\
+30	0.294\\
+45	0.33\\
+60	0.336\\
+75	0.351\\
+90	0.339\\
+};
+\addlegendentry{EVD-TR};
+
+\addplot [color=mycolor1,dashed,line width=2.0pt,mark=diamond,mark options={solid}]
+  table[row sep=crcr]{%
+-90	0.0220000000000002\\
+-75	0.052\\
+-60	0.0590000000000002\\
+-45	0.0510000000000002\\
+-30	0.00300000000000011\\
+-15	0.0710000000000002\\
+0	0.195\\
+15	0.294\\
+30	0.352\\
+45	0.39\\
+60	0.397\\
+75	0.413\\
+90	0.403\\
+};
+\addlegendentry{EVD-2};
+
+\end{axis}
+\end{tikzpicture}%

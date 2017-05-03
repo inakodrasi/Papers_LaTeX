@@ -1,0 +1,70 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.00000,0.56250}%
+\definecolor{mycolor2}{rgb}{0.00000,0.87500,1.00000}%
+\definecolor{mycolor3}{rgb}{1.00000,0.81250,0.00000}%
+%
+\begin{tikzpicture}[font = \small]
+
+\begin{axis}[%
+width=0.7\figurewidth,
+height=\figureheight,
+at={(0\figurewidth,0\figureheight)},
+scale only axis,
+separate axis lines,
+every outer x axis line/.append style={black},
+every x tick label/.append style={font=\color{black}},
+xmin=1,
+xmax=9,
+xtick={2, 4, 6, 8},
+xlabel={Number of microphones $M$},
+xmajorgrids,
+every outer y axis line/.append style={black},
+every y tick label/.append style={font=\color{black}},
+ymin=0,
+ymax=5.5,
+ylabel={$\Delta$fwSSNR [dB]},
+ytick = {0,1,2,3, 4,5,6},
+ylabel absolute, ylabel style={yshift=-0.7em},
+ymajorgrids,
+axis background/.style={fill=white},
+]
+\addplot[ybar,bar width=0.0207792207792208\figurewidth,bar shift=-0.038961038961039\figurewidth,fill=mycolor1,draw=black, pattern = horizontal lines,area legend] plot table[row sep=crcr] {%
+2	0.899141552342785\\
+4	2.08977404383428\\
+6	2.60915082968812\\
+8	3.02898844321822\\
+};
+
+\addplot [color=black,solid,forget plot]
+  table[row sep=crcr]{%
+1	0\\
+9	0\\
+};
+\addplot[ybar,bar width=0.0207792207792208\figurewidth,bar shift=-0.012987012987013\figurewidth,fill=mycolor2,draw=black, pattern = north west lines, area legend] plot table[row sep=crcr] {%
+2	2.12450090617688\\
+4	3.15432128450469\\
+6	3.42662722825039\\
+8	3.70375647931467\\
+};
+
+\addplot[ybar,bar width=0.0207792207792208\figurewidth,bar shift=0.012987012987013\figurewidth,fill=mycolor3,draw=black, pattern = crosshatch, area legend] plot table[row sep=crcr] {%
+2	2.90444274750519\\
+4	4.2310746683285\\
+6	4.69873024828204\\
+8	4.93767468458384\\
+};
+
+\addplot[ybar,bar width=0.0207792207792208\figurewidth,bar shift=0.038961038961039\figurewidth,fill=red!50!black,draw=black, pattern = dots, area legend] plot table[row sep=crcr] {%
+2	2.90444274750535\\
+4	3.98494501063778\\
+6	3.95329547165157\\
+8	3.88611713101302\\
+};
+
+\end{axis}
+\end{tikzpicture}%
